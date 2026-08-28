@@ -110,6 +110,28 @@ pub fn Padding::uniform(Int) -> Self
 pub fn Padding::vertical(Int) -> Self
 pub fn Padding::zero() -> Self
 
+pub(all) struct Paragraph {
+  block : Block?
+  style : @core.Style
+  wrap : Wrap?
+  text : @core.Text
+  scroll : @core.Position
+  alignment : @core.Alignment
+} derive(Eq, @debug.Debug)
+pub fn Paragraph::alignment(Self, @core.Alignment) -> Self
+pub fn Paragraph::block(Self, Block) -> Self
+pub fn Paragraph::centered(Self) -> Self
+pub fn Paragraph::left_aligned(Self) -> Self
+pub fn Paragraph::line_count(Self, Int) -> Int
+pub fn Paragraph::line_width(Self) -> Int
+pub fn Paragraph::new(@core.Text) -> Self
+pub fn Paragraph::of_str(String) -> Self
+pub fn Paragraph::render(Self, @core.Rect, @core.Buffer) -> Unit
+pub fn Paragraph::right_aligned(Self) -> Self
+pub fn Paragraph::scroll(Self, (Int, Int)) -> Self
+pub fn Paragraph::style(Self, @core.Style) -> Self
+pub fn Paragraph::wrap(Self, Wrap) -> Self
+
 pub(all) enum TitlePosition {
   Top
   Bottom
@@ -127,6 +149,11 @@ pub(all) struct WordWrapper {
 }
 pub fn WordWrapper::new(Array[(Array[@core.StyledGrapheme], @core.Alignment)], Int, Bool) -> Self
 pub impl LineComposer for WordWrapper
+
+pub(all) struct Wrap {
+  trim : Bool
+} derive(Eq, @debug.Debug)
+pub fn Wrap::of(Bool) -> Self
 
 pub(all) struct WrappedLine {
   graphemes : Array[@core.StyledGrapheme]
