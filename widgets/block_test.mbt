@@ -641,3 +641,65 @@ test "Block 样式作用于边框" {
   @debug.assert_eq(buf.get(0, 0).style().fg, Some(@core.Color::Red))
   @debug.assert_eq(buf.get(2, 1).style().fg, Some(@core.Color::Red))
 }
+
+///|
+/// 上游 render_partial_borders（全开与 左+上 两组）：
+/// 三种合并策略下局部边框渲染一致喵。
+test "Block 局部边框合并渲染" {
+  let strategies = [
+    @core.MergeStrategy::Replace,
+    @core.MergeStrategy::Exact,
+    @core.MergeStrategy::Fuzzy,
+  ]
+  for strategy in strategies {
+    let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+    Block::new()
+    .borders(Borders::all())
+    .merge_borders(strategy)
+    .render(buffer.area, buffer)
+    @debug.assert_eq(
+      buffer,
+      @core.Buffer::with_lines([
+        "┌────────┐", "│        │", "└────────┘",
+      ]),
+    )
+    let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+    Block::new()
+    .borders(Borders::top().union(Borders::left()))
+    .merge_borders(strategy)
+    .render(buffer.area, buffer)
+    @debug.assert_eq(
+      buffer,
+      @core.Buffer::with_lines([
+        "┌─────────", "│         ", "│         ",
+      ]),
+    )
+  }
+}
+
+///|
+/// 相邻块边框折叠：后渲染块的边与前块的边按策略合成喵。
+test "Block 边框折叠合成" {
+  // 竖线并入竖线仍是竖线喵
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 1, 1))
+  Block::new()
+  .borders(Borders::left())
+  .merge_borders(@core.MergeStrategy::Exact)
+  .render(@core.Rect::new(0, 0, 1, 1), buffer)
+  Block::new()
+  .borders(Borders::left())
+  .merge_borders(@core.MergeStrategy::Exact)
+  .render(@core.Rect::new(0, 0, 1, 1), buffer)
+  inspect(buffer.get(0, 0).symbol(), content="│")
+  // 先画左块上边 ─，再画右块左边 │，Exact 合成 ┼ 喵
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 1, 1))
+  Block::new()
+  .borders(Borders::top())
+  .merge_borders(@core.MergeStrategy::Exact)
+  .render(@core.Rect::new(0, 0, 1, 1), buffer)
+  Block::new()
+  .borders(Borders::left())
+  .merge_borders(@core.MergeStrategy::Exact)
+  .render(@core.Rect::new(0, 0, 1, 1), buffer)
+  inspect(buffer.get(0, 0).symbol(), content="┼")
+}

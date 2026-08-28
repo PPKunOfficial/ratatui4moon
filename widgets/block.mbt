@@ -19,7 +19,7 @@ pub(all) enum TitlePosition {
 /// `inner` 计算 border/标题/padding 扣除后的内容区，供嵌套
 /// widget 使用喵。
 ///
-/// 上游的 `merge_borders`（边框合并策略）与 `shadow` 登记待复刻喵。
+/// 上游的 `shadow` 登记待复刻喵。
 pub(all) struct Block {
   titles : Array[(TitlePosition?, @core.Line)]
   titles_style : @core.Style
@@ -30,6 +30,7 @@ pub(all) struct Block {
   border_set : @core.BorderSet
   style : @core.Style
   padding : Padding
+  merge_borders : @core.MergeStrategy
 } derive(Eq, Debug)
 
 ///|
@@ -45,6 +46,7 @@ pub fn Block::new() -> Block {
     border_set: BorderType::Plain.to_border_set(),
     style: @core.Style::new(),
     padding: Padding::zero(),
+    merge_borders: Replace,
   }
 }
 
@@ -139,6 +141,15 @@ pub fn Block::border_type(self : Block, border_type : BorderType) -> Block {
 /// 直接设边框符号集（上游 `Block::border_set`）喵。
 pub fn Block::border_set(self : Block, set : @core.BorderSet) -> Block {
   { ..self, border_set: set }
+}
+
+///|
+/// 设边框合并策略，供相邻块边框折叠（上游 `Block::merge_borders`）喵。
+pub fn Block::merge_borders(
+  self : Block,
+  strategy : @core.MergeStrategy,
+) -> Block {
+  { ..self, merge_borders: strategy }
 }
 
 ///|
@@ -245,29 +256,59 @@ fn Block::render_sides(
   fn put(x : Int, y : Int, symbol : String) -> Unit {
     match buf.mut_cell(x, y) {
       Some(cell) => {
-        cell.set_symbol(symbol)
+        cell.merge_symbol(symbol, self.merge_borders)
         cell.set_style(self.border_style)
       }
       None => ()
     }
   }
+  // 非 Replace 策略时边线端点不画：边线与角符号的某些合并组合
+  // 不产生正确字符，端点交由角符号直接落格（上游 inset 语义）喵
+  let non_replace = !(self.merge_borders is Replace)
+  let left_inset_amount = if non_replace &&
+    self.borders.contains(Borders::left()) {
+    1
+  } else {
+    0
+  }
+  let top_inset_amount = if non_replace && self.borders.contains(Borders::top()) {
+    1
+  } else {
+    0
+  }
+  let right_inset_amount = if non_replace &&
+    self.borders.contains(Borders::right()) {
+    1
+  } else {
+    0
+  }
+  let bottom_inset_amount = if non_replace &&
+    self.borders.contains(Borders::bottom()) {
+    1
+  } else {
+    0
+  }
+  let left_inset = left + left_inset_amount
+  let top_inset = top + top_inset_amount
+  let right_inset = right - right_inset_amount
+  let bottom_inset = bottom - bottom_inset_amount
   if self.borders.contains(Borders::left()) {
-    for y in top..<=bottom {
+    for y in top_inset..<=bottom_inset {
       put(left, y, self.border_set.vertical_left)
     }
   }
   if self.borders.contains(Borders::top()) {
-    for x in left..<=right {
+    for x in left_inset..<=right_inset {
       put(x, top, self.border_set.horizontal_top)
     }
   }
   if self.borders.contains(Borders::right()) {
-    for y in top..<=bottom {
+    for y in top_inset..<=bottom_inset {
       put(right, y, self.border_set.vertical_right)
     }
   }
   if self.borders.contains(Borders::bottom()) {
-    for x in left..<=right {
+    for x in left_inset..<=right_inset {
       put(x, bottom, self.border_set.horizontal_bottom)
     }
   }
@@ -287,7 +328,7 @@ fn Block::render_corners(
   fn put(x : Int, y : Int, symbol : String) -> Unit {
     match buf.mut_cell(x, y) {
       Some(cell) => {
-        cell.set_symbol(symbol)
+        cell.merge_symbol(symbol, self.merge_borders)
         cell.set_style(self.border_style)
       }
       None => ()

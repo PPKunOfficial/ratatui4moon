@@ -82,6 +82,23 @@ pub fn Cell::append_symbol(self : Cell, symbol : String) -> Unit {
 }
 
 ///|
+/// 以合并策略把新符号并入单元格（上游 `Cell::merge_symbol`）喵。
+///
+/// 供边框折叠使用；空格态直接落入新符号，非边框符号在其他策略下
+/// 优先于边框符号（详见 `MergeStrategy::merge`）喵。
+pub fn Cell::merge_symbol(
+  self : Cell,
+  symbol : String,
+  strategy : MergeStrategy,
+) -> Unit {
+  if self.symbol == "" {
+    self.set_symbol(symbol)
+  } else {
+    self.set_symbol(strategy.merge(self.symbol(), symbol))
+  }
+}
+
+///|
 /// 写单字符（上游 `Cell::set_char`）喵。
 pub fn Cell::set_char(self : Cell, ch : Char) -> Unit {
   self.set_symbol(ch.to_string())

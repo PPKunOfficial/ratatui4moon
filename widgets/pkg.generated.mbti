@@ -21,6 +21,7 @@ pub(all) struct Block {
   border_set : @core.BorderSet
   style : @core.Style
   padding : Padding
+  merge_borders : @core.MergeStrategy
 } derive(Eq, @debug.Debug)
 pub fn Block::border_set(Self, @core.BorderSet) -> Self
 pub fn Block::border_style(Self, @core.Style) -> Self
@@ -29,6 +30,7 @@ pub fn Block::bordered() -> Self
 pub fn Block::borders(Self, Borders) -> Self
 pub fn Block::horizontal_space(Self) -> (Int, Int)
 pub fn Block::inner(Self, @core.Rect) -> @core.Rect
+pub fn Block::merge_borders(Self, @core.MergeStrategy) -> Self
 pub fn Block::new() -> Self
 pub fn Block::padding(Self, Padding) -> Self
 pub fn Block::render(Self, @core.Rect, @core.Buffer) -> Unit

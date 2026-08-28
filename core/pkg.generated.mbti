@@ -76,6 +76,7 @@ pub(all) struct Cell {
 pub fn Cell::append_symbol(Self, String) -> Unit
 pub fn Cell::cell_width(Self) -> Int
 pub fn Cell::empty() -> Self
+pub fn Cell::merge_symbol(Self, String, MergeStrategy) -> Unit
 pub fn Cell::of(String) -> Self
 pub fn Cell::of_cell(Self) -> Self
 pub fn Cell::reset(Self) -> Unit
@@ -152,6 +153,13 @@ pub(all) struct Margin {
 pub fn Margin::new(Int, Int) -> Self
 pub fn Margin::to_display(Self) -> String
 pub fn Margin::uniform(Int) -> Self
+
+pub(all) enum MergeStrategy {
+  Replace
+  Exact
+  Fuzzy
+} derive(Eq, @debug.Debug)
+pub fn MergeStrategy::merge(Self, String, String) -> String
 
 pub(all) struct Modifier {
   bits : UInt16

@@ -162,3 +162,18 @@ test "Cell::cell_width" {
   // 非法 0 宽兜底钳为 1（上游 NonZeroU16 语义）喵
   inspect(cell.cell_width(), content="1")
 }
+
+///|
+/// 上游 merge_symbol 文档示例：边框折叠的合成行为喵。
+test "Cell::merge_symbol" {
+  let cell = Cell::of("┘")
+  cell.merge_symbol("┏", MergeStrategy::Exact)
+  inspect(cell.symbol(), content="╆")
+  let cell = Cell::of("╭")
+  cell.merge_symbol("┘", MergeStrategy::Fuzzy)
+  inspect(cell.symbol(), content="┼")
+  // 空格态直接落入新符号喵
+  let cell = Cell::empty()
+  cell.merge_symbol("┼", MergeStrategy::Exact)
+  inspect(cell.symbol(), content="┼")
+}

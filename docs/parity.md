@@ -18,7 +18,7 @@
 | `layout/direction.rs` / `flex.rs` | — | ⬜ | Horizontal/Vertical、Flex 模式 |
 | `layout/layout.rs` | — | ⬜ | Layout + cassowary 求解（ADR-3：纯 MoonBit 一次性求解子集，最大单体工程） |
 | `buffer/buffer.rs` | `core/buffer.mbt` | ✅ | `with_lines` 的 Into 泛型形态（有 `with_lines_of`）；Debug 全功能 |
-| `buffer/cell.rs` | `core/cell.mbt` | ✅ | `merge_symbol`（随 symbols/merge 落位） |
+| `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |
 | `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ◐ | 宽度表为近似区间法（unicode/ 全量表待迁） |
 | `buffer/diff.rs` | `Buffer::diff` | ✅ | `BufferDiff` 独立迭代器形态（行为等价 Array 输出） |
 | `buffer/assert.rs` | — | ⬜ | BufferAssert 测试辅助 |
@@ -32,7 +32,7 @@
 | `text/masked.rs` | — | ⬜ | MaskedText |
 | `text/grapheme.rs` | `core/grapheme.mbt` | ◐ | 图形簇细分（逐码点近似，unicode/ 落位后升级） |
 | `symbols/border.rs` | `core/border.mbt` | ◐ | 虚线/象限/半块集合（8+ 个 Set 常量） |
-| `symbols/merge.rs` | — | ⬜ | MergeStrategy + Box Drawing 合并表（Block::merge_borders 前置） |
+| `symbols/merge.rs` | `core/merge.mbt` | ✅ | — |
 | `symbols/line.rs` / `bar.rs` / `block.rs` / `braille.rs` / `half_block.rs` / `marker.rs` / `pixel.rs` / `scrollbar.rs` / `shade.rs` | — | ⬜ | 各符号常量表（Canvas/Chart/Scrollbar 前置） |
 | `terminal/*`（Frame/Buffers/Viewport/Inline/Init/Render/Resize/Cursor） | — | ⬜ | 终端会话层（本库 backend 包对位其 TestBackend 部分） |
 | `widgets/widget.rs` / `stateful_widget.rs` | 隐式 render 约定 | ◐ | Widget/StatefulWidget trait 形式化 |
@@ -42,7 +42,7 @@
 
 | 上游模块 | 状态 | 缺项 |
 |---|---|---|
-| `block.rs` + `block/padding.rs` | ◐ | `merge_borders`（随 symbols/merge）、`shadow`、虚线线型、Stylize 糖 |
+| `block.rs` + `block/padding.rs` | ◐ | `shadow`、虚线线型、Stylize 糖 |
 | `block/shadow.rs` | ⬜ | Shadow/Dimmed 渲染 |
 | `borders.rs` | ◐ | 四种基础线型 ✅；虚线变体 ⬜ |
 | `reflow.rs`（WordWrapper/LineTruncator） | ⬜ | 折行引擎（Paragraph 前置，unicode/ 宽度表强依赖） |
