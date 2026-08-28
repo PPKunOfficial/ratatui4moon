@@ -64,8 +64,33 @@ bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离�
 ### ADR-5 黄金快照为主测试形式
 
 渲染正确性 = 精确 ANSI 字符串断言（`inspect!` 快照）。布局等未来浮点路径
-用容差断言。参考资源：ratatui 约 20,900 行内联测试是免费的行为规格库，
-实现一个 widget 就翻译对应断言。
+用容差断言。参考资源：上游 ratatui 的内联测试是免费的行为规格库，
+实现一个模块就翻译对应断言（工作法见 ADR-7）。
+
+### ADR-6 上游参照基线：pinned 快照，不追活分支
+
+上游 ratatui 迭代很快，行为规格必须锚定一个不动点喵：
+
+- 参照仓库：`/Users/pp/projects/ratatui`（浅克隆，detached HEAD），
+  固定 tag **`ratatui-v0.30.2`**（commit `e665c36c`，2026-06-19 发布）；
+- 复刻测试与对照实现一律以该检出为准；上游出新 release 时由维护者
+  显式更新固定点并复查受影响测试，禁止在会话中随手 `git pull` 漂移喵；
+- 上游 v0.30 起拆分为 workspace（`ratatui-core`/`ratatui-widgets`），
+  本库的 `core/` 对位 `ratatui-core/src/{layout,style,buffer,text}`，
+  `widgets/` 对位 `ratatui-widgets` 喵。
+
+### ADR-7 单测复刻 TDD 工作法
+
+1. **先测后码**：为每个上游模块逐条复刻内联测试（测试名保留上游
+   对应关系注释），快照断言走 `inspect`/`@debug.assert_eq`，再写实现
+   使其转绿；快照只经 `moon test --update` 生成，禁止手改喵；
+2. **数值模型**：坐标用 `Int` 承装，但完整保留上游 `u16` 饱和语义
+   （`MAX_COORD = 65535`，`Rect::new`/`offset`/`resize` 等负责钳制；
+   面积用 `Int64` 防 u16² 溢出）——u16 是上游的内存布局选择，
+   饱和行为才是规格喵；
+3. **不可移植用例显式登记**：依赖 Layout 求解器、unicode 宽表、
+   `should_panic` 语义的测试在对应测试文件头注释登记为"待复刻"，
+   随对应包落位补齐，不静默丢弃喵。
 
 ## 3. 分层架构与依赖方向
 
@@ -94,6 +119,9 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 
 - **黄金 ANSI 快照**：`TestBackend` 录帧 + `frame_to_ansi` 精确串断言，
   快照更新只走 `moon test --update`，禁止手改 content；
+- **上游单测复刻**：core 等模块的单元测试逐条复刻上游内联测试
+  （ADR-7 工作法），结构体相等断言用 `@debug.assert_eq`（`Eq + Debug`
+  派生），不给模型类型补 `Show`；
 - 单元测试覆盖差分、裁剪、退化区域、非原点坐标等边界；
 - 测试零真实终端、零网络、零 I/O，`moon test` 全绿方可提交；
 - CI 目标：Linux + Windows 双平台（v0.2 前）。

@@ -26,7 +26,9 @@ backend/   Backend trait · TestBackend（录帧）· ANSI 发射引擎
 
 黄金快照：`widget 渲染 → Buffer::diff → TestBackend → last_ansi`，
 对精确 ANSI 字符串做 `inspect!` 断言。零真实终端、零网络、完全确定性；
-行为规格大量参考 ratatui 的两万行内联测试翻译喵。
+行为规格采用"上游单测复刻 TDD"：先把 ratatui（pinned `ratatui-v0.30.2`）
+的对应内联测试逐条搬进来，再照上游语义写实现跑到全绿（详见
+docs/design.md ADR-6/ADR-7）喵。
 
 ```bash
 moon test            # 全绿

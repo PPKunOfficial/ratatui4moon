@@ -1,4 +1,9 @@
 // core 是依赖树的叶子：零外部依赖、零 I/O 喵。
+// 仅测试目标引入标准库 debug 包（Debug 呈现与 assert_eq），不进运行时喵。
 pkgtype(kind: "library")
 
 supported_targets = "+native"
+
+import {
+  "moonbitlang/core/debug",
+} for "test"

@@ -6,6 +6,7 @@ import {
 }
 
 // Values
+pub const MAX_COORD : Int = 65535
 
 // Errors
 
@@ -47,16 +48,80 @@ pub(all) enum Color {
 } derive(Eq, @debug.Debug)
 pub fn Color::fg_code(Self) -> Int
 
+pub(all) struct Margin {
+  horizontal : Int
+  vertical : Int
+} derive(Eq, @debug.Debug)
+pub fn Margin::new(Int, Int) -> Self
+pub fn Margin::to_display(Self) -> String
+pub fn Margin::uniform(Int) -> Self
+
+pub(all) struct Offset {
+  x : Int
+  y : Int
+} derive(Eq, @debug.Debug)
+pub fn Offset::max() -> Self
+pub fn Offset::min() -> Self
+pub fn Offset::new(Int, Int) -> Self
+pub fn Offset::of_position(Position) -> Self
+pub fn Offset::op_add(Self, Rect) -> Rect
+pub fn Offset::zero() -> Self
+
+pub(all) struct Position {
+  x : Int
+  y : Int
+} derive(Eq, @debug.Debug)
+pub fn Position::new(Int, Int) -> Self
+pub fn Position::of_rect(Rect) -> Self
+pub fn Position::of_tuple((Int, Int)) -> Self
+pub fn Position::offset(Self, Offset) -> Self
+pub fn Position::op_add(Self, Offset) -> Self
+pub fn Position::op_sub(Self, Offset) -> Self
+pub fn Position::to_display(Self) -> String
+pub fn Position::to_tuple(Self) -> (Int, Int)
+
 pub(all) struct Rect {
   x : Int
   y : Int
   width : Int
   height : Int
 } derive(Eq, @debug.Debug)
+pub fn Rect::area(Self) -> Int64
+pub fn Rect::as_position(Self) -> Position
+pub fn Rect::as_size(Self) -> Size
 pub fn Rect::bottom(Self) -> Int
+pub fn Rect::clamp(Self, Self) -> Self
+pub fn Rect::columns(Self) -> Iter[Self]
+pub fn Rect::contains(Self, Position) -> Bool
+pub fn Rect::inner(Self, Margin) -> Self
+pub fn Rect::intersection(Self, Self) -> Self
+pub fn Rect::intersects(Self, Self) -> Bool
 pub fn Rect::is_empty(Self) -> Bool
+pub fn Rect::left(Self) -> Int
 pub fn Rect::new(Int, Int, Int, Int) -> Self
+pub fn Rect::of_position_size(Position, Size) -> Self
+pub fn Rect::of_size(Size) -> Self
+pub fn Rect::offset(Self, Offset) -> Self
+pub fn Rect::op_add(Self, Offset) -> Self
+pub fn Rect::op_sub(Self, Offset) -> Self
+pub fn Rect::outer(Self, Margin) -> Self
+pub fn Rect::resize(Self, Size) -> Self
 pub fn Rect::right(Self) -> Int
+pub fn Rect::rows(Self) -> Iter[Self]
+pub fn Rect::to_display(Self) -> String
+pub fn Rect::top(Self) -> Int
+pub fn Rect::union(Self, Self) -> Self
+
+pub(all) struct Size {
+  width : Int
+  height : Int
+} derive(Eq, @debug.Debug)
+pub fn Size::area(Self) -> Int64
+pub fn Size::new(Int, Int) -> Self
+pub fn Size::of_rect(Rect) -> Self
+pub fn Size::of_tuple((Int, Int)) -> Self
+pub fn Size::to_display(Self) -> String
+pub fn Size::to_tuple(Self) -> (Int, Int)
 
 pub(all) struct Style {
   bold : Bool
