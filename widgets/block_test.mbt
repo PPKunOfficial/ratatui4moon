@@ -111,18 +111,14 @@ test "Block 在非原点区域与偏移坐标对齐" {
 ///|
 test "Block 样式作用于边框" {
   let buf = @core.Buffer::new(@core.Rect::new(0, 0, 3, 2))
-  let block = Block::styled(@core.Style::of(true, Some(@core.Color::Red)))
+  let block = Block::styled(
+    @core.Style::new().fg(@core.Color::Red).add_modifier(@core.Modifier::bold()),
+  )
   block.render(@core.Rect::new(0, 0, 3, 2), buf)
-  inspect(buf.get(0, 0).style.bold, content="true")
-  // Color 走 Debug 而非 Show（品味约定），此处以 SGR 码提取断言
-  let fg = match buf.get(0, 0).style.fg {
-    Some(c) => c.fg_code()
-    None => 0
-  }
-  inspect(fg, content="31")
-  let fg_corner = match buf.get(2, 1).style.fg {
-    Some(c) => c.fg_code()
-    None => 0
-  }
-  inspect(fg_corner, content="31")
+  inspect(
+    buf.get(0, 0).style.has_modifier(@core.Modifier::bold()),
+    content="true",
+  )
+  @debug.assert_eq(buf.get(0, 0).style.fg, Some(@core.Color::Red))
+  @debug.assert_eq(buf.get(2, 1).style.fg, Some(@core.Color::Red))
 }

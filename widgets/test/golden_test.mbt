@@ -28,7 +28,12 @@ test "带加粗红字内容的黄金快照" {
   let area = @core.Rect::new(0, 0, 10, 3)
   let buf = @core.Buffer::new(area)
   @widgets.Block::new().render(area, buf)
-  buf.set_string(1, 1, "hi", @core.Style::of(true, Some(@core.Color::Red)))
+  buf.set_string(
+    1,
+    1,
+    "hi",
+    @core.Style::new().fg(@core.Color::Red).add_modifier(@core.Modifier::bold()),
+  )
   let t = @backend.TestBackend::new()
   t.draw(buf.diff(@core.Buffer::new(area)))
   inspect(

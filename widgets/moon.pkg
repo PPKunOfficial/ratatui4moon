@@ -2,6 +2,10 @@ import {
   "nonoka/ratatui4moon/core",
 }
 
+import {
+  "moonbitlang/core/debug",
+} for "test"
+
 pkgtype(kind: "library")
 
 supported_targets = "+native"

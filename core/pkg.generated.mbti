@@ -29,6 +29,7 @@ pub(all) struct Cell {
 pub fn Cell::empty() -> Self
 
 pub(all) enum Color {
+  Reset
   Black
   Red
   Green
@@ -36,17 +37,20 @@ pub(all) enum Color {
   Blue
   Magenta
   Cyan
+  Gray
+  DarkGray
+  LightRed
+  LightGreen
+  LightYellow
+  LightBlue
+  LightMagenta
+  LightCyan
   White
-  BrightBlack
-  BrightRed
-  BrightGreen
-  BrightYellow
-  BrightBlue
-  BrightMagenta
-  BrightCyan
-  BrightWhite
+  Rgb(Int, Int, Int)
+  Indexed(Int)
 } derive(Eq, @debug.Debug)
-pub fn Color::fg_code(Self) -> Int
+pub fn Color::from_u32(Int) -> Self
+pub fn Color::to_display(Self) -> String
 
 pub(all) struct Margin {
   horizontal : Int
@@ -55,6 +59,30 @@ pub(all) struct Margin {
 pub fn Margin::new(Int, Int) -> Self
 pub fn Margin::to_display(Self) -> String
 pub fn Margin::uniform(Int) -> Self
+
+pub(all) struct Modifier {
+  bits : UInt16
+} derive(Eq, @debug.Debug)
+pub fn Modifier::all() -> Self
+pub fn Modifier::bold() -> Self
+pub fn Modifier::contains(Self, Self) -> Bool
+pub fn Modifier::crossed_out() -> Self
+pub fn Modifier::difference(Self, Self) -> Self
+pub fn Modifier::dim() -> Self
+pub fn Modifier::empty() -> Self
+pub fn Modifier::hidden() -> Self
+pub fn Modifier::insert(Self, Self) -> Self
+pub fn Modifier::intersection(Self, Self) -> Self
+pub fn Modifier::intersects(Self, Self) -> Bool
+pub fn Modifier::is_empty(Self) -> Bool
+pub fn Modifier::italic() -> Self
+pub fn Modifier::rapid_blink() -> Self
+pub fn Modifier::remove(Self, Self) -> Self
+pub fn Modifier::reversed() -> Self
+pub fn Modifier::slow_blink() -> Self
+pub fn Modifier::to_debug(Self) -> String
+pub fn Modifier::underlined() -> Self
+pub fn Modifier::union(Self, Self) -> Self
 
 pub(all) struct Offset {
   x : Int
@@ -124,12 +152,21 @@ pub fn Size::to_display(Self) -> String
 pub fn Size::to_tuple(Self) -> (Int, Int)
 
 pub(all) struct Style {
-  bold : Bool
   fg : Color?
+  bg : Color?
+  add_modifier : Modifier
+  sub_modifier : Modifier
 } derive(Eq, @debug.Debug)
+pub fn Style::add_modifier(Self, Modifier) -> Self
+pub fn Style::bg(Self, Color) -> Self
 pub fn Style::default() -> Self
+pub fn Style::fg(Self, Color) -> Self
+pub fn Style::has_modifier(Self, Modifier) -> Bool
 pub fn Style::is_default(Self) -> Bool
-pub fn Style::of(Bool, Color?) -> Self
+pub fn Style::new() -> Self
+pub fn Style::patch(Self, Self) -> Self
+pub fn Style::remove_modifier(Self, Modifier) -> Self
+pub fn Style::reset() -> Self
 
 // Type aliases
 
