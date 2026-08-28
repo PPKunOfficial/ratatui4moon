@@ -327,6 +327,14 @@ pub fn Span::width(Self) -> Int
 pub fn Span::with_content(Self, String) -> Self
 pub fn Span::with_style(Self, Style) -> Self
 
+pub(all) struct Stateful[W, S] {
+  widget : W
+  mut state : S
+}
+pub fn[W, S] Stateful::of(W, S) -> Self[W, S]
+pub fn[W, S] Stateful::set_state(Self[W, S], S) -> Unit
+pub fn[W, S] Stateful::state(Self[W, S]) -> S
+
 pub(all) struct Style {
   fg : Color?
   bg : Color?
@@ -435,3 +443,11 @@ pub fn Text::with_style(Self, Style) -> Self
 // Type aliases
 
 // Traits
+pub(open) trait StatefulWidget {
+  fn render(Self, Rect, Buffer) -> Unit
+}
+
+pub(open) trait Widget {
+  fn render(Self, Rect, Buffer) -> Unit
+}
+pub impl Widget for String

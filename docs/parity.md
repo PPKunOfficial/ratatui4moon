@@ -35,7 +35,7 @@
 | `symbols/merge.rs` | `core/merge.mbt` | ✅ | — |
 | `symbols/line.rs` / `bar.rs` / `block.rs` / `braille.rs` / `half_block.rs` / `marker.rs` / `pixel.rs` / `scrollbar.rs` / `shade.rs` | — | ⬜ | 各符号常量表（Canvas/Chart/Scrollbar 前置） |
 | `terminal/*`（Frame/Buffers/Viewport/Inline/Init/Render/Resize/Cursor） | — | ⬜ | 终端会话层（本库 backend 包对位其 TestBackend 部分） |
-| `widgets/widget.rs` / `stateful_widget.rs` | 隐式 render 约定 | ◐ | Widget/StatefulWidget trait 形式化 |
+| `widgets/widget.rs` / `stateful_widget.rs` | `core/widget.mbt` + `core/stateful_widget.mbt` | ✅ | Widget trait（Span/Line/Text/String/Block/Paragraph 实现）；StatefulWidget 以 Stateful[W,S] 状态打包形式化（MoonBit 无关联类型，所有权偏差登记） |
 | `backend.rs` + `backend/test.rs` | `backend/` 包（自有 Backend trait + TestBackend） | ◐ | 本库 trait 只含 `draw`，终端原语随 TtyBackend 扩契约 |
 
 ## ratatui-widgets

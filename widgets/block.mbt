@@ -217,7 +217,7 @@ pub fn Block::inner(self : Block, area : @core.Rect) -> @core.Rect {
 
 ///|
 /// 渲染块（上游 `Widget for &Block`）喵。
-pub fn Block::render(
+impl @core.Widget for Block with fn render(
   self : Block,
   area : @core.Rect,
   buf : @core.Buffer,
@@ -611,3 +611,7 @@ pub fn Block::vertical_space(self : Block) -> (Int, Int) {
   let bottom_border = if has_bottom { 1 } else { 0 }
   (self.padding.top + top_border, self.padding.bottom + bottom_border)
 }
+
+///|
+/// 点调用提升声明（MoonBit extend 惯用法）喵。
+pub extend Block with @core.Widget::{render}

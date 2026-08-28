@@ -157,7 +157,7 @@ pub fn Paragraph::line_width(self : Paragraph) -> Int {
 
 ///|
 /// 渲染段落（上游 `Widget for &Paragraph`）喵。
-pub fn Paragraph::render(
+impl @core.Widget for Paragraph with fn render(
   self : Paragraph,
   area : @core.Rect,
   buf : @core.Buffer,
@@ -284,3 +284,7 @@ fn get_line_offset(
     @core.Alignment::Left => 0
   }
 }
+
+///|
+/// 点调用提升声明（MoonBit extend 惯用法）喵。
+pub extend Paragraph with @core.Widget::{render}

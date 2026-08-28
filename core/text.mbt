@@ -104,7 +104,7 @@ pub fn Span::styled_graphemes(
 ///|
 /// 渲染进缓冲：首字形必落格、零宽字形并入邻格、多宽字形隐藏
 /// 尾列复位、越界截断（上游 `Widget for &Span`）喵。
-pub fn Span::render(self : Span, area : Rect, buf : Buffer) -> Unit {
+impl Widget for Span with fn render(self : Span, area : Rect, buf : Buffer) -> Unit {
   let area = buf.area.intersection(area)
   if area.is_empty() {
     return
@@ -320,7 +320,7 @@ pub fn Line::styled_graphemes(
 
 ///|
 /// 渲染进缓冲（上游 `Widget for Line`，缺省承左对齐）喵。
-pub fn Line::render(self : Line, area : Rect, buf : Buffer) -> Unit {
+impl Widget for Line with fn render(self : Line, area : Rect, buf : Buffer) -> Unit {
   self.render_with_alignment(area, buf, None)
 }
 
@@ -435,3 +435,11 @@ fn spans_after_width(
   }
   out
 }
+
+///|
+/// 点调用提升声明（MoonBit extend 惯用法）喵。
+pub extend Span with Widget::{render}
+
+///|
+/// 点调用提升声明（MoonBit extend 惯用法）喵。
+pub extend Line with Widget::{render}

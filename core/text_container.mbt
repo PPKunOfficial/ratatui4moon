@@ -204,7 +204,7 @@ pub fn Text::to_display(self : Text) -> String {
 ///|
 /// 渲染文本：文本级样式铺满区域，逐行渲染并把文本级对齐作为
 /// 父级缺省对齐（上游 `WidgetRef for Text`）喵。
-pub fn Text::render(self : Text, area : Rect, buf : Buffer) -> Unit {
+impl Widget for Text with fn render(self : Text, area : Rect, buf : Buffer) -> Unit {
   let area = buf.area.intersection(area)
   buf.set_style(area, self.style)
   for y, line in self.lines {
@@ -215,3 +215,7 @@ pub fn Text::render(self : Text, area : Rect, buf : Buffer) -> Unit {
     line.render_with_alignment(line_area, buf, self.alignment)
   }
 }
+
+///|
+/// 点调用提升声明（MoonBit extend 惯用法）喵。
+pub extend Text with Widget::{render}
