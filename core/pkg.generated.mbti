@@ -8,25 +8,67 @@ import {
 // Values
 pub const MAX_COORD : Int = 65535
 
+pub fn char_display_width(Char) -> Int
+
+pub fn symbol_width(String) -> Int
+
 // Errors
 
 // Types and methods
 pub(all) struct Buffer {
-  area : Rect
-  cells : Array[Cell]
-}
+  mut area : Rect
+  mut cells : Array[Cell]
+} derive(Eq, @debug.Debug)
+pub fn Buffer::cell(Self, Int, Int) -> Cell?
+pub fn Buffer::cell_at(Self, Position) -> Cell?
 pub fn Buffer::diff(Self, Self) -> Array[(Int, Int, Cell)]
+pub fn Buffer::empty(Rect) -> Self
+pub fn Buffer::filled(Rect, Cell) -> Self
 pub fn Buffer::get(Self, Int, Int) -> Cell
 pub fn Buffer::in_bounds(Self, Int, Int) -> Bool
+pub fn Buffer::index_of(Self, Int, Int) -> Int
+pub fn Buffer::merge(Self, Self) -> Unit
+pub fn Buffer::mut_cell(Self, Int, Int) -> Cell?
 pub fn Buffer::new(Rect) -> Self
-pub fn Buffer::set_cell(Self, Int, Int, Char, Style) -> Unit
+pub fn Buffer::pos_of(Self, Int) -> (Int, Int)
+pub fn Buffer::reset(Self) -> Unit
+pub fn Buffer::resize(Self, Rect) -> Unit
+pub fn Buffer::set_line(Self, Int, Int, Line, Int) -> (Int, Int)
+pub fn Buffer::set_span(Self, Int, Int, Span, Int) -> (Int, Int)
 pub fn Buffer::set_string(Self, Int, Int, String, Style) -> Unit
+pub fn Buffer::set_stringn(Self, Int, Int, String, Int, Style) -> (Int, Int)
+pub fn Buffer::set_style(Self, Rect, Style) -> Unit
+pub fn Buffer::to_debug(Self) -> String
+pub fn Buffer::with_lines(Array[String]) -> Self
+pub fn Buffer::with_lines_of(Array[Line]) -> Self
 
 pub(all) struct Cell {
-  ch : Char
-  style : Style
+  mut symbol : String
+  mut fg : Color
+  mut bg : Color
+  mut modifier : Modifier
+  mut diff_option : CellDiffOption
 } derive(Eq, @debug.Debug)
+pub fn Cell::cell_width(Self) -> Int
 pub fn Cell::empty() -> Self
+pub fn Cell::of(String) -> Self
+pub fn Cell::of_cell(Self) -> Self
+pub fn Cell::reset(Self) -> Unit
+pub fn Cell::set_bg(Self, Color) -> Unit
+pub fn Cell::set_char(Self, Char) -> Unit
+pub fn Cell::set_diff_option(Self, CellDiffOption) -> Unit
+pub fn Cell::set_fg(Self, Color) -> Unit
+pub fn Cell::set_style(Self, Style) -> Unit
+pub fn Cell::set_symbol(Self, String) -> Unit
+pub fn Cell::style(Self) -> Style
+pub fn Cell::symbol(Self) -> String
+
+pub(all) enum CellDiffOption {
+  None
+  Skip
+  AlwaysUpdate
+  ForcedWidth(Int)
+} derive(Eq, @debug.Debug)
 
 pub(all) enum Color {
   Reset
@@ -51,6 +93,14 @@ pub(all) enum Color {
 } derive(Eq, @debug.Debug)
 pub fn Color::from_u32(Int) -> Self
 pub fn Color::to_display(Self) -> String
+
+pub(all) struct Line {
+  spans : Array[Span]
+  style : Style
+} derive(Eq, @debug.Debug)
+pub fn Line::raw(String) -> Self
+pub fn Line::styled(String, Style) -> Self
+pub fn Line::width(Self) -> Int
 
 pub(all) struct Margin {
   horizontal : Int
@@ -150,6 +200,14 @@ pub fn Size::of_rect(Rect) -> Self
 pub fn Size::of_tuple((Int, Int)) -> Self
 pub fn Size::to_display(Self) -> String
 pub fn Size::to_tuple(Self) -> (Int, Int)
+
+pub(all) struct Span {
+  content : String
+  style : Style
+} derive(Eq, @debug.Debug)
+pub fn Span::raw(String) -> Self
+pub fn Span::styled(String, Style) -> Self
+pub fn Span::width(Self) -> Int
 
 pub(all) struct Style {
   fg : Color?

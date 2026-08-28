@@ -8,7 +8,7 @@
 /// 单线边框块组件喵。
 ///
 /// spike 阶段只有边框；标题、内边距、圆角边框等按消费方需求增量追加。
-/// `style` 统一作用于全部边框字符喵。
+/// `style` 以 patch 语义作用于全部边框字符喵。
 pub(all) struct Block {
   style : @core.Style
 } derive(Eq, Debug)
@@ -40,16 +40,25 @@ pub fn Block::render(
   }
   let right = area.right() - 1
   let bottom = area.bottom() - 1
-  buf.set_cell(area.x, area.y, '┌', self.style)
-  buf.set_cell(right, area.y, '┐', self.style)
-  buf.set_cell(area.x, bottom, '└', self.style)
-  buf.set_cell(right, bottom, '┘', self.style)
+  fn put(x : Int, y : Int, symbol : String) -> Unit {
+    match buf.mut_cell(x, y) {
+      Some(cell) => {
+        cell.set_symbol(symbol)
+        cell.set_style(self.style)
+      }
+      None => ()
+    }
+  }
+  put(area.x, area.y, "┌")
+  put(right, area.y, "┐")
+  put(area.x, bottom, "└")
+  put(right, bottom, "┘")
   for x in (area.x + 1)..<right {
-    buf.set_cell(x, area.y, '─', self.style)
-    buf.set_cell(x, bottom, '─', self.style)
+    put(x, area.y, "─")
+    put(x, bottom, "─")
   }
   for y in (area.y + 1)..<bottom {
-    buf.set_cell(area.x, y, '│', self.style)
-    buf.set_cell(right, y, '│', self.style)
+    put(area.x, y, "│")
+    put(right, y, "│")
   }
 }

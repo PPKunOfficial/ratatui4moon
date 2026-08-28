@@ -15,7 +15,7 @@ test "带边框 hello 的 ANSI 黄金快照" {
   @widgets.Block::new().render(area, buf)
   buf.set_string(1, 1, "hello, ratatui", @core.Style::default())
   let t = @backend.TestBackend::new()
-  t.draw(buf.diff(@core.Buffer::new(area)))
+  t.draw(@core.Buffer::new(area).diff(buf))
   inspect(
     t.last_ansi(),
     content="\u{1b}[1;1H┌──────────────┐\u{1b}[2;1H│hello,\u{1b}[2;9Hratatui│\u{1b}[3;1H└──────────────┘",
@@ -35,7 +35,7 @@ test "带加粗红字内容的黄金快照" {
     @core.Style::new().fg(@core.Color::Red).add_modifier(@core.Modifier::bold()),
   )
   let t = @backend.TestBackend::new()
-  t.draw(buf.diff(@core.Buffer::new(area)))
+  t.draw(@core.Buffer::new(area).diff(buf))
   inspect(
     t.last_ansi(),
     content="\u{1b}[1;1H┌────────┐\u{1b}[2;1H│\u{1b}[0m\u{1b}[1m\u{1b}[31mhi\u{1b}[2;10H\u{1b}[0m│\u{1b}[3;1H└────────┘",
@@ -52,7 +52,7 @@ test "多帧录制与取帧" {
   t.draw(first.diff(@core.Buffer::new(area)))
   let second = @core.Buffer::new(area)
   second.set_string(0, 0, "cd", @core.Style::default())
-  t.draw(second.diff(first))
+  t.draw(first.diff(second))
   inspect(t.frame_count(), content="2")
   // 第二帧只含两个变化单元格
   inspect(t.last_ansi(), content="\u{1b}[1;1Hcd")

@@ -175,12 +175,12 @@ pub fn frame_to_ansi(cells : Array[(Int, Int, @core.Cell)]) -> String {
     }
     cur_x = x
     cur_y = y
-    let s = sgr_transition(c.style, prev_style)
+    let s = sgr_transition(c.style(), prev_style)
     if !s.is_empty() {
       out.write_string(s)
     }
-    out.write_char(c.ch)
-    prev_style = Some(c.style)
+    out.write_string(c.symbol())
+    prev_style = Some(c.style())
   }
   match prev_style {
     Some(s) =>

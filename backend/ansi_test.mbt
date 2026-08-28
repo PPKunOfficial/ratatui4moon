@@ -10,7 +10,7 @@ test "frame_to_ansi 连续单元格只挪行不重复定位" {
   let buf = @core.Buffer::new(@core.Rect::new(0, 0, 3, 2))
   buf.set_string(0, 0, "abc", @core.Style::default())
   buf.set_string(0, 1, "def", @core.Style::default())
-  let changes = buf.diff(@core.Buffer::new(@core.Rect::new(0, 0, 3, 2)))
+  let changes = @core.Buffer::new(@core.Rect::new(0, 0, 3, 2)).diff(buf)
   inspect(frame_to_ansi(changes), content="\u{1b}[1;1Habc\u{1b}[2;1Hdef")
 }
 
@@ -23,7 +23,7 @@ test "frame_to_ansi 锁定 SGR 增量协议" {
     "ab",
     @core.Style::new().fg(@core.Color::Red).add_modifier(@core.Modifier::bold()),
   )
-  let changes = buf.diff(@core.Buffer::new(@core.Rect::new(0, 0, 2, 1)))
+  let changes = @core.Buffer::new(@core.Rect::new(0, 0, 2, 1)).diff(buf)
   // 帧首定位 + RESET + 加粗 + 红前景（背景未变不发射）+ 字符 + 帧末收束
   inspect(
     frame_to_ansi(changes),

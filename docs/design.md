@@ -98,7 +98,8 @@ bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离�
 widgets/            无状态 widget（Block / Paragraph / List / Editor…）
    │ 只依赖 core
    ▼
-core/               Rect · Style · Color · Cell · Buffer · diff   ← 依赖树叶，零 I/O
+core/               Rect · Position/Size/Margin/Offset · Style/Modifier/Color ·
+                    Cell · Buffer · diff · Span/Line · 近似宽度表  ← 依赖树叶，零 I/O
    ▲ 只依赖 core
    │
 backend/            Backend trait · TestBackend · ANSI 引擎
@@ -111,6 +112,12 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 
 - `core` 禁止 import 本 module 任何包；`widgets` 禁止依赖 `backend`
   （widget 的输出是 Buffer，不是 ANSI）；
+- 差分方向对位上游 `BufferDiff`：`prev.diff(next)` 产出把 prev 更新为
+  next 的最小变化序列；x/y/width 不一致为程序员错误（`guard!`），
+  高度取较小值喵；
+- Cell 的可变字段 + 引用语义是模型契约：Buffer 内的 Cell 即真实
+  单元格，`mut_cell` 原地修改；`filled` 等批量构造必须逐格克隆，
+  禁止共享同一引用喵；
 - 一切终端转义出自 `backend/ansi.mbt`，上层禁止手拼；
 - 当前 `Backend` 契约只含 `draw(frame)`；raw mode / 光标 / 尺寸 / async 输入
   在接入 tty 时扩契约，禁止为不存在的消费方预埋机制。
@@ -128,14 +135,16 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 
 ## 5. unicode 计划
 
-CJK 渲染是第一消费方（Nonoka）的刚需，宽度层从 Nonoka `tui/width.mbt`
-的"近似区间法"升级：
+CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
+以近似区间法供宽（覆盖 CJK/全角/谚文/常见 Emoji 区间，控制与零宽
+字符宽 0），已支撑 `set_stringn` 列推进与差分吞列；升级路径：
 
 1. 迁入 `unicode/` 包并保留现有 API 语义（`char_display_width` /
-   `wrap_by_width` 等）；
+   `symbol_width` 等）；
 2. 数据表从 Rust `unicode-width` crate 机械搬运（east-asian width 全表 +
-   零宽组合符区间），替换近似区间；
-3. Buffer 的 `set_string` 列推进与 `unicode` 层对接（双宽字符占 2 列）；
+   零宽组合符区间 + VS16 emoji 序列），替换近似区间，并补齐依赖
+   真实宽度的上游用例（emoji/ZWJ 图形簇）；
+3. Grapheme 簇细分（`unicode-segmentation` 对位）随全量表一并评估；
 4. 折行引擎参考 ratatui `paragraph + reflow` 的行为规格翻译测试。
 
 ## 6. 路线图
