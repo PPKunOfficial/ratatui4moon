@@ -48,3 +48,67 @@ test "Color::Rgb 边界分量" {
     Color::Rgb(1, 0x23, 0x45).to_display(),
   )
 }
+
+///|
+/// 上游 from_ansi_color：命名色与别名/分隔符容错喵。
+test "Color::from_str 命名与别名" {
+  @debug.assert_eq(Color::from_str("reset"), Some(Reset))
+  @debug.assert_eq(Color::from_str("black"), Some(Black))
+  @debug.assert_eq(Color::from_str("red"), Some(Red))
+  @debug.assert_eq(Color::from_str("green"), Some(Green))
+  @debug.assert_eq(Color::from_str("yellow"), Some(Yellow))
+  @debug.assert_eq(Color::from_str("blue"), Some(Blue))
+  @debug.assert_eq(Color::from_str("magenta"), Some(Magenta))
+  @debug.assert_eq(Color::from_str("cyan"), Some(Cyan))
+  @debug.assert_eq(Color::from_str("gray"), Some(Gray))
+  @debug.assert_eq(Color::from_str("darkgray"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("lightred"), Some(LightRed))
+  @debug.assert_eq(Color::from_str("lightgreen"), Some(LightGreen))
+  @debug.assert_eq(Color::from_str("lightyellow"), Some(LightYellow))
+  @debug.assert_eq(Color::from_str("lightblue"), Some(LightBlue))
+  @debug.assert_eq(Color::from_str("lightmagenta"), Some(LightMagenta))
+  @debug.assert_eq(Color::from_str("lightcyan"), Some(LightCyan))
+  @debug.assert_eq(Color::from_str("white"), Some(White))
+  // 别名喵
+  @debug.assert_eq(Color::from_str("lightblack"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("lightwhite"), Some(White))
+  @debug.assert_eq(Color::from_str("lightgray"), Some(White))
+  // silver = grey = gray 喵
+  @debug.assert_eq(Color::from_str("grey"), Some(Gray))
+  @debug.assert_eq(Color::from_str("silver"), Some(Gray))
+  // 空格分隔被忽略喵
+  @debug.assert_eq(Color::from_str("light black"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("light white"), Some(White))
+  @debug.assert_eq(Color::from_str("light gray"), Some(White))
+  // 连字符被忽略喵
+  @debug.assert_eq(Color::from_str("light-black"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("light-white"), Some(White))
+  @debug.assert_eq(Color::from_str("light-gray"), Some(White))
+  // 下划线被忽略喵
+  @debug.assert_eq(Color::from_str("light_black"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("light_white"), Some(White))
+  @debug.assert_eq(Color::from_str("light_gray"), Some(White))
+  // bright = light 喵
+  @debug.assert_eq(Color::from_str("bright-black"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("bright-white"), Some(White))
+  @debug.assert_eq(Color::from_str("brightblack"), Some(DarkGray))
+  @debug.assert_eq(Color::from_str("brightwhite"), Some(White))
+}
+
+///|
+/// 上游 from_rgb_color / from_indexed_color喵。
+test "Color::from_str 真彩与索引" {
+  @debug.assert_eq(Color::from_str("#FF0000"), Some(Color::Rgb(255, 0, 0)))
+  @debug.assert_eq(Color::from_str("10"), Some(Color::Indexed(10)))
+}
+
+///|
+/// 上游 from_invalid_colors：非法输入全部拒绝喵。
+test "Color::from_str 非法输入" {
+  let bad_colors = [
+    "invalid_color", "abcdef0", " bcdefa", "#abcdef00", "#1🦀2", "resets", "lightblackk",
+  ]
+  for bad in bad_colors {
+    inspect(Color::from_str(bad) is None, content="true")
+  }
+}

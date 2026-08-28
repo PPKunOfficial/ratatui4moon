@@ -23,8 +23,8 @@
 | `buffer/diff.rs` | `Buffer::diff` | ✅ | `BufferDiff` 独立迭代器形态（行为等价 Array 输出） |
 | `buffer/assert.rs` | — | ⬜ | BufferAssert 测试辅助 |
 | `style.rs`（Style/Modifier） | `core/style.mbt` | ✅ | stylize 速记糖（见 stylize 行） |
-| `style/color.rs` | `core/color.mbt` | ◐ | FromStr 解析（别名/分隔符容错） |
-| `style/stylize.rs` | — | ⬜ | 约五十个速记方法（`.red()`/`.on_blue()`/`.bold()`…） |
+| `style/color.rs` | `core/color.mbt` | ✅ | palette/anstyle 转换单列 |
+| `style/stylize.rs` | `core/stylize.mbt` | ✅ | Style 级速记全量；Cell/Line 等类型速记由 set_style/patch_style 组合覆盖 |
 | `style/palette*` | — | ⬜ | Material/Tailwind 色板 + HSL/HSLuv 转换 |
 | `style/anstyle.rs` | — | ⬜ | anstyle crate 桥接（MoonBit 无此 crate，按语义复刻转换） |
 | `text/span.rs` / `line.rs` | `core/text.mbt` | ✅ | Into/Cow/Collect 构造糖（Rust 语法层） |

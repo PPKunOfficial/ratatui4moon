@@ -117,6 +117,7 @@ pub(all) enum Color {
   Rgb(Int, Int, Int)
   Indexed(Int)
 } derive(Eq, @debug.Debug)
+pub fn Color::from_str(String) -> Self?
 pub fn Color::from_u32(Int) -> Self
 pub fn Color::to_display(Self) -> String
 
@@ -277,14 +278,66 @@ pub(all) struct Style {
 } derive(Eq, @debug.Debug)
 pub fn Style::add_modifier(Self, Modifier) -> Self
 pub fn Style::bg(Self, Color) -> Self
+pub fn Style::black(Self) -> Self
+pub fn Style::blue(Self) -> Self
+pub fn Style::bold(Self) -> Self
+pub fn Style::crossed_out(Self) -> Self
+pub fn Style::cyan(Self) -> Self
+pub fn Style::dark_gray(Self) -> Self
 pub fn Style::default() -> Self
+pub fn Style::dim(Self) -> Self
 pub fn Style::fg(Self, Color) -> Self
+pub fn Style::gray(Self) -> Self
+pub fn Style::green(Self) -> Self
 pub fn Style::has_modifier(Self, Modifier) -> Bool
+pub fn Style::hidden(Self) -> Self
 pub fn Style::is_default(Self) -> Bool
+pub fn Style::italic(Self) -> Self
+pub fn Style::light_blue(Self) -> Self
+pub fn Style::light_cyan(Self) -> Self
+pub fn Style::light_green(Self) -> Self
+pub fn Style::light_magenta(Self) -> Self
+pub fn Style::light_red(Self) -> Self
+pub fn Style::light_yellow(Self) -> Self
+pub fn Style::magenta(Self) -> Self
 pub fn Style::new() -> Self
+pub fn Style::not_bold(Self) -> Self
+pub fn Style::not_crossed_out(Self) -> Self
+pub fn Style::not_dim(Self) -> Self
+pub fn Style::not_hidden(Self) -> Self
+pub fn Style::not_italic(Self) -> Self
+pub fn Style::not_rapid_blink(Self) -> Self
+pub fn Style::not_reversed(Self) -> Self
+pub fn Style::not_slow_blink(Self) -> Self
+pub fn Style::not_underlined(Self) -> Self
+pub fn Style::on_black(Self) -> Self
+pub fn Style::on_blue(Self) -> Self
+pub fn Style::on_cyan(Self) -> Self
+pub fn Style::on_dark_gray(Self) -> Self
+pub fn Style::on_gray(Self) -> Self
+pub fn Style::on_green(Self) -> Self
+pub fn Style::on_light_blue(Self) -> Self
+pub fn Style::on_light_cyan(Self) -> Self
+pub fn Style::on_light_green(Self) -> Self
+pub fn Style::on_light_magenta(Self) -> Self
+pub fn Style::on_light_red(Self) -> Self
+pub fn Style::on_light_yellow(Self) -> Self
+pub fn Style::on_magenta(Self) -> Self
+pub fn Style::on_red(Self) -> Self
+pub fn Style::on_white(Self) -> Self
+pub fn Style::on_yellow(Self) -> Self
 pub fn Style::patch(Self, Self) -> Self
+pub fn Style::rapid_blink(Self) -> Self
+pub fn Style::red(Self) -> Self
 pub fn Style::remove_modifier(Self, Modifier) -> Self
 pub fn Style::reset() -> Self
+pub fn Style::reset_style(Self) -> Self
+pub fn Style::reversed(Self) -> Self
+pub fn Style::slow_blink(Self) -> Self
+pub fn Style::to_debug(Self) -> String
+pub fn Style::underlined(Self) -> Self
+pub fn Style::white(Self) -> Self
+pub fn Style::yellow(Self) -> Self
 
 pub(all) struct StyledGrapheme {
   symbol : String
