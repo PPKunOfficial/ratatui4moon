@@ -22,7 +22,7 @@ priv enum LineStyle {
   TripleDashThick
   QuadrupleDash
   QuadrupleDashThick
-}
+} derive(Eq)
 
 ///|
 /// 合成边框符号：右/上/左/下四个方向的线型（上游包私有 `BorderSymbol`）喵。
