@@ -201,6 +201,17 @@ pub fn Margin::new(Int, Int) -> Self
 pub fn Margin::to_display(Self) -> String
 pub fn Margin::uniform(Int) -> Self
 
+pub(all) struct Masked {
+  inner : String
+  mask_char : Char
+} derive(Eq)
+pub fn Masked::mask_char(Self) -> Char
+pub fn Masked::of(String, Char) -> Self
+pub fn Masked::to_debug(Self) -> String
+pub fn Masked::to_display(Self, limit? : Int) -> String
+pub fn Masked::to_text(Self) -> Text
+pub fn Masked::value(Self) -> String
+
 pub(all) enum MergeStrategy {
   Replace
   Exact

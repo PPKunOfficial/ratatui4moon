@@ -43,13 +43,17 @@ pub fn Constraint::apply(self : Constraint, length : Int) -> Int {
   match self {
     Percentage(p) => {
       let ratio = Float::from_int(p) / 100.0
-      let scaled = (ratio * Float::from_int(length)).min(Float::from_int(length))
+      let scaled = (ratio * Float::from_int(length)).min(
+        Float::from_int(length),
+      )
       scaled.to_int()
     }
     Ratio(n, d) => {
       let denominator = if d > 1 { d } else { 1 }
       let ratio = Float::from_int(n) / Float::from_int(denominator)
-      let scaled = (ratio * Float::from_int(length)).min(Float::from_int(length))
+      let scaled = (ratio * Float::from_int(length)).min(
+        Float::from_int(length),
+      )
       scaled.to_int()
     }
     Length(l) => if length < l { length } else { l }
