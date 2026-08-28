@@ -1,0 +1,10 @@
+// 黑盒黄金快照包：只依赖被测包与 backend 的公开 API 喵。
+import {
+  "nonoka/ratatui4moon/core",
+  "nonoka/ratatui4moon/backend",
+  "nonoka/ratatui4moon/widgets",
+} for "test"
+
+pkgtype(kind: "library")
+
+supported_targets = "+native"

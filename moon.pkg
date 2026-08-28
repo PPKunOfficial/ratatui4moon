@@ -1,0 +1,2 @@
+// 根 package 空壳：领域一律放 core/、backend/、widgets/ 等子 package 喵。
+pkgtype(kind: "library")

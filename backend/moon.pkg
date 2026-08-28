@@ -1,0 +1,7 @@
+import {
+  "nonoka/ratatui4moon/core",
+}
+
+pkgtype(kind: "library")
+
+supported_targets = "+native"

@@ -1,0 +1,71 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "nonoka/ratatui4moon/core"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub(all) struct Buffer {
+  area : Rect
+  cells : Array[Cell]
+}
+pub fn Buffer::diff(Self, Self) -> Array[(Int, Int, Cell)]
+pub fn Buffer::get(Self, Int, Int) -> Cell
+pub fn Buffer::in_bounds(Self, Int, Int) -> Bool
+pub fn Buffer::new(Rect) -> Self
+pub fn Buffer::set_cell(Self, Int, Int, Char, Style) -> Unit
+pub fn Buffer::set_string(Self, Int, Int, String, Style) -> Unit
+
+pub(all) struct Cell {
+  ch : Char
+  style : Style
+} derive(Eq, @debug.Debug)
+pub fn Cell::empty() -> Self
+
+pub(all) enum Color {
+  Black
+  Red
+  Green
+  Yellow
+  Blue
+  Magenta
+  Cyan
+  White
+  BrightBlack
+  BrightRed
+  BrightGreen
+  BrightYellow
+  BrightBlue
+  BrightMagenta
+  BrightCyan
+  BrightWhite
+} derive(Eq, @debug.Debug)
+pub fn Color::fg_code(Self) -> Int
+
+pub(all) struct Rect {
+  x : Int
+  y : Int
+  width : Int
+  height : Int
+} derive(Eq, @debug.Debug)
+pub fn Rect::bottom(Self) -> Int
+pub fn Rect::is_empty(Self) -> Bool
+pub fn Rect::new(Int, Int, Int, Int) -> Self
+pub fn Rect::right(Self) -> Int
+
+pub(all) struct Style {
+  bold : Bool
+  fg : Color?
+} derive(Eq, @debug.Debug)
+pub fn Style::default() -> Self
+pub fn Style::is_default(Self) -> Bool
+pub fn Style::of(Bool, Color?) -> Self
+
+// Type aliases
+
+// Traits

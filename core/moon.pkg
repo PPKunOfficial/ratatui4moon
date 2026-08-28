@@ -1,0 +1,4 @@
+// core 是依赖树的叶子：零外部依赖、零 I/O 喵。
+pkgtype(kind: "library")
+
+supported_targets = "+native"

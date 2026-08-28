@@ -1,0 +1,37 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "nonoka/ratatui4moon/backend"
+
+import {
+  "nonoka/ratatui4moon/core",
+}
+
+// Values
+pub const ESCAPE : String = "\x1b"
+
+pub const RESET : String = "\x1b[0m"
+
+pub fn csi(String, String) -> String
+
+pub fn cursor_to(Int, Int) -> String
+
+pub fn frame_to_ansi(Array[(Int, Int, @core.Cell)]) -> String
+
+pub fn sgr_transition(@core.Style, @core.Style?) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct TestBackend {
+  frames : Array[Array[(Int, Int, @core.Cell)]]
+}
+pub fn TestBackend::frame_count(Self) -> Int
+pub fn TestBackend::last_ansi(Self) -> String
+pub fn TestBackend::new() -> Self
+pub impl Backend for TestBackend
+
+// Type aliases
+
+// Traits
+pub(open) trait Backend {
+  fn draw(Self, Array[(Int, Int, @core.Cell)]) -> Unit
+}
