@@ -47,7 +47,7 @@
 | `borders.rs` | ✅ | — |
 | `reflow.rs`（WordWrapper/LineTruncator） | `widgets/reflow.mbt` | ✅ | 上游 21 条折行测试全量复刻；宽度用近似区间法（unicode/ 落位后升级） |
 | `paragraph.rs` | `widgets/paragraph.mbt` | ✅ | 上游 29 条测试全量复刻（折行/截断/滚动/对齐/样式分层/CJK）；半宽浊点图形簇用例随 unicode/ |
-| `list.rs` + `list/*` | `widgets/list.mbt` + `list_render.mbt` | ◐ | List/ListState/ListItem/ListDirection/HighlightSpacing + 状态化渲染全算法（选中收敛/偏移回写/滚动边距/正反方向/高亮符号）；上游 `tests/list/` 集成黄金用例待补 |
+| `list.rs` + `list/*` | `widgets/list.mbt` + `list_render.mbt` | ✅ | 状态化渲染全算法 + `tests/widgets_list.rs` 全部 8 条集成用例复刻（Terminal 层以直渲染等价承载） |
 | `table.rs` + `table/*` | ⬜ | Table + Row/Cell/State |
 | `tabs.rs` | ⬜ | Tabs |
 | `gauge.rs` | ⬜ | Gauge/GaugeStyle |
