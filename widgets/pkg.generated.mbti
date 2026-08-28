@@ -81,6 +81,17 @@ pub fn Borders::to_debug(Self) -> String
 pub fn Borders::top() -> Self
 pub fn Borders::union(Self, Self) -> Self
 
+pub(all) struct LineTruncator {
+  input_lines : Array[(Array[@core.StyledGrapheme], @core.Alignment)]
+  mut input_pos : Int
+  max_line_width : Int
+  mut current_line : Array[@core.StyledGrapheme]
+  mut horizontal_offset : Int
+}
+pub fn LineTruncator::new(Array[(Array[@core.StyledGrapheme], @core.Alignment)], Int) -> Self
+pub fn LineTruncator::set_horizontal_offset(Self, Int) -> Unit
+pub impl LineComposer for LineTruncator
+
 pub(all) struct Padding {
   left : Int
   right : Int
@@ -104,6 +115,28 @@ pub(all) enum TitlePosition {
   Bottom
 } derive(Eq, @debug.Debug)
 
+pub(all) struct WordWrapper {
+  input_lines : Array[(Array[@core.StyledGrapheme], @core.Alignment)]
+  mut input_pos : Int
+  max_line_width : Int
+  wrapped_lines : Array[Array[@core.StyledGrapheme]]
+  mut wrapped_head : Int
+  mut current_alignment : @core.Alignment
+  mut current_line : Array[@core.StyledGrapheme]
+  trim : Bool
+}
+pub fn WordWrapper::new(Array[(Array[@core.StyledGrapheme], @core.Alignment)], Int, Bool) -> Self
+pub impl LineComposer for WordWrapper
+
+pub(all) struct WrappedLine {
+  graphemes : Array[@core.StyledGrapheme]
+  width : Int
+  alignment : @core.Alignment
+}
+
 // Type aliases
 
 // Traits
+pub(open) trait LineComposer {
+  fn next_line(Self) -> WrappedLine?
+}

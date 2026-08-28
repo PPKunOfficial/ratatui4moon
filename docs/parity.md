@@ -45,7 +45,7 @@
 | `block.rs` + `block/padding.rs` | ◐ | `shadow`、Stylize 糖 |
 | `block/shadow.rs` | ⬜ | Shadow/Dimmed 渲染 |
 | `borders.rs` | ✅ | — |
-| `reflow.rs`（WordWrapper/LineTruncator） | ⬜ | 折行引擎（Paragraph 前置，unicode/ 宽度表强依赖） |
+| `reflow.rs`（WordWrapper/LineTruncator） | `widgets/reflow.mbt` | ✅ | 上游 21 条折行测试全量复刻；宽度用近似区间法（unicode/ 落位后升级） |
 | `paragraph.rs` | ⬜ | Paragraph（Nonoka 刚需第一位） |
 | `list.rs` + `list/*` | ⬜ | List + ListState |
 | `table.rs` + `table/*` | ⬜ | Table + Row/Cell/State |
@@ -62,8 +62,10 @@
 ## 推进顺序（依赖驱动）
 
 1. ✅ 文本基元（Span/Line/Alignment）→ Block 容器
-2. ▶ 当前：`Text` 容器 → `symbols/merge` + `merge_borders` → stylize 速记 + Color FromStr
-3. symbols 常量表 + 虚线边框集 → `reflow` + Paragraph（unicode/ 宽度表一并升级）
+2. ✅ `Text` 容器 → `symbols/merge` + `merge_borders` → stylize 速记 + Color FromStr
+3. ✅ `reflow.rs`（WordWrapper/LineTruncator）+ 21 条折行测试
+4. ▶ Paragraph → symbols 常量表收尾
+5. Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/Sparkline/Scrollbar
 4. Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/Sparkline/Scrollbar
 5. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
 6. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
