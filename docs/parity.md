@@ -14,8 +14,8 @@
 | `layout/position.rs` | `core/position.mbt` | ✅ | `Add<Position>`（Position+Position）糖 |
 | `layout/size.rs` / `margin.rs` / `offset.rs` | 同名 `.mbt` | ✅ | FromStr 糖 |
 | `layout/alignment.rs` | `core/alignment.mbt` | ◐ | `VerticalAlignment`、FromStr |
-| `layout/constraint.rs` | — | ⬜ | Constraint 枚举（Min/Max/Length/Percentage/Ratio/Fill/Fill比例）+ Display/排序 |
-| `layout/direction.rs` / `flex.rs` | — | ⬜ | Horizontal/Vertical、Flex 模式 |
+| `layout/constraint.rs` | `core/constraint.mbt` | ✅ | apply/from_* 构造器/Display 全量；u32::MAX 极端用例按 Int 域折算 |
+| `layout/direction.rs` / `flex.rs` | `core/direction.mbt` + `core/flex.mbt` | ✅ | — |
 | `layout/layout.rs` | — | ⬜ | Layout + cassowary 求解（ADR-3：纯 MoonBit 一次性求解子集，最大单体工程） |
 | `buffer/buffer.rs` | `core/buffer.mbt` | ✅ | `with_lines` 的 Into 泛型形态（有 `with_lines_of`）；Debug 全功能 |
 | `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |

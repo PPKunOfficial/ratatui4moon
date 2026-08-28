@@ -129,6 +129,44 @@ pub fn Color::from_str(String) -> Self?
 pub fn Color::from_u32(Int) -> Self
 pub fn Color::to_display(Self) -> String
 
+pub(all) enum Constraint {
+  Min(Int)
+  Max(Int)
+  Length(Int)
+  Percentage(Int)
+  Ratio(Int, Int)
+  Fill(Int)
+} derive(Eq, @debug.Debug)
+pub fn Constraint::apply(Self, Int) -> Int
+pub fn Constraint::default() -> Self
+pub fn Constraint::from_fills(Array[Int]) -> Array[Self]
+pub fn Constraint::from_lengths(Array[Int]) -> Array[Self]
+pub fn Constraint::from_maxes(Array[Int]) -> Array[Self]
+pub fn Constraint::from_mins(Array[Int]) -> Array[Self]
+pub fn Constraint::from_percentages(Array[Int]) -> Array[Self]
+pub fn Constraint::from_ratios(Array[(Int, Int)]) -> Array[Self]
+pub fn Constraint::to_display(Self) -> String
+
+pub(all) enum Direction {
+  Horizontal
+  Vertical
+} derive(Eq, @debug.Debug)
+pub fn Direction::from_str(String) -> Self?
+pub fn Direction::perpendicular(Self) -> Self
+pub fn Direction::to_display(Self) -> String
+
+pub(all) enum Flex {
+  Legacy
+  Start
+  End
+  Center
+  SpaceBetween
+  SpaceEvenly
+  SpaceAround
+} derive(Eq, @debug.Debug)
+pub fn Flex::default() -> Self
+pub fn Flex::to_display(Self) -> String
+
 pub(all) struct Line {
   mut spans : Array[Span]
   mut style : Style
