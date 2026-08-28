@@ -81,6 +81,13 @@ pub fn Borders::to_debug(Self) -> String
 pub fn Borders::top() -> Self
 pub fn Borders::union(Self, Self) -> Self
 
+pub(all) enum HighlightSpacing {
+  Always
+  WhenSelected
+  Never
+} derive(Eq, @debug.Debug)
+pub fn HighlightSpacing::should_add(Self, Bool) -> Bool
+
 pub(all) struct LineTruncator {
   input_lines : Array[(Array[@core.StyledGrapheme], @core.Alignment)]
   mut input_pos : Int
@@ -91,6 +98,65 @@ pub(all) struct LineTruncator {
 pub fn LineTruncator::new(Array[(Array[@core.StyledGrapheme], @core.Alignment)], Int) -> Self
 pub fn LineTruncator::set_horizontal_offset(Self, Int) -> Unit
 pub impl LineComposer for LineTruncator
+
+pub(all) struct List {
+  block : Block?
+  items : Array[ListItem]
+  style : @core.Style
+  direction : ListDirection
+  highlight_style : @core.Style
+  highlight_symbol : @core.Line?
+  repeat_highlight_symbol : Bool
+  highlight_spacing : HighlightSpacing
+  scroll_padding : Int
+} derive(Eq, @debug.Debug)
+pub fn List::block(Self, Block) -> Self
+pub fn List::direction(Self, ListDirection) -> Self
+pub fn List::highlight_spacing(Self, HighlightSpacing) -> Self
+pub fn List::highlight_style(Self, @core.Style) -> Self
+pub fn List::highlight_symbol(Self, @core.Line) -> Self
+pub fn List::highlight_symbol_str(Self, String) -> Self
+pub fn List::is_empty(Self) -> Bool
+pub fn List::items(Self, Array[ListItem]) -> Self
+pub fn List::len(Self) -> Int
+pub fn List::new(Array[ListItem]) -> Self
+pub fn List::render_stateful(Self, @core.Rect, @core.Buffer, ListState) -> Unit
+pub fn List::repeat_highlight_symbol(Self, Bool) -> Self
+pub fn List::scroll_padding(Self, Int) -> Self
+pub fn List::style(Self, @core.Style) -> Self
+
+pub(all) enum ListDirection {
+  TopToBottom
+  BottomToTop
+} derive(Eq, @debug.Debug)
+pub fn ListDirection::to_display(Self) -> String
+
+pub(all) struct ListItem {
+  content : @core.Text
+  style : @core.Style
+} derive(Eq, @debug.Debug)
+pub fn ListItem::height(Self) -> Int
+pub fn ListItem::of(@core.Text) -> Self
+pub fn ListItem::of_span(@core.Span) -> Self
+pub fn ListItem::of_str(String) -> Self
+pub fn ListItem::style(Self, @core.Style) -> Self
+pub fn ListItem::width(Self) -> Int
+
+pub(all) struct ListState {
+  mut offset : Int
+  mut selected : Int?
+} derive(Eq, @debug.Debug)
+pub fn ListState::new() -> Self
+pub fn ListState::scroll_down_by(Self, Int) -> Unit
+pub fn ListState::scroll_up_by(Self, Int) -> Unit
+pub fn ListState::select(Self, Int?) -> Unit
+pub fn ListState::select_first(Self) -> Unit
+pub fn ListState::select_last(Self) -> Unit
+pub fn ListState::select_next(Self) -> Unit
+pub fn ListState::select_previous(Self) -> Unit
+pub fn ListState::selected(Self) -> Int?
+pub fn ListState::with_offset(Self, Int) -> Self
+pub fn ListState::with_selected(Self, Int?) -> Self
 
 pub(all) struct Padding {
   left : Int

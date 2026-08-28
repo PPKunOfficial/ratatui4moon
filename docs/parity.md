@@ -47,7 +47,7 @@
 | `borders.rs` | ✅ | — |
 | `reflow.rs`（WordWrapper/LineTruncator） | `widgets/reflow.mbt` | ✅ | 上游 21 条折行测试全量复刻；宽度用近似区间法（unicode/ 落位后升级） |
 | `paragraph.rs` | `widgets/paragraph.mbt` | ✅ | 上游 29 条测试全量复刻（折行/截断/滚动/对齐/样式分层/CJK）；半宽浊点图形簇用例随 unicode/ |
-| `list.rs` + `list/*` | ⬜ | List + ListState |
+| `list.rs` + `list/*` | `widgets/list.mbt` + `list_render.mbt` | ◐ | List/ListState/ListItem/ListDirection/HighlightSpacing + 状态化渲染全算法（选中收敛/偏移回写/滚动边距/正反方向/高亮符号）；上游 `tests/list/` 集成黄金用例待补 |
 | `table.rs` + `table/*` | ⬜ | Table + Row/Cell/State |
 | `tabs.rs` | ⬜ | Tabs |
 | `gauge.rs` | ⬜ | Gauge/GaugeStyle |
@@ -65,7 +65,8 @@
 2. ✅ `Text` 容器 → `symbols/merge` + `merge_borders` → stylize 速记 + Color FromStr
 3. ✅ `reflow.rs`（WordWrapper/LineTruncator）+ 21 条折行测试
 4. ✅ Paragraph（折行/截断/滚动/对齐/样式分层全语义）
-5. ▶ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/Sparkline/Scrollbar
+5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
+6. ▶ List（核心算法 ✅，集成黄金用例待补）→ Tabs/Gauge/Sparkline/Scrollbar
 4. Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/Sparkline/Scrollbar
 5. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
 6. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
