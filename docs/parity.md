@@ -49,7 +49,7 @@
 | `paragraph.rs` | `widgets/paragraph.mbt` | ✅ | 上游 29 条测试全量复刻（折行/截断/滚动/对齐/样式分层/CJK）；半宽浊点图形簇用例随 unicode/ |
 | `list.rs` + `list/*` | `widgets/list.mbt` + `list_render.mbt` | ✅ | 状态化渲染全算法 + `tests/widgets_list.rs` 全部 8 条集成用例复刻（Terminal 层以直渲染等价承载） |
 | `table.rs` + `table/*` | ⬜ | Table + Row/Cell/State |
-| `tabs.rs` | ⬜ | Tabs |
+| `tabs.rs` | `widgets/tabs.mbt` | ✅ | 13 条测试全量复刻（缺省样式/分隔符/内边距/选中矩阵/越界与取消/极小缓冲） |
 | `gauge.rs` | ⬜ | Gauge/GaugeStyle |
 | `sparkline.rs` | ⬜ | Sparkline |
 | `scrollbar.rs` | ⬜ | Scrollbar + Orientation |

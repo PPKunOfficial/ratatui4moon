@@ -7,6 +7,7 @@ import {
 }
 
 // Values
+pub fn tabs_default_highlight_style() -> @core.Style
 
 // Errors
 
@@ -198,6 +199,31 @@ pub fn Paragraph::right_aligned(Self) -> Self
 pub fn Paragraph::scroll(Self, (Int, Int)) -> Self
 pub fn Paragraph::style(Self, @core.Style) -> Self
 pub fn Paragraph::wrap(Self, Wrap) -> Self
+
+pub(all) struct Tabs {
+  block : Block?
+  titles : Array[@core.Line]
+  selected : Int?
+  style : @core.Style
+  highlight_style : @core.Style
+  divider : @core.Span
+  padding_left : @core.Line
+  padding_right : @core.Line
+} derive(Eq, @debug.Debug)
+pub fn Tabs::block(Self, Block) -> Self
+pub fn Tabs::divider(Self, @core.Span) -> Self
+pub fn Tabs::divider_str(Self, String) -> Self
+pub fn Tabs::highlight_style(Self, @core.Style) -> Self
+pub fn Tabs::new(Array[@core.Line]) -> Self
+pub fn Tabs::of_strs(Array[String]) -> Self
+pub fn Tabs::padding(Self, @core.Line, @core.Line) -> Self
+pub fn Tabs::padding_left_str(Self, String) -> Self
+pub fn Tabs::padding_right_str(Self, String) -> Self
+pub fn Tabs::padding_str(Self, String, String) -> Self
+pub fn Tabs::select(Self, Int?) -> Self
+pub fn Tabs::style(Self, @core.Style) -> Self
+pub fn Tabs::titles(Self, Array[@core.Line]) -> Self
+pub impl @core.Widget for Tabs
 
 pub(all) enum TitlePosition {
   Top
