@@ -546,7 +546,7 @@ test "Paragraph::line_count" {
   let paragraph = Paragraph::of_str("Hello World").wrap(Wrap::of(true))
   inspect(paragraph.line_count(20), content="1")
   inspect(paragraph.line_count(10), content="2")
-  let text = "Hello World ".repeat(100).trim_space().to_string()
+  let text = "Hello World ".repeat(100).trim().to_owned()
   let paragraph = Paragraph::of_str(text)
   inspect(paragraph.line_count(11), content="1")
   inspect(paragraph.line_count(6), content="1")
