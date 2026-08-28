@@ -51,7 +51,16 @@ pub(all) enum BorderType {
   Rounded
   Double
   Thick
+  LightDoubleDashed
+  HeavyDoubleDashed
+  LightTripleDashed
+  HeavyTripleDashed
+  LightQuadrupleDashed
+  HeavyQuadrupleDashed
+  QuadrantInside
+  QuadrantOutside
 } derive(Eq, @debug.Debug)
+pub fn BorderType::from_str(String) -> Self?
 pub fn BorderType::to_border_set(Self) -> @core.BorderSet
 pub fn BorderType::to_display(Self) -> String
 

@@ -73,3 +73,123 @@ pub fn BorderSet::thick() -> BorderSet {
     horizontal_bottom: "━",
   }
 }
+
+///|
+/// 双破折线边框（上游 `border::LIGHT_DOUBLE_DASHED`）：`┌╌╌╌┐` 喵。
+pub fn BorderSet::light_double_dashed() -> BorderSet {
+  {
+    top_left: "┌",
+    top_right: "┐",
+    bottom_left: "└",
+    bottom_right: "┘",
+    vertical_left: "╎",
+    vertical_right: "╎",
+    horizontal_top: "╌",
+    horizontal_bottom: "╌",
+  }
+}
+
+///|
+/// 粗双破折线边框（上游 `border::HEAVY_DOUBLE_DASHED`）喵。
+pub fn BorderSet::heavy_double_dashed() -> BorderSet {
+  {
+    top_left: "┏",
+    top_right: "┓",
+    bottom_left: "┗",
+    bottom_right: "┛",
+    vertical_left: "╏",
+    vertical_right: "╏",
+    horizontal_top: "╍",
+    horizontal_bottom: "╍",
+  }
+}
+
+///|
+/// 三破折线边框（上游 `border::LIGHT_TRIPLE_DASHED`）喵。
+pub fn BorderSet::light_triple_dashed() -> BorderSet {
+  {
+    top_left: "┌",
+    top_right: "┐",
+    bottom_left: "└",
+    bottom_right: "┘",
+    vertical_left: "┆",
+    vertical_right: "┆",
+    horizontal_top: "┄",
+    horizontal_bottom: "┄",
+  }
+}
+
+///|
+/// 粗三破折线边框（上游 `border::HEAVY_TRIPLE_DASHED`）喵。
+pub fn BorderSet::heavy_triple_dashed() -> BorderSet {
+  {
+    top_left: "┏",
+    top_right: "┓",
+    bottom_left: "┗",
+    bottom_right: "┛",
+    vertical_left: "┇",
+    vertical_right: "┇",
+    horizontal_top: "┅",
+    horizontal_bottom: "┅",
+  }
+}
+
+///|
+/// 四破折线边框（上游 `border::LIGHT_QUADRUPLE_DASHED`）喵。
+pub fn BorderSet::light_quadruple_dashed() -> BorderSet {
+  {
+    top_left: "┌",
+    top_right: "┐",
+    bottom_left: "└",
+    bottom_right: "┘",
+    vertical_left: "┊",
+    vertical_right: "┊",
+    horizontal_top: "┈",
+    horizontal_bottom: "┈",
+  }
+}
+
+///|
+/// 粗四破折线边框（上游 `border::HEAVY_QUADRUPLE_DASHED`）喵。
+pub fn BorderSet::heavy_quadruple_dashed() -> BorderSet {
+  {
+    top_left: "┏",
+    top_right: "┓",
+    bottom_left: "┗",
+    bottom_right: "┛",
+    vertical_left: "┋",
+    vertical_right: "┋",
+    horizontal_top: "┉",
+    horizontal_bottom: "┉",
+  }
+}
+
+///|
+/// 内缩象限边框（上游 `border::QUADRANT_INSIDE`，半格像素内缩）喵。
+pub fn BorderSet::quadrant_inside() -> BorderSet {
+  {
+    top_left: "▗",
+    top_right: "▖",
+    bottom_left: "▝",
+    bottom_right: "▘",
+    vertical_left: "▐",
+    vertical_right: "▌",
+    horizontal_top: "▄",
+    horizontal_bottom: "▀",
+  }
+}
+
+///|
+/// 外扩象限边框（上游 `border::QUADRANT_OUTSIDE`，半格像素外扩）喵。
+pub fn BorderSet::quadrant_outside() -> BorderSet {
+  {
+    top_left: "▛",
+    top_right: "▜",
+    bottom_left: "▙",
+    bottom_right: "▟",
+    vertical_left: "▌",
+    vertical_right: "▐",
+    horizontal_top: "▀",
+    horizontal_bottom: "▄",
+  }
+}

@@ -109,13 +109,20 @@ pub fn Borders::to_debug(self : Borders) -> String {
 }
 
 ///|
-/// 边框线型（上游 `widgets::BorderType`，v0.1 复刻四种基础线型；
-/// 虚线/象限变体登记待复刻）喵。
+/// 边框线型（上游 `widgets::BorderType` 全部 12 变体）喵。
 pub(all) enum BorderType {
   Plain
   Rounded
   Double
   Thick
+  LightDoubleDashed
+  HeavyDoubleDashed
+  LightTripleDashed
+  HeavyTripleDashed
+  LightQuadrupleDashed
+  HeavyQuadrupleDashed
+  QuadrantInside
+  QuadrantOutside
 } derive(Eq, Debug)
 
 ///|
@@ -126,6 +133,35 @@ pub fn BorderType::to_display(self : BorderType) -> String {
     Rounded => "Rounded"
     Double => "Double"
     Thick => "Thick"
+    LightDoubleDashed => "LightDoubleDashed"
+    HeavyDoubleDashed => "HeavyDoubleDashed"
+    LightTripleDashed => "LightTripleDashed"
+    HeavyTripleDashed => "HeavyTripleDashed"
+    LightQuadrupleDashed => "LightQuadrupleDashed"
+    HeavyQuadrupleDashed => "HeavyQuadrupleDashed"
+    QuadrantInside => "QuadrantInside"
+    QuadrantOutside => "QuadrantOutside"
+  }
+}
+
+///|
+/// 从变体名解析线型（上游 `FromStr`，大小写敏感；包私有别名见
+/// `BorderType::parse`）喵。
+pub fn BorderType::from_str(s : String) -> BorderType? {
+  match s {
+    "Plain" => Some(Plain)
+    "Rounded" => Some(Rounded)
+    "Double" => Some(Double)
+    "Thick" => Some(Thick)
+    "LightDoubleDashed" => Some(LightDoubleDashed)
+    "HeavyDoubleDashed" => Some(HeavyDoubleDashed)
+    "LightTripleDashed" => Some(LightTripleDashed)
+    "HeavyTripleDashed" => Some(HeavyTripleDashed)
+    "LightQuadrupleDashed" => Some(LightQuadrupleDashed)
+    "HeavyQuadrupleDashed" => Some(HeavyQuadrupleDashed)
+    "QuadrantInside" => Some(QuadrantInside)
+    "QuadrantOutside" => Some(QuadrantOutside)
+    _ => None
   }
 }
 
@@ -137,5 +173,13 @@ pub fn BorderType::to_border_set(self : BorderType) -> @core.BorderSet {
     Rounded => @core.BorderSet::rounded()
     Double => @core.BorderSet::double()
     Thick => @core.BorderSet::thick()
+    LightDoubleDashed => @core.BorderSet::light_double_dashed()
+    HeavyDoubleDashed => @core.BorderSet::heavy_double_dashed()
+    LightTripleDashed => @core.BorderSet::light_triple_dashed()
+    HeavyTripleDashed => @core.BorderSet::heavy_triple_dashed()
+    LightQuadrupleDashed => @core.BorderSet::light_quadruple_dashed()
+    HeavyQuadrupleDashed => @core.BorderSet::heavy_quadruple_dashed()
+    QuadrantInside => @core.BorderSet::quadrant_inside()
+    QuadrantOutside => @core.BorderSet::quadrant_outside()
   }
 }

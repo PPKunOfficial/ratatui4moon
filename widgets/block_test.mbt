@@ -703,3 +703,123 @@ test "Block 边框折叠合成" {
   .render(@core.Rect::new(0, 0, 1, 1), buffer)
   inspect(buffer.get(0, 0).symbol(), content="┼")
 }
+
+///|
+/// 上游 render_light_double_dashed_border 喵。
+test "Block 亮双虚线边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::LightDoubleDashed)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "┌╌╌╌╌╌╌╌╌┐", "╎        ╎", "└╌╌╌╌╌╌╌╌┘",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_heavy_double_dashed_border 喵。
+test "Block 粗双虚线边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::HeavyDoubleDashed)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "┏╍╍╍╍╍╍╍╍┓", "╏        ╏", "┗╍╍╍╍╍╍╍╍┛",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_light_triple_dashed_border 喵。
+test "Block 亮三虚线边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::LightTripleDashed)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "┌┄┄┄┄┄┄┄┄┐", "┆        ┆", "└┄┄┄┄┄┄┄┄┘",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_heavy_triple_dashed_border 喵。
+test "Block 粗三虚线边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::HeavyTripleDashed)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "┏┅┅┅┅┅┅┅┅┓", "┇        ┇", "┗┅┅┅┅┅┅┅┅┛",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_light_quadruple_dashed_border 喵。
+test "Block 亮四虚线边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::LightQuadrupleDashed)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "┌┈┈┈┈┈┈┈┈┐", "┊        ┊", "└┈┈┈┈┈┈┈┈┘",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_heavy_quadruple_dashed_border 喵。
+test "Block 粗四虚线边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::HeavyQuadrupleDashed)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "┏┉┉┉┉┉┉┉┉┓", "┋        ┋", "┗┉┉┉┉┉┉┉┉┛",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_quadrant_inside：半格像素内缩边框喵。
+test "Block 内缩象限边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::QuadrantInside)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "▗▄▄▄▄▄▄▄▄▖", "▐        ▌", "▝▀▀▀▀▀▀▀▀▘",
+    ]),
+  )
+}
+
+///|
+/// 上游 render_border_quadrant_outside：半格像素外扩边框喵。
+test "Block 外扩象限边框" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 3))
+  Block::bordered()
+  .border_type(BorderType::QuadrantOutside)
+  .render(buffer.area, buffer)
+  @debug.assert_eq(
+    buffer,
+    @core.Buffer::with_lines([
+      "▛▀▀▀▀▀▀▀▀▜", "▌        ▐", "▙▄▄▄▄▄▄▄▄▟",
+    ]),
+  )
+}

@@ -35,7 +35,15 @@ pub(all) struct BorderSet {
   horizontal_bottom : String
 } derive(Eq, @debug.Debug)
 pub fn BorderSet::double() -> Self
+pub fn BorderSet::heavy_double_dashed() -> Self
+pub fn BorderSet::heavy_quadruple_dashed() -> Self
+pub fn BorderSet::heavy_triple_dashed() -> Self
+pub fn BorderSet::light_double_dashed() -> Self
+pub fn BorderSet::light_quadruple_dashed() -> Self
+pub fn BorderSet::light_triple_dashed() -> Self
 pub fn BorderSet::plain() -> Self
+pub fn BorderSet::quadrant_inside() -> Self
+pub fn BorderSet::quadrant_outside() -> Self
 pub fn BorderSet::rounded() -> Self
 pub fn BorderSet::thick() -> Self
 

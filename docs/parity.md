@@ -31,7 +31,7 @@
 | `text/text.rs` | `core/text_container.mbt` | ✅ | Into/Iterator 语法糖 |
 | `text/masked.rs` | — | ⬜ | MaskedText |
 | `text/grapheme.rs` | `core/grapheme.mbt` | ◐ | 图形簇细分（逐码点近似，unicode/ 落位后升级） |
-| `symbols/border.rs` | `core/border.mbt` | ◐ | 虚线/象限/半块集合（8+ 个 Set 常量） |
+| `symbols/border.rs` | `core/border.mbt` | ◐ | 缺 ONE_EIGHTH/PROPORTIONAL/FULL/EMPTY 填充集（随 Canvas） |
 | `symbols/merge.rs` | `core/merge.mbt` | ✅ | — |
 | `symbols/line.rs` / `bar.rs` / `block.rs` / `braille.rs` / `half_block.rs` / `marker.rs` / `pixel.rs` / `scrollbar.rs` / `shade.rs` | — | ⬜ | 各符号常量表（Canvas/Chart/Scrollbar 前置） |
 | `terminal/*`（Frame/Buffers/Viewport/Inline/Init/Render/Resize/Cursor） | — | ⬜ | 终端会话层（本库 backend 包对位其 TestBackend 部分） |
@@ -42,9 +42,9 @@
 
 | 上游模块 | 状态 | 缺项 |
 |---|---|---|
-| `block.rs` + `block/padding.rs` | ◐ | `shadow`、虚线线型、Stylize 糖 |
+| `block.rs` + `block/padding.rs` | ◐ | `shadow`、Stylize 糖 |
 | `block/shadow.rs` | ⬜ | Shadow/Dimmed 渲染 |
-| `borders.rs` | ◐ | 四种基础线型 ✅；虚线变体 ⬜ |
+| `borders.rs` | ✅ | — |
 | `reflow.rs`（WordWrapper/LineTruncator） | ⬜ | 折行引擎（Paragraph 前置，unicode/ 宽度表强依赖） |
 | `paragraph.rs` | ⬜ | Paragraph（Nonoka 刚需第一位） |
 | `list.rs` + `list/*` | ⬜ | List + ListState |
