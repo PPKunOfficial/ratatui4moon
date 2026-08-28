@@ -24,6 +24,21 @@ pub(all) enum Alignment {
 } derive(Eq, @debug.Debug)
 pub fn Alignment::to_display(Self) -> String
 
+pub(all) struct BorderSet {
+  top_left : String
+  top_right : String
+  bottom_left : String
+  bottom_right : String
+  vertical_left : String
+  vertical_right : String
+  horizontal_top : String
+  horizontal_bottom : String
+} derive(Eq, @debug.Debug)
+pub fn BorderSet::double() -> Self
+pub fn BorderSet::plain() -> Self
+pub fn BorderSet::rounded() -> Self
+pub fn BorderSet::thick() -> Self
+
 pub(all) struct Buffer {
   mut area : Rect
   mut cells : Array[Cell]

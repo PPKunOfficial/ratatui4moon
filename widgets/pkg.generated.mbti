@@ -12,11 +12,86 @@ import {
 
 // Types and methods
 pub(all) struct Block {
+  titles : Array[(TitlePosition?, @core.Line)]
+  titles_style : @core.Style
+  titles_alignment : @core.Alignment
+  titles_position : TitlePosition
+  borders : Borders
+  border_style : @core.Style
+  border_set : @core.BorderSet
   style : @core.Style
+  padding : Padding
 } derive(Eq, @debug.Debug)
+pub fn Block::border_set(Self, @core.BorderSet) -> Self
+pub fn Block::border_style(Self, @core.Style) -> Self
+pub fn Block::border_type(Self, BorderType) -> Self
+pub fn Block::bordered() -> Self
+pub fn Block::borders(Self, Borders) -> Self
+pub fn Block::horizontal_space(Self) -> (Int, Int)
+pub fn Block::inner(Self, @core.Rect) -> @core.Rect
 pub fn Block::new() -> Self
+pub fn Block::padding(Self, Padding) -> Self
 pub fn Block::render(Self, @core.Rect, @core.Buffer) -> Unit
-pub fn Block::styled(@core.Style) -> Self
+pub fn Block::style(Self, @core.Style) -> Self
+pub fn Block::title(Self, @core.Line) -> Self
+pub fn Block::title_alignment(Self, @core.Alignment) -> Self
+pub fn Block::title_bottom(Self, @core.Line) -> Self
+pub fn Block::title_bottom_str(Self, String) -> Self
+pub fn Block::title_position(Self, TitlePosition) -> Self
+pub fn Block::title_str(Self, String) -> Self
+pub fn Block::title_style(Self, @core.Style) -> Self
+pub fn Block::title_top(Self, @core.Line) -> Self
+pub fn Block::title_top_str(Self, String) -> Self
+pub fn Block::vertical_space(Self) -> (Int, Int)
+
+pub(all) enum BorderType {
+  Plain
+  Rounded
+  Double
+  Thick
+} derive(Eq, @debug.Debug)
+pub fn BorderType::to_border_set(Self) -> @core.BorderSet
+pub fn BorderType::to_display(Self) -> String
+
+pub(all) struct Borders {
+  bits : UInt16
+} derive(Eq, @debug.Debug)
+pub fn Borders::all() -> Self
+pub fn Borders::bottom() -> Self
+pub fn Borders::contains(Self, Self) -> Bool
+pub fn Borders::empty() -> Self
+pub fn Borders::insert(Self, Self) -> Self
+pub fn Borders::intersects(Self, Self) -> Bool
+pub fn Borders::is_empty(Self) -> Bool
+pub fn Borders::left() -> Self
+pub fn Borders::remove(Self, Self) -> Self
+pub fn Borders::right() -> Self
+pub fn Borders::to_debug(Self) -> String
+pub fn Borders::top() -> Self
+pub fn Borders::union(Self, Self) -> Self
+
+pub(all) struct Padding {
+  left : Int
+  right : Int
+  top : Int
+  bottom : Int
+} derive(Eq, @debug.Debug)
+pub fn Padding::bottom(Int) -> Self
+pub fn Padding::horizontal(Int) -> Self
+pub fn Padding::left(Int) -> Self
+pub fn Padding::new(Int, Int, Int, Int) -> Self
+pub fn Padding::proportional(Int) -> Self
+pub fn Padding::right(Int) -> Self
+pub fn Padding::symmetric(Int, Int) -> Self
+pub fn Padding::top(Int) -> Self
+pub fn Padding::uniform(Int) -> Self
+pub fn Padding::vertical(Int) -> Self
+pub fn Padding::zero() -> Self
+
+pub(all) enum TitlePosition {
+  Top
+  Bottom
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 

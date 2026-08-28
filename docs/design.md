@@ -95,12 +95,12 @@ bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离�
 ## 3. 分层架构与依赖方向
 
 ```
-widgets/            无状态 widget（Block / Paragraph / List / Editor…）
+widgets/            无状态 widget（Block：Borders/BorderType/Padding/标题…）
    │ 只依赖 core
    ▼
 core/               Rect · Position/Size/Margin/Offset · Style/Modifier/Color ·
                     Cell · Buffer · diff · Span/Line/Alignment/StyledGrapheme ·
-                    近似宽度表  ← 依赖树叶，零 I/O
+                    BorderSet · 近似宽度表  ← 依赖树叶，零 I/O
    ▲ 只依赖 core
    │
 backend/            Backend trait · TestBackend · ANSI 引擎
@@ -151,8 +151,9 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
 
 ## 6. 路线图
 
-- **v0.1（当前）**：core（Buffer/diff/Style）+ backend（trait/TestBackend/ANSI）
-  + widgets（Block），黄金快照管线全绿 ✅
+- **v0.1（当前）**：core（Buffer/diff/Style/text 基元）+ backend（trait/
+  TestBackend/ANSI）+ widgets（Block：边框/线型/标题/内边距），
+  上游 v0.30.2 core 与 Block 单测逐条复刻全绿 ✅
 - **v0.2**：`unicode/` 宽度表全量搬运与折行；Paragraph；线性 `layout/`
   （`LayoutSolver` trait + LinearSolver）；`TtyBackend` 接入 tty 包；
   Linux + Windows CI
