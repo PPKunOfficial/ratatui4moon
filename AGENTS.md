@@ -1,8 +1,14 @@
 # Repository Guidelines
 
-> 本文件是 ratatui4moon 仓库的**条约**：只陈述"应当怎么做"的规则与约定。
-> 仓库现状以 `docs/design.md` 与代码为准。编码品味与 Nonoka 家族一致
-> （块式 `///|`、显式构造、`inspect!` 快照、中文塔菲注释），不再重复全文喵。
+> 本文件是 ratatui4moon 仓库协作的**条约**：只陈述"应当怎么做"的规则与约定，不记录"当前怎么样"的现状。
+> 仓库现状一律以 `docs/design.md` 设计文档与代码为准。
+> **禁止条款**：不得写入任何实时性信息——测试/用例数量、用例清单、实测数据与结论、
+> 探针/工程路径、修复记录等；此类内容一律放 `docs/` 对应文档或测试文件头注释。
+> 发现本文件出现与规则无关的现状描述时，应将其改写为规则形态（或删除），并保证条款自身严谨准确。
+
+@.agents/taste.md
+
+@.agents/iron.md
 
 ## 项目方针 (Project Focus)
 
@@ -23,12 +29,13 @@
   用 `for "test"` 导入喵。
 - 规划中：`unicode/`（宽度表与折行）、`layout/`（线性布局 → 弹性分配器）。
   新职责新开 `<职责>/` 目录配 `moon.pkg`，禁止堆进既有包喵。
+- `_build/`：构建产物，禁止入库（已在 .gitignore 忽略）。
 
 ## 构建与测试契约 (Build & Test Contract)
 
 - 提交前必须全绿：`moon fmt && moon info && moon check && moon test`，
   `.mbti` 接口摘要入库，diff 可见公开 API 变化喵。
-- **黄金快照铁律**：一切渲染行为以 `inspect!` 快照佐证；快照更新只走
+- **黄金快照铁律**：一切渲染行为以 `inspect` 快照佐证；快照更新只走
   `moon test --update`，禁止手改 content 字符串；禁止静默改断言掩盖回归喵。
 - 测试零真实终端、零网络、零 I/O：渲染链路 `widget → Buffer::diff →
   TestBackend → last_ansi` 全程确定性离线可跑喵。
@@ -36,17 +43,22 @@
 
 ## 代码规范 (Code Conventions)
 
-- 无 panic 原则：渲染路径禁止 `abort`/`panic`，越界一律优雅裁剪；
-  仅"调用方破坏内部不变量"（如 `diff` 尺寸不一致）允许 `guard!` 断言喵。
-- widget 无状态：`render(area, buf)` 即画即走，禁止 retained 树与
-  响应式订阅（那是 vDOM 路线的领域喵）。
-- ANSI 转义只能出自 `backend/ansi.mbt`，上层禁止手拼转义字串喵。
-- 可后加字段一律 `T?` / 带默认值；对外枚举一律 `pub(all)`，消费者
-  `match` 必带通配分支喵。
+- 编码品味以 `@.agents/taste.md` 为准（源自 `mooncakes.io/docs/moonbitlang/core`
+  与 `github.com/moonbitlang/core` 实地扒取的块式/显式/快照测试品味，
+  并叠加本仓库七铁律加严），日常工作速查见
+  `.agents/skills/moonbit-style/SKILL.md` 喵。
+- 注释与文档（.md）统一使用中文，塔菲风格（活泼、直率、俏皮，句尾可带"喵"），
+  同时必须保证技术表述准确严谨（不装傻、不模糊概念）。
+- 最高优先级契约见 `@.agents/iron.md`（依赖方向、core 零 I/O、无 panic、
+  黄金快照、即时模式、ANSI 出口唯一、扩展性纪律），任何改动不得破坏喵。
+- 错误处理：渲染路径禁止 `abort`/`panic`，越界与退化输入优雅裁剪；
+  `guard!` 仅限内部不变量断言喵。
 
 ## Git 提交规范 (Git Convention)
 
-- 每完成一个独立模块或修复点即提交一次。
-- 格式：`<emoji> <type>(<scope>): <技术性中文描述>`，句尾可带"喵"。
-- 映射：✨ feat / 🐛 fix / ⚡️ perf / 📝 docs / 🎨 style / 🔨 refactor / 🧪 test。
-- 提交前必更 `docs/design.md` 与 README，文档未同步视为未达提交条件喵。
+- 每完成一个独立的小模块或修复点即提交一次。
+- 提交格式：`<emoji> <type>(<scope>): <技术性中文描述>`，句尾可带"喵"。
+- 类型与 Gitmoji 映射：✨ feat / 🐛 fix / ⚡️ perf / 📝 docs / 🎨 style / 🔨 refactor / 🧪 test。
+- 提交前必更文档：每次提交前必须根据本次改动同步更新受影响的 `docs/design.md`
+  与 `README.mbt.md` 及相关注释/示例，确保文档与代码语义一致；
+  文档未同步视为未达到提交条件喵。
