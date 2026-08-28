@@ -31,7 +31,7 @@ priv struct BorderSymbol {
   up : LineStyle
   left : LineStyle
   down : LineStyle
-} derive(Eq)
+}
 
 ///|
 /// 构造合成符号（包私有）喵。
