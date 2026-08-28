@@ -284,6 +284,35 @@ pub(all) struct StyledGrapheme {
 } derive(Eq, @debug.Debug)
 pub fn StyledGrapheme::of(String, Style) -> Self
 
+pub(all) struct Text {
+  mut alignment : Alignment?
+  mut style : Style
+  mut lines : Array[Line]
+} derive(Eq, @debug.Debug)
+pub fn Text::add_line(Self, Line) -> Self
+pub fn Text::centered(Self) -> Self
+pub fn Text::empty() -> Self
+pub fn Text::height(Self) -> Int
+pub fn Text::left_aligned(Self) -> Self
+pub fn Text::of_line(Line) -> Self
+pub fn Text::of_lines(Array[Line]) -> Self
+pub fn Text::of_span(Span) -> Self
+pub fn Text::op_add(Self, Self) -> Self
+pub fn Text::patch_style(Self, Style) -> Self
+pub fn Text::push_line(Self, Line) -> Unit
+pub fn Text::push_lines(Self, Array[Line]) -> Unit
+pub fn Text::push_span(Self, Span) -> Unit
+pub fn Text::raw(String) -> Self
+pub fn Text::render(Self, Rect, Buffer) -> Unit
+pub fn Text::reset_style(Self) -> Self
+pub fn Text::right_aligned(Self) -> Self
+pub fn Text::styled(String, Style) -> Self
+pub fn Text::styled_graphemes(Self, Style) -> Array[StyledGrapheme]
+pub fn Text::to_display(Self) -> String
+pub fn Text::width(Self) -> Int
+pub fn Text::with_alignment(Self, Alignment) -> Self
+pub fn Text::with_style(Self, Style) -> Self
+
 // Type aliases
 
 // Traits

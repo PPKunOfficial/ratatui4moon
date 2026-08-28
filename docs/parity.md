@@ -28,7 +28,7 @@
 | `style/palette*` | — | ⬜ | Material/Tailwind 色板 + HSL/HSLuv 转换 |
 | `style/anstyle.rs` | — | ⬜ | anstyle crate 桥接（MoonBit 无此 crate，按语义复刻转换） |
 | `text/span.rs` / `line.rs` | `core/text.mbt` | ✅ | Into/Cow/Collect 构造糖（Rust 语法层） |
-| `text/text.rs` | — | ⬜ | Text 多行容器（Paragraph 前置） |
+| `text/text.rs` | `core/text_container.mbt` | ✅ | Into/Iterator 语法糖 |
 | `text/masked.rs` | — | ⬜ | MaskedText |
 | `text/grapheme.rs` | `core/grapheme.mbt` | ◐ | 图形簇细分（逐码点近似，unicode/ 落位后升级） |
 | `symbols/border.rs` | `core/border.mbt` | ◐ | 虚线/象限/半块集合（8+ 个 Set 常量） |
