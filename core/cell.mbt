@@ -73,6 +73,15 @@ pub fn Cell::set_symbol(self : Cell, symbol : String) -> Unit {
 }
 
 ///|
+/// 追加符号到既有符号之后（上游 `Cell::append_symbol`）喵。
+///
+/// 供零宽字形并入单元格使用；空格态（空串）追加后不含前导空格，
+/// 与上游 `None` 态行为一致喵。
+pub fn Cell::append_symbol(self : Cell, symbol : String) -> Unit {
+  self.symbol = self.symbol + symbol
+}
+
+///|
 /// 写单字符（上游 `Cell::set_char`）喵。
 pub fn Cell::set_char(self : Cell, ch : Char) -> Unit {
   self.set_symbol(ch.to_string())

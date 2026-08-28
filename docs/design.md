@@ -99,7 +99,8 @@ widgets/            无状态 widget（Block / Paragraph / List / Editor…）
    │ 只依赖 core
    ▼
 core/               Rect · Position/Size/Margin/Offset · Style/Modifier/Color ·
-                    Cell · Buffer · diff · Span/Line · 近似宽度表  ← 依赖树叶，零 I/O
+                    Cell · Buffer · diff · Span/Line/Alignment/StyledGrapheme ·
+                    近似宽度表  ← 依赖树叶，零 I/O
    ▲ 只依赖 core
    │
 backend/            Backend trait · TestBackend · ANSI 引擎
@@ -137,13 +138,14 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 
 CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
 以近似区间法供宽（覆盖 CJK/全角/谚文/常见 Emoji 区间，控制与零宽
-字符宽 0），已支撑 `set_stringn` 列推进与差分吞列；升级路径：
+字符宽 0，换行符按上游 str 宽度语义记 1），已支撑 `set_stringn`
+列推进、差分吞列与 `Span`/`Line` 的对齐渲染与截断；升级路径：
 
 1. 迁入 `unicode/` 包并保留现有 API 语义（`char_display_width` /
-   `symbol_width` 等）；
+   `symbol_width` / `truncate_start` 等）；
 2. 数据表从 Rust `unicode-width` crate 机械搬运（east-asian width 全表 +
    零宽组合符区间 + VS16 emoji 序列），替换近似区间，并补齐依赖
-   真实宽度的上游用例（emoji/ZWJ 图形簇）；
+   真实宽度的上游用例（emoji/ZWJ 图形簇/🇺🇸 regional indicator）；
 3. Grapheme 簇细分（`unicode-segmentation` 对位）随全量表一并评估；
 4. 折行引擎参考 ratatui `paragraph + reflow` 的行为规格翻译测试。
 

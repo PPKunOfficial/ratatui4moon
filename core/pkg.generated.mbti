@@ -12,9 +12,18 @@ pub fn char_display_width(Char) -> Int
 
 pub fn symbol_width(String) -> Int
 
+pub fn truncate_start(String, Int) -> (String, Int)
+
 // Errors
 
 // Types and methods
+pub(all) enum Alignment {
+  Left
+  Center
+  Right
+} derive(Eq, @debug.Debug)
+pub fn Alignment::to_display(Self) -> String
+
 pub(all) struct Buffer {
   mut area : Rect
   mut cells : Array[Cell]
@@ -49,6 +58,7 @@ pub(all) struct Cell {
   mut modifier : Modifier
   mut diff_option : CellDiffOption
 } derive(Eq, @debug.Debug)
+pub fn Cell::append_symbol(Self, String) -> Unit
 pub fn Cell::cell_width(Self) -> Int
 pub fn Cell::empty() -> Self
 pub fn Cell::of(String) -> Self
@@ -95,12 +105,30 @@ pub fn Color::from_u32(Int) -> Self
 pub fn Color::to_display(Self) -> String
 
 pub(all) struct Line {
-  spans : Array[Span]
-  style : Style
+  mut spans : Array[Span]
+  mut style : Style
+  mut alignment : Alignment?
 } derive(Eq, @debug.Debug)
+pub fn Line::centered(Self) -> Self
+pub fn Line::empty() -> Self
+pub fn Line::left_aligned(Self) -> Self
+pub fn Line::of_span(Span) -> Self
+pub fn Line::of_spans(Array[Span]) -> Self
+pub fn Line::op_add(Self, Span) -> Self
+pub fn Line::patch_style(Self, Style) -> Self
+pub fn Line::push_span(Self, Span) -> Unit
+pub fn Line::push_spans(Self, Array[Span]) -> Unit
 pub fn Line::raw(String) -> Self
+pub fn Line::render(Self, Rect, Buffer) -> Unit
+pub fn Line::render_with_alignment(Self, Rect, Buffer, Alignment?) -> Unit
+pub fn Line::reset_style(Self) -> Self
+pub fn Line::right_aligned(Self) -> Self
 pub fn Line::styled(String, Style) -> Self
+pub fn Line::styled_graphemes(Self, Style) -> Array[StyledGrapheme]
+pub fn Line::to_display(Self) -> String
 pub fn Line::width(Self) -> Int
+pub fn Line::with_alignment(Self, Alignment) -> Self
+pub fn Line::with_style(Self, Style) -> Self
 
 pub(all) struct Margin {
   horizontal : Int
@@ -205,9 +233,18 @@ pub(all) struct Span {
   content : String
   style : Style
 } derive(Eq, @debug.Debug)
+pub fn Span::empty() -> Self
+pub fn Span::patch_style(Self, Style) -> Self
 pub fn Span::raw(String) -> Self
+pub fn Span::render(Self, Rect, Buffer) -> Unit
+pub fn Span::reset_style(Self) -> Self
 pub fn Span::styled(String, Style) -> Self
+pub fn Span::styled_graphemes(Self, Style) -> Array[StyledGrapheme]
+pub fn Span::to_display(Self, limit? : Int) -> String
+pub fn Span::to_line(Self) -> Line
 pub fn Span::width(Self) -> Int
+pub fn Span::with_content(Self, String) -> Self
+pub fn Span::with_style(Self, Style) -> Self
 
 pub(all) struct Style {
   fg : Color?
@@ -225,6 +262,12 @@ pub fn Style::new() -> Self
 pub fn Style::patch(Self, Self) -> Self
 pub fn Style::remove_modifier(Self, Modifier) -> Self
 pub fn Style::reset() -> Self
+
+pub(all) struct StyledGrapheme {
+  symbol : String
+  style : Style
+} derive(Eq, @debug.Debug)
+pub fn StyledGrapheme::of(String, Style) -> Self
 
 // Type aliases
 

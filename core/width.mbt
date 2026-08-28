@@ -1,16 +1,49 @@
 ///|
 /// 符号显示宽度（v0.1 近似区间法，v0.2 迁 `unicode/` 全量表）喵。
 ///
-/// 语义对位上游 `unicode-width`：控制字符与零宽符号宽 0、CJK/全角
-/// 宽 2、其余宽 1；字符串宽度为逐码点宽度之和（零宽修饰符不加分）。
-/// emoji 专属 VS16 序列（如 `⌨️`）暂按基础码点计宽，与全量表一同
-/// 迁移（相应上游用例已在测试文件登记"待复刻"）喵。
+/// 语义对位上游 `unicode-width` 0.2 的 `str::width`：控制字符与零宽
+/// 符号宽 0、CJK/全角宽 2、其余宽 1；**换行符特判宽 1**（上游
+/// `width_in_str` 的 LINE_FEED 分支，`Span::width` 语义由此而来，
+/// 上游测试标注"待重新审视" #1271）喵。
 pub fn symbol_width(symbol : String) -> Int {
   let mut total = 0
   for ch in symbol {
-    total += char_display_width(ch)
+    if ch.to_int() == 0x0A {
+      total += 1
+    } else {
+      total += char_display_width(ch)
+    }
   }
   total
+}
+
+///|
+/// 从头部按显示宽度截断，保留尾部（上游 `unicode-truncate` crate 的
+/// `unicode_truncate_start`）喵。
+///
+/// 返回 (保留文本, 实际显示宽度)：整码点裁剪，零宽码点不占列；
+/// 越过截断点之前的零宽码点随头部一起丢弃喵。
+pub fn truncate_start(text : String, max_width : Int) -> (String, Int) {
+  let chars : Array[Char] = []
+  for ch in text {
+    chars.push(ch)
+  }
+  let kept : Array[Char] = []
+  let mut total = 0
+  for i2 in 0..<chars.length() {
+    let ch = chars[chars.length() - 1 - i2]
+    let width = char_display_width(ch)
+    if total + width > max_width {
+      break
+    }
+    total += width
+    kept.push(ch)
+  }
+  let content = StringBuilder()
+  for i2 in 0..<kept.length() {
+    content.write_char(kept[kept.length() - 1 - i2])
+  }
+  (content.to_string(), total)
 }
 
 ///|
