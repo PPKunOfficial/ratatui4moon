@@ -308,6 +308,7 @@ pub fn Style::not_crossed_out(self : Style) -> Style {
 ///|
 /// 复位速记（上游 `Stylize::reset`）喵。
 pub fn Style::reset_style(self : Style) -> Style {
+  ignore(self)
   Style::reset()
 }
 
