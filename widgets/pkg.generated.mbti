@@ -120,6 +120,7 @@ pub fn List::is_empty(Self) -> Bool
 pub fn List::items(Self, Array[ListItem]) -> Self
 pub fn List::len(Self) -> Int
 pub fn List::new(Array[ListItem]) -> Self
+pub fn List::render(Self, @core.Rect, @core.Buffer) -> Unit
 pub fn List::render_stateful(Self, @core.Rect, @core.Buffer, ListState) -> Unit
 pub fn List::repeat_highlight_symbol(Self, Bool) -> Self
 pub fn List::scroll_padding(Self, Int) -> Self

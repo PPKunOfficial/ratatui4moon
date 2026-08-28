@@ -355,3 +355,7 @@ fn List::apply_scroll_padding_to_selected_index(
   }
   Some(chosen.clamp(min=0, max=last_valid_index))
 }
+
+///|
+/// 点调用提升声明（MoonBit extend 惯用法）喵。
+pub extend List with @core.Widget::{render}

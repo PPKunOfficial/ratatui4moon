@@ -226,3 +226,12 @@ test "List 选中越界收敛与偏移回写" {
     @core.Buffer::with_lines(["Item 3    ", "Item 4    "]),
   )
 }
+
+///|
+/// 无状态 Widget 渲染路径（上游 `Widget for &List`：以默认状态驱动）喵。
+test "List 无状态渲染" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 10, 1))
+  let list = List::new([ListItem::of_str("Item 1")])
+  list.render(buffer.area, buffer)
+  @debug.assert_eq(buffer, @core.Buffer::with_lines(["Item 1    "]))
+}
