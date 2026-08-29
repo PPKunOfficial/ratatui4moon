@@ -21,12 +21,12 @@
 | `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |
 | `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ◐ | 宽度表为近似区间法（unicode/ 全量表待迁） |
 | `buffer/diff.rs` | `Buffer::diff` | ✅ | `BufferDiff` 独立迭代器形态（行为等价 Array 输出） |
-| `buffer/assert.rs` | — | ⬜ | BufferAssert 测试辅助 |
+| `buffer/assert.rs` | `core/buffer_assert.mbt` | ✅ | `assert_buffer_eq` 宏以 raise 函数对位（MoonBit 无宏，登记）；3 条测试复刻（should_panic 以 try/catch 承载） |
 | `style.rs`（Style/Modifier） | `core/style.mbt` | ✅ | stylize 速记糖（见 stylize 行） |
 | `style/color.rs` | `core/color.mbt` | ✅ | palette/anstyle 转换单列 |
 | `style/stylize.rs` | `core/stylize.mbt` | ✅ | Style 级速记全量；Cell/Line 等类型速记由 set_style/patch_style 组合覆盖 |
-| `style/palette*` | — | ⬜ | Material/Tailwind 色板 + HSL/HSLuv 转换 |
-| `style/anstyle.rs` | — | ⬜ | anstyle crate 桥接（MoonBit 无此 crate，按语义复刻转换） |
+| `style/palette*` | `core/palette_material.mbt` + `palette_tailwind.mbt` + `palette_conversion.mbt` | ✅ | Material 19 组（16 含强调色）+ Tailwind 22 组全表机械搬运 + Srgb/LinSrgb→Color 传递函数（上游 2 条测试复刻 + 文档示例锚定）；`palette` crate 的 HSL/HSLuv 类型 ratatui 源码未引用，不在复刻面 |
+| `style/anstyle.rs` | `core/anstyle.mbt` | ✅ | 最小等价类型（AnsiColor/Ansi256Color/RgbColor/Effects/AnStyle）+ 全部转换与 14 条测试复刻；Reset 转换的 panic 以 fail() 对位（消息逐字一致，登记） |
 | `text/span.rs` / `line.rs` | `core/text.mbt` | ✅ | Into/Cow/Collect 构造糖（Rust 语法层） |
 | `text/text.rs` | `core/text_container.mbt` | ✅ | Into/Iterator 语法糖 |
 | `text/masked.rs` | `core/masked.mbt` | ✅ | — |

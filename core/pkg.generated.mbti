@@ -168,6 +168,48 @@ pub let braille_table : Array[Char]
 
 pub fn char_display_width(Char) -> Int
 
+pub let material_amber : MaterialAccentedPalette
+
+pub let material_black : Color
+
+pub let material_blue : MaterialAccentedPalette
+
+pub let material_blue_gray : MaterialNonAccentedPalette
+
+pub let material_brown : MaterialNonAccentedPalette
+
+pub let material_cyan : MaterialAccentedPalette
+
+pub let material_deep_orange : MaterialAccentedPalette
+
+pub let material_deep_purple : MaterialAccentedPalette
+
+pub let material_gray : MaterialNonAccentedPalette
+
+pub let material_green : MaterialAccentedPalette
+
+pub let material_indigo : MaterialAccentedPalette
+
+pub let material_light_blue : MaterialAccentedPalette
+
+pub let material_light_green : MaterialAccentedPalette
+
+pub let material_lime : MaterialAccentedPalette
+
+pub let material_orange : MaterialAccentedPalette
+
+pub let material_pink : MaterialAccentedPalette
+
+pub let material_purple : MaterialAccentedPalette
+
+pub let material_red : MaterialAccentedPalette
+
+pub let material_teal : MaterialAccentedPalette
+
+pub let material_white : Color
+
+pub let material_yellow : MaterialAccentedPalette
+
 pub let octants : Array[Char]
 
 pub let quadrants : Array[Char]
@@ -176,9 +218,62 @@ pub let sextants : Array[Char]
 
 pub fn symbol_width(String) -> Int
 
+pub let tailwind_amber : TailwindPalette
+
+pub let tailwind_black : Color
+
+pub let tailwind_blue : TailwindPalette
+
+pub let tailwind_cyan : TailwindPalette
+
+pub let tailwind_emerald : TailwindPalette
+
+pub let tailwind_fuchsia : TailwindPalette
+
+pub let tailwind_gray : TailwindPalette
+
+pub let tailwind_green : TailwindPalette
+
+pub let tailwind_indigo : TailwindPalette
+
+pub let tailwind_lime : TailwindPalette
+
+pub let tailwind_neutral : TailwindPalette
+
+pub let tailwind_orange : TailwindPalette
+
+pub let tailwind_pink : TailwindPalette
+
+pub let tailwind_purple : TailwindPalette
+
+pub let tailwind_red : TailwindPalette
+
+pub let tailwind_rose : TailwindPalette
+
+pub let tailwind_sky : TailwindPalette
+
+pub let tailwind_slate : TailwindPalette
+
+pub let tailwind_stone : TailwindPalette
+
+pub let tailwind_teal : TailwindPalette
+
+pub let tailwind_violet : TailwindPalette
+
+pub let tailwind_white : Color
+
+pub let tailwind_yellow : TailwindPalette
+
+pub let tailwind_zinc : TailwindPalette
+
 pub fn truncate_start(String, Int) -> (String, Int)
 
 // Errors
+pub(all) suberror TryFromColorError {
+  Ansi256
+  Ansi
+  RgbColor
+} derive(Eq, @debug.Debug)
 
 // Types and methods
 pub(all) enum Alignment {
@@ -188,6 +283,53 @@ pub(all) enum Alignment {
 } derive(Eq, @debug.Debug)
 pub fn Alignment::from_str(String) -> Self?
 pub fn Alignment::to_display(Self) -> String
+
+pub(all) struct AnStyle {
+  fg : AnStyleColor?
+  bg : AnStyleColor?
+  underline_color : AnStyleColor?
+  effects : Effects
+} derive(Eq, @debug.Debug)
+pub fn AnStyle::bg_color(Self, AnStyleColor?) -> Self
+pub fn AnStyle::effects(Self, Effects) -> Self
+pub fn AnStyle::fg_color(Self, AnStyleColor?) -> Self
+pub fn AnStyle::get_bg_color(Self) -> AnStyleColor?
+pub fn AnStyle::get_effects(Self) -> Effects
+pub fn AnStyle::get_fg_color(Self) -> AnStyleColor?
+pub fn AnStyle::get_underline_color(Self) -> AnStyleColor?
+pub fn AnStyle::new() -> Self
+pub fn AnStyle::underline_color(Self, AnStyleColor?) -> Self
+
+pub(all) enum AnStyleColor {
+  Ansi(AnsiColor)
+  Ansi256(Ansi256Color)
+  Rgb(RgbColor)
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Ansi256Color {
+  index : Int
+} derive(Eq, @debug.Debug)
+pub fn Ansi256Color::try_from(Color) -> Result[Self, TryFromColorError]
+
+pub(all) enum AnsiColor {
+  Black
+  Red
+  Green
+  Yellow
+  Blue
+  Magenta
+  Cyan
+  White
+  BrightBlack
+  BrightRed
+  BrightGreen
+  BrightYellow
+  BrightBlue
+  BrightMagenta
+  BrightCyan
+  BrightWhite
+} derive(Eq, @debug.Debug)
+pub fn AnsiColor::try_from(Color) -> Result[Self, TryFromColorError]
 
 pub(all) struct BarSet {
   full : String
@@ -252,6 +394,7 @@ pub(all) struct Buffer {
   mut area : Rect
   mut cells : Array[Cell]
 } derive(Eq, @debug.Debug)
+pub fn Buffer::assert_buffer_eq(Self, Self) -> Unit raise
 pub fn Buffer::cell(Self, Int, Int) -> Cell?
 pub fn Buffer::cell_at(Self, Position) -> Cell?
 pub fn Buffer::diff(Self, Self) -> Array[(Int, Int, Cell)]
@@ -328,6 +471,15 @@ pub(all) enum Color {
 } derive(Eq, @debug.Debug)
 pub fn Color::from_str(String) -> Self?
 pub fn Color::from_u32(Int) -> Self
+pub fn Color::of_an_style_color(AnStyleColor) -> Self
+pub fn Color::of_ansi256_color(Ansi256Color) -> Self
+pub fn Color::of_ansi_color(AnsiColor) -> Self
+pub fn Color::of_lin_srgb_f64(Double, Double, Double) -> Self
+pub fn Color::of_rgb_color(RgbColor) -> Self
+pub fn Color::of_srgb_f64(Double, Double, Double) -> Self
+pub fn Color::of_srgb_u16(Int, Int, Int) -> Self
+pub fn Color::of_srgb_u8(Int, Int, Int) -> Self
+pub fn Color::to_an_style_color(Self) -> AnStyleColor raise
 pub fn Color::to_display(Self) -> String
 
 pub(all) enum Constraint {
@@ -355,6 +507,26 @@ pub(all) enum Direction {
 pub fn Direction::from_str(String) -> Self?
 pub fn Direction::perpendicular(Self) -> Self
 pub fn Direction::to_display(Self) -> String
+
+pub(all) struct Effects {
+  bits : Int
+} derive(Eq, @debug.Debug)
+pub fn Effects::blink() -> Self
+pub fn Effects::bold() -> Self
+pub fn Effects::contains(Self, Self) -> Bool
+pub fn Effects::curly_underline() -> Self
+pub fn Effects::dashed_underline() -> Self
+pub fn Effects::dimmed() -> Self
+pub fn Effects::dotted_underline() -> Self
+pub fn Effects::double_underline() -> Self
+pub fn Effects::hidden() -> Self
+pub fn Effects::invert() -> Self
+pub fn Effects::italic() -> Self
+pub fn Effects::new() -> Self
+pub fn Effects::of_modifier(Modifier) -> Self
+pub fn Effects::strikethrough() -> Self
+pub fn Effects::underline() -> Self
+pub fn Effects::union(Self, Self) -> Self
 
 pub(all) enum Flex {
   Legacy
@@ -453,6 +625,38 @@ pub fn Masked::to_display(Self, limit? : Int) -> String
 pub fn Masked::to_text(Self) -> Text
 pub fn Masked::value(Self) -> String
 
+pub(all) struct MaterialAccentedPalette {
+  c50 : Color
+  c100 : Color
+  c200 : Color
+  c300 : Color
+  c400 : Color
+  c500 : Color
+  c600 : Color
+  c700 : Color
+  c800 : Color
+  c900 : Color
+  a100 : Color
+  a200 : Color
+  a400 : Color
+  a700 : Color
+} derive(Eq, @debug.Debug)
+pub fn MaterialAccentedPalette::from_variants(Array[Int]) -> Self
+
+pub(all) struct MaterialNonAccentedPalette {
+  c50 : Color
+  c100 : Color
+  c200 : Color
+  c300 : Color
+  c400 : Color
+  c500 : Color
+  c600 : Color
+  c700 : Color
+  c800 : Color
+  c900 : Color
+} derive(Eq, @debug.Debug)
+pub fn MaterialNonAccentedPalette::from_variants(Array[Int]) -> Self
+
 pub(all) enum MergeStrategy {
   Replace
   Exact
@@ -476,6 +680,7 @@ pub fn Modifier::intersection(Self, Self) -> Self
 pub fn Modifier::intersects(Self, Self) -> Bool
 pub fn Modifier::is_empty(Self) -> Bool
 pub fn Modifier::italic() -> Self
+pub fn Modifier::of_effects(Effects) -> Self
 pub fn Modifier::rapid_blink() -> Self
 pub fn Modifier::remove(Self, Self) -> Self
 pub fn Modifier::reversed() -> Self
@@ -540,6 +745,13 @@ pub fn Rect::rows(Self) -> Iter[Self]
 pub fn Rect::to_display(Self) -> String
 pub fn Rect::top(Self) -> Int
 pub fn Rect::union(Self, Self) -> Self
+
+pub(all) struct RgbColor {
+  r : Int
+  g : Int
+  b : Int
+} derive(Eq, @debug.Debug)
+pub fn RgbColor::try_from(Color) -> Result[Self, TryFromColorError]
 
 pub(all) struct ScrollbarSet {
   track : String
@@ -628,6 +840,7 @@ pub fn Style::not_rapid_blink(Self) -> Self
 pub fn Style::not_reversed(Self) -> Self
 pub fn Style::not_slow_blink(Self) -> Self
 pub fn Style::not_underlined(Self) -> Self
+pub fn Style::of_an_style(AnStyle) -> Self
 pub fn Style::on_black(Self) -> Self
 pub fn Style::on_blue(Self) -> Self
 pub fn Style::on_cyan(Self) -> Self
@@ -652,6 +865,7 @@ pub fn Style::reset() -> Self
 pub fn Style::reset_style(Self) -> Self
 pub fn Style::reversed(Self) -> Self
 pub fn Style::slow_blink(Self) -> Self
+pub fn Style::to_an_style(Self) -> AnStyle raise
 pub fn Style::to_debug(Self) -> String
 pub fn Style::underlined(Self) -> Self
 pub fn Style::white(Self) -> Self
@@ -663,6 +877,20 @@ pub(all) struct StyledGrapheme {
 } derive(Eq, @debug.Debug)
 pub fn StyledGrapheme::is_whitespace(Self) -> Bool
 pub fn StyledGrapheme::of(String, Style) -> Self
+
+pub(all) struct TailwindPalette {
+  c50 : Color
+  c100 : Color
+  c200 : Color
+  c300 : Color
+  c400 : Color
+  c500 : Color
+  c600 : Color
+  c700 : Color
+  c800 : Color
+  c900 : Color
+  c950 : Color
+} derive(Eq, @debug.Debug)
 
 pub(all) struct Text {
   mut alignment : Alignment?

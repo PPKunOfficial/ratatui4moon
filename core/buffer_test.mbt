@@ -811,3 +811,46 @@ fn with_option(cell : Cell, option : CellDiffOption) -> Cell {
   cell.set_diff_option(option)
   cell
 }
+
+///|
+/// 上游 `assert_buffer_eq_does_not_panic_on_equal_buffers` 喵。
+test "assert_buffer_eq 等值缓冲不断言失败" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 5, 1))
+  let other_buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 5, 1))
+  @core.Buffer::assert_buffer_eq(buffer, other_buffer)
+}
+
+///|
+/// 上游 `assert_buffer_eq_panics_on_unequal_area`：区域不等即断言
+/// 失败（should_panic 以 try? 承载）喵。
+test "assert_buffer_eq 区域不等断言失败" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 5, 1))
+  let other_buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 6, 1))
+  let mut failed = false
+  @core.Buffer::assert_buffer_eq(buffer, other_buffer) catch {
+    Failure(text) => {
+      failed = true
+      inspect(text.contains("buffer areas not equal"), content="true")
+    }
+    _ => ()
+  }
+  inspect(failed, content="true")
+}
+
+///|
+/// 上游 `assert_buffer_eq_panics_on_unequal_style`：内容不等断言
+/// 失败并附 diff 喵。
+test "assert_buffer_eq 内容不等断言失败" {
+  let buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 5, 1))
+  let other_buffer = @core.Buffer::empty(@core.Rect::new(0, 0, 5, 1))
+  ignore(other_buffer.set_string(0, 0, " ", @core.Style::new().fg(@core.Red)))
+  let mut failed = false
+  @core.Buffer::assert_buffer_eq(buffer, other_buffer) catch {
+    Failure(text) => {
+      failed = true
+      inspect(text.contains("buffer contents not equal"), content="true")
+    }
+    _ => ()
+  }
+  inspect(failed, content="true")
+}
