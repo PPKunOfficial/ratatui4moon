@@ -1,0 +1,139 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "nonoka/ratatui4moon/layout"
+
+import {
+  "moonbitlang/core/debug",
+  "nonoka/ratatui4moon/core",
+}
+
+// Values
+pub fn expr_add(Expression, Expression) -> Expression
+
+pub fn expr_add_const(Expression, Float) -> Expression
+
+pub fn expr_scale(Expression, Float) -> Expression
+
+pub fn expr_sub(Expression, Expression) -> Expression
+
+pub fn strength_clip(Float) -> Float
+
+pub fn strength_create(Float, Float, Float, Float) -> Float
+
+pub fn strength_medium() -> Float
+
+pub fn strength_required() -> Float
+
+pub fn strength_strong() -> Float
+
+pub fn strength_weak() -> Float
+
+pub let symbol_invalid : Symbol
+
+// Errors
+pub(all) suberror AddConstraintError {
+  UnsatisfiableConstraint
+  InternalSolverError(String)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+pub(all) struct Constraint {
+  expression : Expression
+  strength : Float
+  op : RelOp
+} derive(Eq, @debug.Debug)
+pub fn Constraint::new(Expression, RelOp, Float) -> Self
+
+pub(all) struct Expression {
+  terms : Array[Term]
+  constant : Float
+} derive(Eq, @debug.Debug)
+pub fn Expression::negate(Self) -> Self
+pub fn Expression::of_constant(Float) -> Self
+pub fn Expression::of_term(Term) -> Self
+pub fn Expression::of_variable(Variable) -> Self
+
+pub(all) struct Layout {
+  direction : @core.Direction
+  margin : @core.Margin
+  constraints : Array[@core.Constraint]
+  flex : @core.Flex
+  spacing : Spacing
+} derive(Eq, @debug.Debug)
+pub fn Layout::constraints(Self, Array[@core.Constraint]) -> Self
+pub fn Layout::default() -> Self
+pub fn Layout::direction(Self, @core.Direction) -> Self
+pub fn Layout::flex(Self, @core.Flex) -> Self
+pub fn Layout::horizontal(Array[@core.Constraint]) -> Self
+pub fn Layout::horizontal_margin(Self, Int) -> Self
+pub fn Layout::make(@core.Direction, Array[@core.Constraint]) -> Self
+pub fn Layout::margin(Self, @core.Margin) -> Self
+pub fn Layout::spacing(Self, Int) -> Self
+pub fn Layout::split(Self, @core.Rect) -> Array[@core.Rect]
+pub fn Layout::split_with_spacers(Self, @core.Rect) -> (Array[@core.Rect], Array[@core.Rect]) raise AddConstraintError
+pub fn Layout::vertical(Array[@core.Constraint]) -> Self
+pub fn Layout::vertical_margin(Self, Int) -> Self
+
+pub(all) enum RelOp {
+  LessOrEqual
+  Equal
+  GreaterOrEqual
+} derive(Eq, @debug.Debug)
+
+pub struct Row {
+  cells : Map[Symbol, Float]
+  mut constant : Float
+}
+
+pub struct Solver {
+  var_data : Map[Variable, (Float, Symbol, Int)]
+  var_for_symbol : Map[Symbol, Variable]
+  changed : Map[Variable, Bool]
+  mut should_clear_changes : Bool
+  rows : Map[Symbol, Row]
+  infeasible_rows : Array[Symbol]
+  objective : Row
+  mut artificial : Row?
+  mut id_tick : Int
+}
+pub fn Solver::add_constraint(Self, Constraint) -> Unit raise AddConstraintError
+pub fn Solver::add_constraints(Self, Array[Constraint]) -> Unit raise AddConstraintError
+pub fn Solver::fetch_changes(Self) -> Array[(Variable, Float)]
+pub fn Solver::get_value(Self, Variable) -> Float
+pub fn Solver::make() -> Self
+
+pub(all) enum Spacing {
+  Space(Int)
+  Overlap(Int)
+} derive(Eq, @debug.Debug)
+
+pub struct Symbol {
+  id : Int
+  typ : SymbolType
+} derive(Eq, Hash)
+
+pub(all) enum SymbolType {
+  Invalid
+  External
+  Slack
+  Error
+  Dummy
+} derive(Eq, Hash)
+
+pub struct Tag {
+  marker : Symbol
+  other : Symbol
+}
+
+pub(all) struct Term {
+  variable : Variable
+  coefficient : Float
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Variable {
+  id : Int
+} derive(Eq, Hash, @debug.Debug)
+pub fn Variable::fresh() -> Self
+
+// Type aliases
+
+// Traits

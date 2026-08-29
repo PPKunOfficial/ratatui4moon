@@ -1,0 +1,14 @@
+// layout 是 ratatui 的弹性分区层：cassowary 一次性求解子集 + Layout 分割。
+// 只依赖 core（Rect/Constraint/Direction/Flex/Margin），零 I/O 喵。
+pkgtype(kind: "library")
+
+supported_targets = "+native"
+
+import {
+  "nonoka/ratatui4moon/core",
+  "moonbitlang/core/float",
+}
+
+import {
+  "moonbitlang/core/debug",
+} for "test"

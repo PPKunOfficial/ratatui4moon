@@ -16,7 +16,7 @@
 | `layout/alignment.rs` | `core/alignment.mbt` | ◐ | `VerticalAlignment`、FromStr |
 | `layout/constraint.rs` | `core/constraint.mbt` | ✅ | apply/from_* 构造器/Display 全量；u32::MAX 极端用例按 Int 域折算 |
 | `layout/direction.rs` / `flex.rs` | `core/direction.mbt` + `core/flex.mbt` | ✅ | — |
-| `layout/layout.rs` | — | ⬜ | Layout + cassowary 求解（ADR-3：纯 MoonBit 一次性求解子集，最大单体工程） |
+| `layout/layout.rs` | `layout/` 包 | ◐ | cassowary 一次性求解子集已移植（`Solver::new → add_constraint → fetch_changes`，四边形/强度排名/不可满足检测全过）；`Layout::split` 约束体系 + strengths + Flex/Spacing 已落；letters 特征矩阵（780 case）与 spacer/segments 全量对齐复刻中 |
 | `buffer/buffer.rs` | `core/buffer.mbt` | ✅ | `with_lines` 的 Into 泛型形态（有 `with_lines_of`）；Debug 全功能 |
 | `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |
 | `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ◐ | 宽度表为近似区间法（unicode/ 全量表待迁） |
