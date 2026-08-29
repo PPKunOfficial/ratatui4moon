@@ -37,7 +37,7 @@ fn Element::size_expr(self : Element) -> Expression {
 fn Element::has_max_size(
   self : Element,
   size : Int,
-  strength : Float,
+  strength : Double,
 ) -> Constraint {
   Constraint::new(
     expr_sub(
@@ -54,7 +54,7 @@ fn Element::has_max_size(
 fn Element::has_min_size(
   self : Element,
   size : Int,
-  strength : Float,
+  strength : Double,
 ) -> Constraint {
   Constraint::new(
     expr_sub(
@@ -71,7 +71,7 @@ fn Element::has_min_size(
 fn Element::has_int_size(
   self : Element,
   size : Int,
-  strength : Float,
+  strength : Double,
 ) -> Constraint {
   Constraint::new(
     expr_sub(
@@ -87,8 +87,8 @@ fn Element::has_int_size(
 /// `size == 浮点常数`（上游 `has_size(spacing_f64, …)` 的标量形态）喵。
 fn Element::has_size_const(
   self : Element,
-  size : Float,
-  strength : Float,
+  size : Double,
+  strength : Double,
 ) -> Constraint {
   Constraint::new(
     expr_sub(self.size_expr(), Expression::of_constant(size)),
@@ -102,7 +102,7 @@ fn Element::has_size_const(
 fn Element::has_size(
   self : Element,
   size : Expression,
-  strength : Float,
+  strength : Double,
 ) -> Constraint {
   Constraint::new(expr_sub(self.size_expr(), size), Equal, strength)
 }
@@ -112,7 +112,7 @@ fn Element::has_size(
 fn Element::has_double_size(
   self : Element,
   size : Expression,
-  strength : Float,
+  strength : Double,
 ) -> Constraint {
   Constraint::new(
     expr_sub(self.size_expr(), expr_scale(size, 2.0)),
@@ -133,76 +133,76 @@ fn Element::is_empty(self : Element) -> Constraint {
 
 ///|
 /// 布局坐标的 100 倍精度放大（上游 `FLOAT_PRECISION_MULTIPLIER`）喵。
-let float_precision_multiplier : Float = 100.0
+let float_precision_multiplier : Double = 100.0
 
 ///|
-fn float_of_int_scaled(n : Int) -> Float {
-  Float::from_int(n) * float_precision_multiplier
+fn float_of_int_scaled(n : Int) -> Double {
+  Double::from_int(n) * float_precision_multiplier
 }
 
 ///|
 /// 上游 `strengths` 模块：Spacer 等尺寸（REQUIRED/10）喵。
-fn spacer_size_eq() -> Float {
+fn spacer_size_eq() -> Double {
   strength_required() / 10.0
 }
 
 ///|
 /// Min 下界强度（STRONG×100）喵。
-fn min_size_ge() -> Float {
+fn min_size_ge() -> Double {
   strength_strong() * 100.0
 }
 
 ///|
 /// Max 上界强度（STRONG×100）喵。
-fn max_size_le() -> Float {
+fn max_size_le() -> Double {
   strength_strong() * 100.0
 }
 
 ///|
 /// Length 等值强度（STRONG×10）喵。
-fn length_size_eq() -> Float {
+fn length_size_eq() -> Double {
   strength_strong() * 10.0
 }
 
 ///|
 /// Percentage 等值强度（STRONG）喵。
-fn percentage_size_eq() -> Float {
+fn percentage_size_eq() -> Double {
   strength_strong()
 }
 
 ///|
 /// Ratio 等值强度（STRONG/10）喵。
-fn ratio_size_eq() -> Float {
+fn ratio_size_eq() -> Double {
   strength_strong() / 10.0
 }
 
 ///|
 /// Min/Max 等值强度（MEDIUM×10）喵。
-fn min_max_size_eq() -> Float {
+fn min_max_size_eq() -> Double {
   strength_medium() * 10.0
 }
 
 ///|
 /// Fill 生长强度（MEDIUM）喵。
-fn fill_grow() -> Float {
+fn fill_grow() -> Double {
   strength_medium()
 }
 
 ///|
 /// Min 非遗留生长强度（MEDIUM/10）喵。
-fn grow() -> Float {
+fn grow() -> Double {
   strength_medium() / 10.0
 }
 
 ///|
 /// Spacer 生长强度（WEAK×10）喵。
-fn space_grow() -> Float {
+fn space_grow() -> Double {
   strength_weak() * 10.0
 }
 
 ///|
 /// 全段等尺寸强度（WEAK）喵。
-fn all_segment_grow() -> Float {
+fn all_segment_grow() -> Double {
   strength_weak()
 }
 
@@ -337,13 +337,13 @@ fn Layout::try_split(
   let (area_start, area_end) = match self.direction {
     @core.Horizontal =>
       (
-        Float::from_int(inner_area.x) * float_precision_multiplier,
-        Float::from_int(inner_area.right()) * float_precision_multiplier,
+        Double::from_int(inner_area.x) * float_precision_multiplier,
+        Double::from_int(inner_area.right()) * float_precision_multiplier,
       )
     @core.Vertical =>
       (
-        Float::from_int(inner_area.y) * float_precision_multiplier,
-        Float::from_int(inner_area.bottom()) * float_precision_multiplier,
+        Double::from_int(inner_area.y) * float_precision_multiplier,
+        Double::from_int(inner_area.bottom()) * float_precision_multiplier,
       )
   }
   // 变量带：n 段 → n+1 条边界；spacers 取相邻偶对、segments 取错位偶对喵。
@@ -387,7 +387,7 @@ fn Layout::try_split(
       )
     }
   }
-  let changes : Map[Variable, Float] = Map([])
+  let changes : Map[Variable, Double] = Map([])
   for pair in solver.fetch_changes() {
     changes.set(pair.0, pair.1)
   }
@@ -426,8 +426,8 @@ fn Layout::degenerate_segments(
 fn configure_area(
   solver : Solver,
   area : Element,
-  area_start : Float,
-  area_end : Float,
+  area_start : Double,
+  area_end : Double,
 ) -> Unit raise AddConstraintError {
   solver.add_constraint(
     Constraint::new(
@@ -538,7 +538,7 @@ fn configure_constraints(
       @core.Percentage(p) =>
         solver.add_constraint(
           segment.has_size(
-            expr_scale(area.size_expr(), Float::from_int(p) / 100.0),
+            expr_scale(area.size_expr(), Double::from_int(p) / 100.0),
             percentage_size_eq(),
           ),
         )
@@ -548,8 +548,8 @@ fn configure_constraints(
         solver.add_constraint(
           segment.has_size(
             expr_scale(
-              expr_scale(area.size_expr(), Float::from_int(num)),
-              1.0 / Float::from_int(denominator),
+              expr_scale(area.size_expr(), Double::from_int(num)),
+              1.0 / Double::from_int(denominator),
             ),
             ratio_size_eq(),
           ),
@@ -574,7 +574,7 @@ fn configure_flex_constraints(
     Space(x) => x
     Overlap(x) => -x
   }
-  let spacing_f64 = Float::from_int(spacing_value) * float_precision_multiplier
+  let spacing_f64 = Double::from_int(spacing_value) * float_precision_multiplier
   let middle_start = 1
   let middle_end = spacers.length() - 1
   match flex {
@@ -739,12 +739,12 @@ fn configure_fill_constraints(
       let left = fills[a]
       let right = fills[b]
       let left_scaling_factor = match constraints[left] {
-        @core.Fill(scale) => Float::from_int(scale).max(0.000001)
+        @core.Fill(scale) => Double::from_int(scale).max(0.000001)
         @core.Min(_) => 1.0
         _ => 1.0
       }
       let right_scaling_factor = match constraints[right] {
-        @core.Fill(scale) => Float::from_int(scale).max(0.000001)
+        @core.Fill(scale) => Double::from_int(scale).max(0.000001)
         @core.Min(_) => 1.0
         _ => 1.0
       }
@@ -765,7 +765,7 @@ fn configure_fill_constraints(
 ///|
 /// 变量值 → Rect（上游 `changes_to_rects`：双重取整后按方向铺放）喵。
 fn changes_to_rects(
-  changes : Map[Variable, Float],
+  changes : Map[Variable, Double],
   elements : Array[Element],
   area : @core.Rect,
   direction : @core.Direction,

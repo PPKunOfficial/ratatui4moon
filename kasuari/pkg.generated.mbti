@@ -1,0 +1,234 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "nonoka/ratatui4moon/kasuari"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn const_weighted(Double, WeightedRelation) -> PartialConstraint
+
+pub fn expr_add(Expression, Expression) -> Expression
+
+pub fn expr_add_const(Expression, Double) -> Expression
+
+pub fn expr_div(Expression, Double) -> Expression
+
+pub fn expr_mul(Expression, Double) -> Expression
+
+pub fn expr_sub(Expression, Expression) -> Expression
+
+pub fn expr_sub_const(Expression, Double) -> Expression
+
+pub fn expr_weighted(Expression, WeightedRelation) -> PartialConstraint
+
+pub fn expression_equal(Expression, Expression) -> Bool
+
+pub fn near_zero(Double) -> Bool
+
+pub fn partial_constraint_to_constraint(PartialConstraint, Expression) -> Constraint
+
+pub fn row_all_dummies(Row) -> Bool
+
+pub let symbol_invalid : Symbol
+
+pub fn term_div(Term, Double) -> Term
+
+pub fn term_mul(Term, Double) -> Term
+
+pub fn term_neg(Term) -> Term
+
+pub fn term_weighted(Term, WeightedRelation) -> PartialConstraint
+
+pub fn variable_weighted(Variable, WeightedRelation) -> PartialConstraint
+
+pub fn weighted_relation_to_pair(WeightedRelation) -> (RelOp, Strength)
+
+// Errors
+pub(all) suberror AddConstraintError {
+  DuplicateConstraint
+  UnsatisfiableConstraint
+  InternalSolverError(String)
+} derive(Eq, @debug.Debug)
+
+pub(all) suberror AddEditVariableError {
+  DuplicateEditVariable
+  BadRequiredStrength
+} derive(Eq, @debug.Debug)
+
+pub(all) suberror InternalSolverError {
+  ObjectiveUnbounded
+  DualOptimizeFailed
+  FailedToFindLeavingRow
+  EditConstraintNotInSystem
+} derive(Eq, @debug.Debug)
+
+pub(all) suberror RemoveConstraintError {
+  UnknownConstraint
+  InternalSolverError(String)
+} derive(Eq, @debug.Debug)
+
+pub(all) suberror RemoveEditVariableError {
+  UnknownEditVariable
+  InternalSolverError(String)
+} derive(Eq, @debug.Debug)
+
+pub(all) suberror SuggestValueError {
+  UnknownEditVariable
+  InternalSolverError(String)
+} derive(Eq, @debug.Debug)
+
+// Types and methods
+pub(all) struct Constraint {
+  id : Int
+  expression : Expression
+  strength : Strength
+  op : RelOp
+} derive(Eq, @debug.Debug)
+pub fn Constraint::expr(Self) -> Expression
+pub fn Constraint::new(Expression, RelOp, Strength) -> Self
+pub fn Constraint::of_weighted(Expression, WeightedRelation) -> Self
+pub fn Constraint::relational_operator(Self) -> RelOp
+pub fn Constraint::strength_value(Self) -> Strength
+
+pub(all) struct EditInfo {
+  tag : Tag
+  constraint : Constraint
+  mut constant : Double
+}
+
+pub(all) struct Expression {
+  terms : Array[Term]
+  constant : Double
+} derive(Eq, @debug.Debug)
+pub fn Expression::negate(Self) -> Self
+pub fn Expression::new(Array[Term], Double) -> Self
+pub fn Expression::of_constant(Double) -> Self
+pub fn Expression::of_term(Term) -> Self
+pub fn Expression::of_terms(Array[Term]) -> Self
+pub fn Expression::of_variable(Variable) -> Self
+
+pub(all) struct PartialConstraint {
+  expression : Expression
+  relation : WeightedRelation
+} derive(Eq, @debug.Debug)
+pub fn PartialConstraint::new(Expression, WeightedRelation) -> Self
+
+#alias(RelationalOperator)
+pub(all) enum RelOp {
+  LessOrEqual
+  Equal
+  GreaterOrEqual
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Row {
+  cells : Map[Symbol, Double]
+  mut constant : Double
+}
+pub fn Row::add(Self, Double) -> Double
+pub fn Row::clone_row(Self) -> Self
+pub fn Row::coefficient_for(Self, Symbol) -> Double
+pub fn Row::drop_symbol(Self, Symbol) -> Unit
+pub fn Row::insert_row(Self, Self, Double) -> Bool
+pub fn Row::insert_symbol(Self, Symbol, Double) -> Unit
+pub fn Row::make(Double) -> Self
+pub fn Row::reverse_sign(Self) -> Unit
+pub fn Row::solve_for_symbol(Self, Symbol) -> Unit
+pub fn Row::solve_for_symbols(Self, Symbol, Symbol) -> Unit
+pub fn Row::sorted_cells(Self) -> Array[(Symbol, Double)]
+pub fn Row::substitute(Self, Symbol, Self) -> Bool
+
+pub struct Solver {
+  constraints : Map[Int, Tag]
+  constraint_store : Map[Int, Constraint]
+  var_data : Map[Variable, (Double, Symbol, Int)]
+  var_for_symbol : Map[Symbol, Variable]
+  changed : Map[Variable, Bool]
+  mut should_clear_changes : Bool
+  rows : Map[Symbol, Row]
+  edits : Map[Variable, EditInfo]
+  infeasible_rows : Array[Symbol]
+  mut objective : Row
+  mut artificial : Row?
+  mut id_tick : Int
+}
+pub fn Solver::add_constraint(Self, Constraint) -> Unit raise AddConstraintError
+pub fn Solver::add_constraints(Self, Array[Constraint]) -> Unit raise AddConstraintError
+pub fn Solver::add_edit_variable(Self, Variable, Strength) -> Unit raise AddEditVariableError
+pub fn Solver::fetch_changes(Self) -> Array[(Variable, Double)]
+pub fn Solver::get_value(Self, Variable) -> Double
+pub fn Solver::has_constraint(Self, Constraint) -> Bool
+pub fn Solver::has_edit_variable(Self, Variable) -> Bool
+pub fn Solver::make() -> Self
+pub fn Solver::new() -> Self
+pub fn Solver::remove_constraint(Self, Constraint) -> Unit raise RemoveConstraintError
+pub fn Solver::remove_edit_variable(Self, Variable) -> Unit raise RemoveEditVariableError
+pub fn Solver::reset(Self) -> Unit
+pub fn Solver::suggest_value(Self, Variable, Double) -> Unit raise SuggestValueError
+
+pub(all) struct Strength {
+  val : Double
+} derive(Eq, @debug.Debug)
+pub fn Strength::add(Self, Self) -> Self
+pub fn Strength::clip(Double) -> Self
+pub fn Strength::compare(Self, Self) -> Int
+pub fn Strength::create(Double, Double, Double, Double) -> Self
+pub fn Strength::div_float(Self, Double) -> Self
+pub fn Strength::equal(Self, Self) -> Bool
+pub fn Strength::ge(Self, Self) -> Bool
+pub fn Strength::gt(Self, Self) -> Bool
+pub fn Strength::le(Self, Self) -> Bool
+pub fn Strength::lt(Self, Self) -> Bool
+pub fn Strength::medium() -> Self
+pub fn Strength::mul_float(Self, Double) -> Self
+pub fn Strength::of_value(Double) -> Self
+pub fn Strength::required() -> Self
+pub fn Strength::strong() -> Self
+pub fn Strength::sub(Self, Self) -> Self
+pub fn Strength::value(Self) -> Double
+pub fn Strength::weak() -> Self
+pub fn Strength::zero() -> Self
+
+pub(all) struct Symbol {
+  id : Int
+  typ : SymbolType
+} derive(Eq, Hash, @debug.Debug)
+pub fn Symbol::is_external(Self) -> Bool
+pub fn Symbol::is_invalid(Self) -> Bool
+
+pub(all) enum SymbolType {
+  Invalid
+  External
+  Slack
+  Error
+  Dummy
+} derive(Eq, Hash, @debug.Debug)
+
+pub(all) struct Tag {
+  marker : Symbol
+  other : Symbol
+} derive(Eq, @debug.Debug)
+
+pub(all) struct Term {
+  variable : Variable
+  coefficient : Double
+} derive(Eq, @debug.Debug)
+pub fn Term::new(Variable, Double) -> Self
+pub fn Term::of_variable(Variable) -> Self
+
+pub(all) struct Variable {
+  id : Int
+} derive(Compare, Eq, Hash, @debug.Debug)
+pub fn Variable::fresh() -> Self
+pub fn Variable::from_id(Int) -> Self
+pub fn Variable::new() -> Self
+
+pub(all) enum WeightedRelation {
+  EQ(Strength)
+  LE(Strength)
+  GE(Strength)
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

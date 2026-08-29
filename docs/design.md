@@ -55,6 +55,14 @@ trait LayoutSolver {  solve(area: Rect, constraints: Array[Constraint]) -> Array
    约束删除机械），以独立包 `<user>/cassowary` 发布，slot 进同一 trait。
    测试断言从第一天起用 ±1px 容差，未来换实现零成本。
 
+> **v0.2 落地更新**：上游 `kasuari 0.4.12` 已由 `nonoka/kasuari4moon`
+> （https://github.com/PPKunOfficial/kasuari4moon）以纯 MoonBit 完整移植
+> （`solver.rs` 864 行全量，含增量编辑/约束增删/dual simplex，双精度
+> `Double`/`f64`），以 `kasuari/` 包 vendored 入本仓库（依赖树叶，仅依赖
+> `moonbitlang/core/double`，零 I/O）；`layout/` 的一次性子集同步由 `Float`
+> (`f32`) 升级为 `Double` (`f64`)，与上游 Rust `f64` 及 kasuari 保持精度
+> 一致，679 case 行为不变（`f32` 的 `1001001000 → 1001001024` 误差已消除）喵。
+
 ### ADR-4 平台 FFI 外包给 `moonbit-community/tty`
 
 真终端后端不自写 C stub，依赖 tty 包（unix/win32 双实现、kitty 键盘协议、
@@ -95,6 +103,14 @@ bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离�
 ## 3. 分层架构与依赖方向
 
 ```
+kasuari/            Cassowary 完整求解器（上游 kasuari 0.4.12 完整移植，Double/f64，
+   │                864 行全量，含增量编辑/约束增删/dual simplex，依赖树叶）
+   │                零 I/O，仅依赖 moonbitlang/core/double；layout 可按需复用
+   ▼
+layout/             弹性分区：Layout 约束体系 + kasuari 一次性子集（Double/f64，
+   │                679 case 全绿，Float→Double 精度升级已与上游 f64 对齐）
+   │                只依赖 core + double
+   ▼
 widgets/            无状态 widget（Block/Paragraph/Table/Canvas/Chart…）
    │ 只依赖 core
    ▼
@@ -169,8 +185,9 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
   LineGauge/Sparkline/Scrollbar/Clear/Fill/BarChart/Table/Canvas/Chart），
   上游 v0.30.2 对应模块的单测与集成黄金用例逐条复刻全绿 ✅
 - **v0.2**：`unicode/` 宽度表全量搬运与折行升级；`layout/` kasuari
-  一次性求解子集已落（679 case 全绿 ✅）；Table/Chart/Canvas 已收官 ✅；
-  `terminal/` 会话层（Terminal/Frame/Viewport/draw 管线）已落 ✅；
+  一次性求解子集已落（679 case 全绿 ✅，**Double/f64 精度升级**）；`kasuari/`
+  完整求解器 vendored（上游 kasuari 0.4.12 全量 864 行，22 测全绿 ✅）；
+  Table/Chart/Canvas 已收官 ✅；`terminal/` 会话层已落 ✅；
   `TtyBackend` 接入 tty 包（async 适配决策待定）；Linux + Windows CI
 - **v0.3**：单行 Editor（历史、光标）；鼠标；kitty 键盘
   协议增强；IME 摸底（raw mode 下 CJK 输入是已知硬骨头，mizchi 以 cooked

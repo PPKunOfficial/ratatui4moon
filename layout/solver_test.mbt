@@ -73,7 +73,7 @@ test "Solver 强度排名" {
 ///|
 /// 上游 tests/quadrilateral.rs（前半段）喵。
 test "Solver 四边形中点" {
-  let point_starts : Array[(Float, Float)] = [
+  let point_starts : Array[(Double, Double)] = [
     (10.0, 10.0),
     (10.0, 200.0),
     (200.0, 200.0),
@@ -88,7 +88,7 @@ test "Solver 四边形中点" {
     midpoints.push((Variable::fresh(), Variable::fresh()))
   }
   let solver = Solver::make()
-  let mut weight : Float = 1.0
+  let mut weight : Double = 1.0
   for i in 0..<4 {
     solver.add_constraint(
       Constraint::new(
@@ -222,7 +222,7 @@ test "Solver 四边形中点" {
     )
   }
   ignore(solver.fetch_changes())
-  let expected : Array[(Float, Float)] = [
+  let expected : Array[(Double, Double)] = [
     (10.0, 105.0),
     (105.0, 200.0),
     (200.0, 105.0),

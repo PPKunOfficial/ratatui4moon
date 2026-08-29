@@ -15,11 +15,19 @@ MoonBit 的 ratatui 式终端 UI 框架：**cell 网格双缓冲 + 即时模式 
 ## 架构
 
 ```
+kasuari/   Cassowary 完整求解器（上游 kasuari 0.4.12 完整移植，Double/f64，含编辑/删约束）
+   │
+layout/    弹性分区：Layout 约束体系 + kasuari 一次性子集（Double/f64，679 case）
+   │
 widgets/   无状态 widget：render(area, buf) 即画即走
    │
 core/      Rect / Style / Cell / Buffer + 帧差分（纯函数，零 I/O，依赖树叶）
    │
+unicode/   依赖树叶：unicode-width 全量表 + 图形簇细分（零 I/O）
+   │
 backend/   Backend trait · TestBackend（录帧）· ANSI 发射引擎
+   │
+terminal/  终端会话：Terminal 双缓冲/Frame/Viewport/draw 管线
 ```
 
 ## 测试哲学
@@ -41,11 +49,12 @@ v0.1：`core` / `backend` / `widgets` / `terminal` 四包绿；Rect/Style/Cell/B
 Block（边框/线型/标题/内边距）、Paragraph（折行/截断/滚动/对齐）、List、Tabs、
 Gauge/LineGauge（unicode 半格进度条）、Sparkline（九级波形图）、Scrollbar
 （四方位滚动条）、Clear/Fill（清空与填充基元）、BarChart（双方向分组
-柱状图）、Layout（kasuari 一次性求解子集 + 全 Flex/Spacing 特征矩阵）、
-Table（全族）、Canvas（Grid 三形态/Cohen–Sutherland 裁剪/五 Shape/
+柱状图）、Layout（kasuari 一次性求解子集 **Double/f64** + 全 Flex/Spacing 特征矩阵，679 case）、
+`kasuari/` 完整求解器（上游 kasuari 0.4.12 全量 864 行，22 测，Double/f64）、
+`unicode/` 全量宽度表与图形簇（Unicode 17.0, 22 测）、Table（全族）、Canvas（Grid 三形态/Cohen–Sutherland 裁剪/五 Shape/
 world 地图）、Chart（轴/标签/图例八方位于一体/四图型）的单元测试与集成
 黄金用例逐条复刻自 ratatui-v0.30.2 并 TDD 转绿；symbols line/block/bar/
 shade/scrollbar/marker/braille/half_block/pixel 符号表全量入库；`terminal/`（Terminal 双缓冲/Frame/Viewport/draw 管线/autoresize/insert_before）、
-RatatuiLogo/RatatuiMascot 徽标组件；黄金快照管线已立。
+RatatuiLogo/RatatuiMascot 徽标组件；黄金快照管线已立。**769 测全绿**喵。
 设计全文见 [docs/design.md](docs/design.md)，对位进度见
 [docs/parity.md](docs/parity.md)，仓库条约见 [AGENTS.md](AGENTS.md)。

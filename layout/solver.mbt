@@ -28,19 +28,19 @@ pub fn Variable::fresh() -> Variable {
 /// 项：变量 × 系数（上游 `Term`）喵。
 pub(all) struct Term {
   variable : Variable
-  coefficient : Float
+  coefficient : Double
 } derive(Eq, Debug)
 
 ///|
 /// 线性表达式：Σ 系数×变量 + 常数（上游 `Expression`）喵。
 pub(all) struct Expression {
   terms : Array[Term]
-  constant : Float
+  constant : Double
 } derive(Eq, Debug)
 
 ///|
 /// 常数表达式（上游 `Expression::from_constant`）喵。
-pub fn Expression::of_constant(v : Float) -> Expression {
+pub fn Expression::of_constant(v : Double) -> Expression {
   { terms: [], constant: v }
 }
 
@@ -84,13 +84,13 @@ pub fn expr_sub(a : Expression, b : Expression) -> Expression {
 
 ///|
 /// 表达式与常数求和：a + c 喵。
-pub fn expr_add_const(a : Expression, c : Float) -> Expression {
+pub fn expr_add_const(a : Expression, c : Double) -> Expression {
   { ..a, constant: a.constant + c }
 }
 
 ///|
 /// 表达式数乘：a × k 喵。
-pub fn expr_scale(a : Expression, k : Float) -> Expression {
+pub fn expr_scale(a : Expression, k : Double) -> Expression {
   {
     terms: a.terms.map(fn(t) { { ..t, coefficient: t.coefficient * k } }),
     constant: a.constant * k,
@@ -118,7 +118,7 @@ pub(all) enum RelOp {
 /// 约束：`表达式 op 0` + 强度（上游 `Constraint`）喵。
 pub(all) struct Constraint {
   expression : Expression
-  strength : Float
+  strength : Double
   op : RelOp
 } derive(Eq, Debug)
 
@@ -127,35 +127,40 @@ pub(all) struct Constraint {
 pub fn Constraint::new(
   expression : Expression,
   op : RelOp,
-  strength : Float,
+  strength : Double,
 ) -> Constraint {
   { expression, op, strength }
 }
 
 ///|
 /// 强度常量与工具（上游 `strength` 模块）喵。
-pub fn strength_required() -> Float {
+pub fn strength_required() -> Double {
   1001001000.0
 }
 
 ///|
-pub fn strength_strong() -> Float {
+pub fn strength_strong() -> Double {
   1000000.0
 }
 
 ///|
-pub fn strength_medium() -> Float {
+pub fn strength_medium() -> Double {
   1000.0
 }
 
 ///|
-pub fn strength_weak() -> Float {
+pub fn strength_weak() -> Double {
   1.0
 }
 
 ///|
 /// 以 STRONG/MEDIUM/WEAK 三层组合构造强度（上游 `strength::create`）喵。
-pub fn strength_create(a : Float, b : Float, c : Float, w : Float) -> Float {
+pub fn strength_create(
+  a : Double,
+  b : Double,
+  c : Double,
+  w : Double,
+) -> Double {
   let strong_part = (a * w).max(0.0).min(1000.0) * 1000000.0
   let medium_part = (b * w).max(0.0).min(1000.0) * 1000.0
   let weak_part = (c * w).max(0.0).min(1000.0)
@@ -164,7 +169,7 @@ pub fn strength_create(a : Float, b : Float, c : Float, w : Float) -> Float {
 
 ///|
 /// 强度夹取到合法区间（上游 `strength::clip`）喵。
-pub fn strength_clip(s : Float) -> Float {
+pub fn strength_clip(s : Double) -> Double {
   let hi = s.min(strength_required())
   if hi < 0.0 {
     0.0
@@ -195,10 +200,10 @@ pub let symbol_invalid : Symbol = { id: 0, typ: Invalid }
 
 ///|
 /// 近零判定（上游 `near_zero`，ε = 1e-8）喵。
-let near_zero_eps : Float = 0.00000001
+let near_zero_eps : Double = 0.00000001
 
 ///|
-fn near_zero(value : Float) -> Bool {
+fn near_zero(value : Double) -> Bool {
   if value < 0.0 {
     -value < near_zero_eps
   } else {
@@ -209,19 +214,19 @@ fn near_zero(value : Float) -> Bool {
 ///|
 /// 单纯形表行：Σ 系数×符号 + 常数（上游 `Row`）喵。
 pub struct Row {
-  cells : Map[Symbol, Float]
-  mut constant : Float
+  cells : Map[Symbol, Double]
+  mut constant : Double
 }
 
 ///|
-fn Row::make(constant : Float) -> Row {
+fn Row::make(constant : Double) -> Row {
   { cells: Map([]), constant }
 }
 
 ///|
 /// 按 id 升序的单元格快照（决定性遍历基）喵。
-fn Row::sorted_cells(self : Row) -> Array[(Symbol, Float)] {
-  let out : Array[(Symbol, Float)] = []
+fn Row::sorted_cells(self : Row) -> Array[(Symbol, Double)] {
+  let out : Array[(Symbol, Double)] = []
   for k, v in self.cells {
     out.push((k, v))
   }
@@ -231,7 +236,7 @@ fn Row::sorted_cells(self : Row) -> Array[(Symbol, Float)] {
 
 ///|
 /// 写入符号系数：合并同类项，归零即删（上游 `insert_symbol`）喵。
-fn Row::insert_symbol(self : Row, s : Symbol, coefficient : Float) -> Unit {
+fn Row::insert_symbol(self : Row, s : Symbol, coefficient : Double) -> Unit {
   match self.cells.get(s) {
     Some(existing) => {
       let merged = existing + coefficient
@@ -247,7 +252,7 @@ fn Row::insert_symbol(self : Row, s : Symbol, coefficient : Float) -> Unit {
 
 ///|
 /// 以系数并入另一行（上游 `insert_row`）；返回常数是否变化喵。
-fn Row::insert_row(self : Row, other : Row, coefficient : Float) -> Bool {
+fn Row::insert_row(self : Row, other : Row, coefficient : Double) -> Bool {
   let constant_diff = other.constant * coefficient
   self.constant += constant_diff
   for pair in other.sorted_cells() {
@@ -285,7 +290,7 @@ fn Row::solve_for_symbol(self : Row, s : Symbol) -> Unit {
   let coeff = match self.cells.get(s) {
     Some(c) => {
       self.cells.remove(s)
-      (-1.0 : Float) / c
+      (-1.0 : Double) / c
     }
     None => 0.0
   }
@@ -312,7 +317,7 @@ fn Row::solve_for_symbols(self : Row, lhs : Symbol, rhs : Symbol) -> Unit {
 
 ///|
 /// 读符号系数（上游 `coefficient_for`）喵。
-fn Row::coefficient_for(self : Row, s : Symbol) -> Float {
+fn Row::coefficient_for(self : Row, s : Symbol) -> Double {
   match self.cells.get(s) {
     Some(v) => v
     None => 0.0
@@ -369,7 +374,7 @@ pub struct Tag {
 ///|
 /// Cassowary 求解器（一次性子集，上游 `Solver`）喵。
 pub struct Solver {
-  var_data : Map[Variable, (Float, Symbol, Int)]
+  var_data : Map[Variable, (Double, Symbol, Int)]
   var_for_symbol : Map[Symbol, Variable]
   changed : Map[Variable, Bool]
   mut should_clear_changes : Bool
@@ -455,7 +460,7 @@ fn Solver::get_var_symbol(self : Solver, v : Variable) -> Symbol {
       let s : Symbol = { id: self.id_tick, typ: External }
       self.id_tick += 1
       self.var_for_symbol.set(s, v)
-      self.var_data.set(v, (@float.not_a_number, s, 1))
+      self.var_data.set(v, (@double.not_a_number, s, 1))
       s
     }
   }
@@ -477,7 +482,7 @@ fn Solver::create_row(self : Solver, constraint : Constraint) -> (Row, Tag) {
   }
   let tag : Tag = match constraint.op {
     GreaterOrEqual | LessOrEqual => {
-      let coeff : Float = if constraint.op is LessOrEqual { 1.0 } else { -1.0 }
+      let coeff : Double = if constraint.op is LessOrEqual { 1.0 } else { -1.0 }
       let slack : Symbol = { id: self.id_tick, typ: Slack }
       self.id_tick += 1
       row.insert_symbol(slack, coeff)
@@ -670,7 +675,7 @@ fn any_pivotable_symbol(row : Row) -> Symbol {
 ///|
 /// 最小比率出基行（上游 `get_leaving_row`）喵。
 fn Solver::get_leaving_row(self : Solver, entering : Symbol) -> (Symbol, Row)? {
-  let mut ratio : Float = @float.infinity
+  let mut ratio : Double = @double.infinity
   let mut found : Symbol? = None
   let keys : Array[Symbol] = []
   for k, _ in self.rows {
@@ -718,14 +723,14 @@ fn Solver::mark_changed(self : Solver, v : Variable) -> Unit {
 
 ///|
 /// 拉取自上次调用以来的全部变量值变化（上游 `fetch_changes`）喵。
-pub fn Solver::fetch_changes(self : Solver) -> Array[(Variable, Float)] {
+pub fn Solver::fetch_changes(self : Solver) -> Array[(Variable, Double)] {
   if self.should_clear_changes {
     self.changed.clear()
     self.should_clear_changes = false
   } else {
     self.should_clear_changes = true
   }
-  let out : Array[(Variable, Float)] = []
+  let out : Array[(Variable, Double)] = []
   let changed_ids : Array[Variable] = []
   for k, _ in self.changed {
     changed_ids.push(k)
@@ -752,7 +757,7 @@ pub fn Solver::fetch_changes(self : Solver) -> Array[(Variable, Float)] {
 
 ///|
 /// 直读变量当前值（上游 `get_value`，测试/调试用）喵。
-pub fn Solver::get_value(self : Solver, v : Variable) -> Float {
+pub fn Solver::get_value(self : Solver, v : Variable) -> Double {
   match self.var_data.get(v) {
     Some(data) =>
       match self.rows.get(data.1) {

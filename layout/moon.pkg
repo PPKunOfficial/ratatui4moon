@@ -6,7 +6,7 @@ supported_targets = "+native"
 
 import {
   "nonoka/ratatui4moon/core",
-  "moonbitlang/core/float",
+  "moonbitlang/core/double",
 }
 
 import {

@@ -1,0 +1,13 @@
+// kasuari 是 Cassowary 完整求解器移植（上游 kasuari 0.4.12），纯 MoonBit 零 I/O 喵。
+// 依赖树叶：仅依赖 moonbitlang/core/double，零 I/O，复刻 nonoka/kasuari4moon 全量逻辑喵。
+pkgtype(kind: "library")
+
+supported_targets = "+native"
+
+import {
+  "moonbitlang/core/double",
+}
+
+import {
+  "moonbitlang/core/debug",
+} for "test"

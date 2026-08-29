@@ -9,23 +9,23 @@ import {
 // Values
 pub fn expr_add(Expression, Expression) -> Expression
 
-pub fn expr_add_const(Expression, Float) -> Expression
+pub fn expr_add_const(Expression, Double) -> Expression
 
-pub fn expr_scale(Expression, Float) -> Expression
+pub fn expr_scale(Expression, Double) -> Expression
 
 pub fn expr_sub(Expression, Expression) -> Expression
 
-pub fn strength_clip(Float) -> Float
+pub fn strength_clip(Double) -> Double
 
-pub fn strength_create(Float, Float, Float, Float) -> Float
+pub fn strength_create(Double, Double, Double, Double) -> Double
 
-pub fn strength_medium() -> Float
+pub fn strength_medium() -> Double
 
-pub fn strength_required() -> Float
+pub fn strength_required() -> Double
 
-pub fn strength_strong() -> Float
+pub fn strength_strong() -> Double
 
-pub fn strength_weak() -> Float
+pub fn strength_weak() -> Double
 
 pub let symbol_invalid : Symbol
 
@@ -38,17 +38,17 @@ pub(all) suberror AddConstraintError {
 // Types and methods
 pub(all) struct Constraint {
   expression : Expression
-  strength : Float
+  strength : Double
   op : RelOp
 } derive(Eq, @debug.Debug)
-pub fn Constraint::new(Expression, RelOp, Float) -> Self
+pub fn Constraint::new(Expression, RelOp, Double) -> Self
 
 pub(all) struct Expression {
   terms : Array[Term]
-  constant : Float
+  constant : Double
 } derive(Eq, @debug.Debug)
 pub fn Expression::negate(Self) -> Self
-pub fn Expression::of_constant(Float) -> Self
+pub fn Expression::of_constant(Double) -> Self
 pub fn Expression::of_term(Term) -> Self
 pub fn Expression::of_variable(Variable) -> Self
 
@@ -80,12 +80,12 @@ pub(all) enum RelOp {
 } derive(Eq, @debug.Debug)
 
 pub struct Row {
-  cells : Map[Symbol, Float]
-  mut constant : Float
+  cells : Map[Symbol, Double]
+  mut constant : Double
 }
 
 pub struct Solver {
-  var_data : Map[Variable, (Float, Symbol, Int)]
+  var_data : Map[Variable, (Double, Symbol, Int)]
   var_for_symbol : Map[Symbol, Variable]
   changed : Map[Variable, Bool]
   mut should_clear_changes : Bool
@@ -97,8 +97,8 @@ pub struct Solver {
 }
 pub fn Solver::add_constraint(Self, Constraint) -> Unit raise AddConstraintError
 pub fn Solver::add_constraints(Self, Array[Constraint]) -> Unit raise AddConstraintError
-pub fn Solver::fetch_changes(Self) -> Array[(Variable, Float)]
-pub fn Solver::get_value(Self, Variable) -> Float
+pub fn Solver::fetch_changes(Self) -> Array[(Variable, Double)]
+pub fn Solver::get_value(Self, Variable) -> Double
 pub fn Solver::make() -> Self
 
 pub(all) enum Spacing {
@@ -126,7 +126,7 @@ pub struct Tag {
 
 pub(all) struct Term {
   variable : Variable
-  coefficient : Float
+  coefficient : Double
 } derive(Eq, @debug.Debug)
 
 pub(all) struct Variable {

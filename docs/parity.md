@@ -16,7 +16,8 @@
 | `layout/alignment.rs` | `core/alignment.mbt` | ✅ | Horizontal/Vertical 全变体 + to_display/from_str（strum 对位）|
 | `layout/constraint.rs` | `core/constraint.mbt` | ✅ | apply/from_* 构造器/Display 全量；u32::MAX 极端用例按 Int 域折算 |
 | `layout/direction.rs` / `flex.rs` | `core/direction.mbt` + `core/flex.mbt` | ✅ | — |
-| `layout/layout.rs` | `layout/` 包 | ✅ | kasuari 一次性求解子集（`Solver::new → add_constraint → fetch_changes`）+ Layout 约束体系/strengths/Flex/Spacing 全落；上游 split 全部 22 组参数矩阵（679 case，含 letters 391）+ docstring 示例 + edge_cases + 不变量测试全量复刻；`skip(1).tuples()` 非重叠单调对（overlap 通道）等语义差异经 kasuari 参照实测校准 |
+| `layout/layout.rs` | `layout/` 包 | ✅ | kasuari 一次性求解子集（`Solver::new → add_constraint → fetch_changes`，**Double/f64 精度，与上游 f64 一致**）+ Layout 约束体系/strengths/Flex/Spacing 全落；上游 split 全部 22 组参数矩阵（679 case，含 letters 391）+ docstring 示例 + edge_cases + 不变量测试全量复刻；`skip(1).tuples()` 非重叠单调对（overlap 通道）等语义差异经 kasuari 参照实测校准 |
+| `kasuari` (上游 `kasuari 0.4.12`/`cassowary`) | `kasuari/` 包 | ✅ | `nonoka/kasuari4moon` 完整移植 vendored（solver.rs 864 行全量，含增量编辑/约束增删/dual simplex，Strength/Variable/Term/Expression/Constraint/Row/Symbol 全量，22 测全绿，f64 精度与上游一致） |
 | `buffer/buffer.rs` | `core/buffer.mbt` | ✅ | `with_lines` 的 Into 泛型形态（有 `with_lines_of`）；Debug 全功能 |
 | `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |
 | `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ✅ | unicode-width 0.2.2（Unicode 17.0）全量三层查找表机械搬运至 `unicode/` 包，状态机（VS16/ZWJ emoji 序列/区域指示符/连字组合）纯 MoonBit 移植；`set_stringn`/`styled_graphemes` 按扩展图形簇切分；上游 emoji 测试（renders_emoji×4/diff 尾列两条）全量补齐 |
@@ -83,7 +84,7 @@
 4. ✅ Paragraph（折行/截断/滚动/对齐/样式分层全语义）
 5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
 6. ✅ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/LineGauge（单测与集成黄金用例全绿）
-7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart + Layout 求解器（ADR-3 kasuari 子集，679 case 全绿）→ Table → Chart（symbols marker/braille/half_block/pixel 前置 + Canvas 全族先行落地）
+7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart + Layout 求解器（ADR-3 kasuari 子集 Double/f64，679 case 全绿）+ `kasuari/` 完整求解器 vendored（22 测全绿）→ Table → Chart（symbols marker/braille/half_block/pixel 前置 + Canvas 全族先行落地）
 8. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
 9. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
 10. Chart/BarChart/Canvas 族（Canvas 已随 Chart 先行收官）
