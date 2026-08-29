@@ -7,6 +7,8 @@ import {
 }
 
 // Values
+pub fn dimmed() -> Dimmed
+
 pub fn tabs_default_highlight_style() -> @core.Style
 
 pub let world_high_resolution : Array[(Double, Double)]
@@ -91,6 +93,7 @@ pub(all) struct Block {
   style : @core.Style
   padding : Padding
   merge_borders : @core.MergeStrategy
+  shadow : Shadow?
 } derive(Eq, @debug.Debug)
 pub fn Block::border_set(Self, @core.BorderSet) -> Self
 pub fn Block::border_style(Self, @core.Style) -> Self
@@ -103,6 +106,7 @@ pub fn Block::merge_borders(Self, @core.MergeStrategy) -> Self
 pub fn Block::new() -> Self
 pub fn Block::padding(Self, Padding) -> Self
 pub fn Block::render(Self, @core.Rect, @core.Buffer) -> Unit
+pub fn Block::shadow(Self, Shadow) -> Self
 pub fn Block::style(Self, @core.Style) -> Self
 pub fn Block::title(Self, @core.Line) -> Self
 pub fn Block::title_alignment(Self, @core.Alignment) -> Self
@@ -284,6 +288,17 @@ pub fn Context::layer(Self) -> Unit
 pub fn Context::marker(Self, @core.Marker) -> Unit
 pub fn Context::new(Int, Int, (Double, Double), (Double, Double), @core.Marker) -> Self
 pub fn Context::print(Self, Double, Double, @core.Line) -> Unit
+
+pub(all) struct Dimmed {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub impl CellEffect for Dimmed
+
+pub(all) enum Effect {
+  Overlay
+  Symbol(String)
+  Custom(Int)
+} derive(Eq, @debug.Debug)
 
 pub(all) struct Fill {
   symbol : String
@@ -594,6 +609,24 @@ pub fn ScrollbarState::with_content_length(Self, Int) -> Self
 pub fn ScrollbarState::with_position(Self, Int) -> Self
 pub fn ScrollbarState::with_viewport_content_length(Self, Int) -> Self
 
+pub(all) struct Shadow {
+  effect : Effect
+  style : @core.Style
+  offset : @core.Offset
+} derive(Eq, @debug.Debug)
+pub fn Shadow::block() -> Self
+pub fn Shadow::custom(&CellEffect) -> Self
+pub fn Shadow::dark_shade() -> Self
+pub fn Shadow::default() -> Self
+pub fn Shadow::light_shade() -> Self
+pub fn Shadow::medium_shade() -> Self
+pub fn Shadow::new(&CellEffect) -> Self
+pub fn Shadow::offset(Self, @core.Offset) -> Self
+pub fn Shadow::overlay() -> Self
+pub fn Shadow::style(Self, @core.Style) -> Self
+pub fn Shadow::symbol(String) -> Self
+pub impl @core.Widget for Shadow
+
 pub(all) struct Sparkline {
   block : Block?
   style : @core.Style
@@ -776,6 +809,10 @@ pub(all) struct WrappedLine {
 // Type aliases
 
 // Traits
+pub(open) trait CellEffect {
+  fn apply(Self, @core.Rect, @core.Rect, @core.Buffer) -> Unit
+}
+
 pub(open) trait LineComposer {
   fn next_line(Self) -> WrappedLine?
 }

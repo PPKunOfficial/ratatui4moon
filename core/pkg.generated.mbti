@@ -178,6 +178,7 @@ pub(all) enum Alignment {
   Center
   Right
 } derive(Eq, @debug.Debug)
+pub fn Alignment::from_str(String) -> Self?
 pub fn Alignment::to_display(Self) -> String
 
 pub(all) struct BarSet {
@@ -677,6 +678,15 @@ pub fn Text::to_display(Self) -> String
 pub fn Text::width(Self) -> Int
 pub fn Text::with_alignment(Self, Alignment) -> Self
 pub fn Text::with_style(Self, Style) -> Self
+
+pub(all) enum VerticalAlignment {
+  Top
+  Center
+  Bottom
+} derive(Eq, @debug.Debug)
+pub fn VerticalAlignment::default() -> Self
+pub fn VerticalAlignment::from_str(String) -> Self?
+pub fn VerticalAlignment::to_display(Self) -> String
 
 // Type aliases
 

@@ -19,7 +19,7 @@ pub(all) enum TitlePosition {
 /// `inner` 计算 border/标题/padding 扣除后的内容区，供嵌套
 /// widget 使用喵。
 ///
-/// 上游的 `shadow` 登记待复刻喵。
+/// 渲染末段还叠加可选 `shadow` 阴影层（上游 `Block::shadow`）喵。
 pub(all) struct Block {
   titles : Array[(TitlePosition?, @core.Line)]
   titles_style : @core.Style
@@ -31,6 +31,7 @@ pub(all) struct Block {
   style : @core.Style
   padding : Padding
   merge_borders : @core.MergeStrategy
+  shadow : Shadow?
 } derive(Eq, Debug)
 
 ///|
@@ -47,6 +48,7 @@ pub fn Block::new() -> Block {
     style: @core.Style::new(),
     padding: Padding::zero(),
     merge_borders: Replace,
+    shadow: None,
   }
 }
 
@@ -111,6 +113,13 @@ pub fn Block::title_alignment(
   alignment : @core.Alignment,
 ) -> Block {
   { ..self, titles_alignment: alignment }
+}
+
+///|
+/// 设块后阴影（上游 `Block::shadow`）：渲染于块区域加阴影偏移
+/// 的区域喵。
+pub fn Block::shadow(self : Block, shadow : Shadow) -> Block {
+  { ..self, shadow: Some(shadow) }
 }
 
 ///|
@@ -229,6 +238,10 @@ impl @core.Widget for Block with fn render(
   buf.set_style(area, self.style)
   self.render_borders(area, buf)
   self.render_titles(area, buf)
+  match self.shadow {
+    Some(shadow) => shadow.render(area, buf)
+    None => ()
+  }
 }
 
 ///|
