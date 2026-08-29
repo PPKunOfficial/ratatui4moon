@@ -322,6 +322,16 @@ pub fn Layout::split_with_spacers(
   self : Layout,
   area : @core.Rect,
 ) -> (Array[@core.Rect], Array[@core.Rect]) raise AddConstraintError {
+  let (segments, spacers, _solver) = self.try_split(area)
+  (segments, spacers)
+}
+
+///|
+/// 切分并返回求解器（调试/断言用）喵。
+fn Layout::try_split(
+  self : Layout,
+  area : @core.Rect,
+) -> (Array[@core.Rect], Array[@core.Rect], Solver) raise AddConstraintError {
   let solver = Solver::make()
   let inner_area = area.inner(self.margin)
   let (area_start, area_end) = match self.direction {
@@ -393,7 +403,7 @@ pub fn Layout::split_with_spacers(
     inner_area,
     self.direction,
   )
-  (segment_rects, spacer_rects)
+  (segment_rects, spacer_rects, solver)
 }
 
 ///|
@@ -473,13 +483,15 @@ fn configure_variable_in_area_constraints(
 }
 
 ///|
-/// 相邻边界单调（上游 `configure_variable_constraints`）喵。
+/// 段边界单调（上游 `configure_variable_constraints`：
+/// `skip(1).tuples()` 非重叠偶对 v1≤v2、v3≤v4……spacer 两端不设
+/// 单调约束，为负间距 overlap 留通道）喵。
 fn configure_variable_constraints(
   solver : Solver,
   variables : Array[Variable],
 ) -> Unit raise AddConstraintError {
-  let last_variable = variables.length() - 1
-  for i in 1..<last_variable {
+  let mut i = 1
+  while i + 1 < variables.length() {
     solver.add_constraint(
       Constraint::new(
         expr_sub(
@@ -490,6 +502,7 @@ fn configure_variable_constraints(
         strength_required(),
       ),
     )
+    i += 2
   }
 }
 

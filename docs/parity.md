@@ -16,7 +16,7 @@
 | `layout/alignment.rs` | `core/alignment.mbt` | ◐ | `VerticalAlignment`、FromStr |
 | `layout/constraint.rs` | `core/constraint.mbt` | ✅ | apply/from_* 构造器/Display 全量；u32::MAX 极端用例按 Int 域折算 |
 | `layout/direction.rs` / `flex.rs` | `core/direction.mbt` + `core/flex.mbt` | ✅ | — |
-| `layout/layout.rs` | `layout/` 包 | ◐ | cassowary 一次性求解子集已移植（`Solver::new → add_constraint → fetch_changes`，四边形/强度排名/不可满足检测全过）；`Layout::split` 约束体系 + strengths + Flex/Spacing 已落；letters 特征矩阵（780 case）与 spacer/segments 全量对齐复刻中 |
+| `layout/layout.rs` | `layout/` 包 | ✅ | kasuari 一次性求解子集（`Solver::new → add_constraint → fetch_changes`）+ Layout 约束体系/strengths/Flex/Spacing 全落；上游 split 全部 22 组参数矩阵（679 case，含 letters 391）+ docstring 示例 + edge_cases + 不变量测试全量复刻；`skip(1).tuples()` 非重叠单调对（overlap 通道）等语义差异经 kasuari 参照实测校准 |
 | `buffer/buffer.rs` | `core/buffer.mbt` | ✅ | `with_lines` 的 Into 泛型形态（有 `with_lines_of`）；Debug 全功能 |
 | `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |
 | `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ◐ | 宽度表为近似区间法（unicode/ 全量表待迁） |
@@ -77,7 +77,7 @@
 4. ✅ Paragraph（折行/截断/滚动/对齐/样式分层全语义）
 5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
 6. ✅ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/LineGauge（单测与集成黄金用例全绿）
-7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart（bar/shade/scrollbar 符号集随落位）→ ▶ Layout 求解器（ADR-3，解锁 Table/Chart）
+7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart + Layout 求解器（ADR-3 kasuari 子集，679 case 全绿）→ ▶ Table → Chart
 8. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
 9. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
 10. Chart/BarChart/Canvas 族

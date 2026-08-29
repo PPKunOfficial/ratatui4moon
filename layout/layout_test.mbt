@@ -748,3 +748,1192 @@ fn flex_of(name : String) -> @core.Flex {
     _ => @core.Legacy
   }
 }
+
+///|
+/// 上游 check_ranges：横切后比对各段 (left, right) 序列喵。
+fn check_ranges(
+  width : Int,
+  constraints : Array[@core.Constraint],
+  flex : @core.Flex,
+  spacing : Int?,
+  expected : String,
+) -> Unit raise {
+  let layout = Layout::horizontal(constraints).flex(flex)
+  let layout = match spacing {
+    Some(s) => layout.spacing(s)
+    None => layout
+  }
+  let chunks = layout.split(@core.Rect::new(0, 0, width, 1))
+  let parts : Array[String] = []
+  for chunk in chunks {
+    parts.push("(\{chunk.left()},\{chunk.right()})")
+  }
+  assert_eq(parts.join(","), normalize_expected(expected))
+}
+
+///|
+/// 上游 check_widths：六种非遗留 flex 下各段宽度一致喵。
+fn check_widths(
+  width : Int,
+  constraints : Array[@core.Constraint],
+  expected : String,
+) -> Unit raise {
+  let flexes = [
+    @core.Start,
+    @core.End,
+    @core.Center,
+    @core.SpaceAround,
+    @core.SpaceEvenly,
+    @core.SpaceBetween,
+  ]
+  for flex in flexes {
+    let chunks = Layout::horizontal(constraints)
+      .flex(flex)
+      .split(@core.Rect::new(0, 0, width, 1))
+    let parts : Array[String] = []
+    for chunk in chunks {
+      parts.push(chunk.width.to_string())
+    }
+    assert_eq(parts.join(","), normalize_expected(expected))
+  }
+}
+
+///|
+/// 上游 check_pairs：比对各段 (x, width) 序列喵。
+fn check_pairs(
+  width : Int,
+  constraints : Array[@core.Constraint],
+  flex : @core.Flex,
+  spacing : Int?,
+  expected : String,
+) -> Unit raise {
+  let layout = Layout::horizontal(constraints).flex(flex)
+  let layout = match spacing {
+    Some(s) => layout.spacing(s)
+    None => layout
+  }
+  let chunks = layout.split(@core.Rect::new(0, 0, width, 1))
+  let parts : Array[String] = []
+  for chunk in chunks {
+    parts.push("(\{chunk.x},\{chunk.width})")
+  }
+  assert_eq(parts.join(","), normalize_expected(expected))
+}
+
+///|
+/// 上游 check_spacers：spacer 数 = 段数 + 1 且 (x, width) 匹配喵。
+fn check_spacers(
+  width : Int,
+  constraints : Array[@core.Constraint],
+  flex : @core.Flex,
+  spacing : Int?,
+  expected : String,
+) -> Unit raise {
+  let layout = Layout::horizontal(constraints).flex(flex)
+  let layout = match spacing {
+    Some(s) => layout.spacing(s)
+    None => layout
+  }
+  let (_, spacers) = layout.split_with_spacers(@core.Rect::new(0, 0, width, 1))
+  inspect(spacers.length(), content="\{constraints.length() + 1}")
+  let parts : Array[String] = []
+  for spacer in spacers {
+    parts.push("(\{spacer.x},\{spacer.width})")
+  }
+  assert_eq(parts.join(","), normalize_expected(expected))
+}
+
+///|
+/// 期望串规范化：去掉空格与 vec![] 外括号喵。
+fn normalize_expected(expected : String) -> String {
+  let s = expected.replace_all(old=" ", new="")
+  let s = s.replace_all(old="[", new="")
+  let s = s.replace_all(old="]", new="")
+  s
+}
+
+///|
+/// 上游 constraint_length 参数矩阵（12 case）喵。
+test "layout constraint_length" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    ([@core.Length(25), @core.Min(100)], "[(0,0),(0,100)]"),
+    ([@core.Length(25), @core.Min(0)], "[(0,25),(25,100)]"),
+    ([@core.Length(25), @core.Max(0)], "[(0,100),(100,100)]"),
+    ([@core.Length(25), @core.Max(100)], "[(0,25),(25,100)]"),
+    ([@core.Length(25), @core.Percentage(25)], "[(0,25),(25,100)]"),
+    ([@core.Percentage(25), @core.Length(25)], "[(0,75),(75,100)]"),
+    ([@core.Length(25), @core.Ratio(1, 4)], "[(0,25),(25,100)]"),
+    ([@core.Ratio(1, 4), @core.Length(25)], "[(0,75),(75,100)]"),
+    ([@core.Length(25), @core.Length(25)], "[(0,25),(25,100)]"),
+    (
+      [@core.Length(25), @core.Length(25), @core.Length(25)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+    (
+      [@core.Length(15), @core.Length(35), @core.Length(25)],
+      "[(0,15),(15,50),(50,100)]",
+    ),
+    (
+      [@core.Length(25), @core.Length(25), @core.Length(25)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+  ]
+  for case in cases {
+    check_ranges(100, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 table_length 参数矩阵（2 case）喵。
+test "layout table_length" {
+  let cases : Array[(Int, Array[@core.Constraint], String)] = [
+    (7, [@core.Length(4), @core.Length(4)], "(0,3),(4,7)"),
+    (4, [@core.Length(4), @core.Length(4)], "(0,2),(3,4)"),
+  ]
+  for case in cases {
+    check_ranges(case.0, case.1, flex_of("Start"), Some(1), case.2)
+  }
+}
+
+///|
+/// 上游 length_is_higher_priority 参数矩阵（16 case）喵。
+test "layout length_is_higher_priority" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    (
+      [@core.Min(25), @core.Length(25), @core.Max(25)],
+      "[(0,50),(50,75),(75,100)]",
+    ),
+    (
+      [@core.Max(25), @core.Length(25), @core.Min(25)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+    (
+      [@core.Length(33), @core.Length(33), @core.Length(33)],
+      "[(0,33),(33,66),(66,100)]",
+    ),
+    (
+      [@core.Length(25), @core.Length(25), @core.Length(25)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+    (
+      [@core.Percentage(25), @core.Length(25), @core.Ratio(1, 4)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+    (
+      [@core.Length(25), @core.Ratio(1, 4), @core.Percentage(25)],
+      "[(0,25),(25,75),(75,100)]",
+    ),
+    (
+      [@core.Ratio(1, 4), @core.Length(25), @core.Percentage(25)],
+      "[(0,50),(50,75),(75,100)]",
+    ),
+    (
+      [@core.Ratio(1, 4), @core.Percentage(25), @core.Length(25)],
+      "[(0,50),(50,75),(75,100)]",
+    ),
+    (
+      [@core.Length(100), @core.Length(1), @core.Min(20)],
+      "[(0,80),(80,80),(80,100)]",
+    ),
+    (
+      [@core.Min(20), @core.Length(1), @core.Length(100)],
+      "[(0,20),(20,21),(21,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,55),(55,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(2)],
+      "[(0,30),(30,40),(40,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(4)],
+      "[(0,18),(18,28),(28,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(5)],
+      "[(0,15),(15,25),(25,100)]",
+    ),
+    (
+      [@core.Length(25), @core.Length(25), @core.Length(25)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+    (
+      [@core.Length(25), @core.Length(25), @core.Length(25)],
+      "[(0,25),(25,50),(50,100)]",
+    ),
+  ]
+  for case in cases {
+    check_ranges(100, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 length_is_higher_priority_in_flex 参数矩阵（15 case）喵。
+test "layout length_is_higher_priority_in_flex" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    ([@core.Min(25), @core.Length(25), @core.Max(25)], "[50,25,25]"),
+    ([@core.Max(25), @core.Length(25), @core.Min(25)], "[25,25,50]"),
+    ([@core.Length(33), @core.Length(33), @core.Length(33)], "[33,33,33]"),
+    ([@core.Length(25), @core.Length(25), @core.Length(25)], "[25,25,25]"),
+    ([@core.Percentage(25), @core.Length(25), @core.Ratio(1, 4)], "[25,25,25]"),
+    ([@core.Length(25), @core.Ratio(1, 4), @core.Percentage(25)], "[25,25,25]"),
+    ([@core.Ratio(1, 4), @core.Length(25), @core.Percentage(25)], "[25,25,25]"),
+    ([@core.Ratio(1, 4), @core.Percentage(25), @core.Length(25)], "[25,25,25]"),
+    ([@core.Length(100), @core.Length(1), @core.Min(20)], "[79,1,20]"),
+    ([@core.Min(20), @core.Length(1), @core.Length(100)], "[20,1,79]"),
+    ([@core.Fill(1), @core.Length(10), @core.Fill(1)], "[45,10,45]"),
+    ([@core.Fill(1), @core.Length(10), @core.Fill(2)], "[30,10,60]"),
+    ([@core.Fill(1), @core.Length(10), @core.Fill(4)], "[18,10,72]"),
+    ([@core.Fill(1), @core.Length(10), @core.Fill(5)], "[15,10,75]"),
+    ([@core.Length(25), @core.Length(25), @core.Length(25)], "[25,25,25]"),
+  ]
+  for case in cases {
+    check_widths(100, case.0, case.1)
+  }
+}
+
+///|
+/// 上游 fixed_with_50_width 参数矩阵（2 case）喵。
+test "layout fixed_with_50_width" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(2)],
+      "[(0,13),(13,23),(23,50)]",
+    ),
+    (
+      [@core.Length(10), @core.Fill(2), @core.Fill(1)],
+      "[(0,10),(10,37),(37,50)]",
+    ),
+  ]
+  for case in cases {
+    check_ranges(50, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 fill 参数矩阵（32 case）喵。
+test "layout fill" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    (
+      [@core.Fill(1), @core.Fill(2), @core.Fill(1), @core.Fill(1)],
+      "[(0,20),(20,60),(60,80),(80,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Fill(2), @core.Fill(3), @core.Fill(4)],
+      "[(0,10),(10,30),(30,60),(60,100)]",
+    ),
+    (
+      [@core.Fill(4), @core.Fill(3), @core.Fill(2), @core.Fill(1)],
+      "[(0,40),(40,70),(70,90),(90,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Fill(3), @core.Fill(2), @core.Fill(4)],
+      "[(0,10),(10,40),(40,60),(60,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(3),
+        @core.Length(50),
+        @core.Fill(2),
+        @core.Fill(4),
+      ],
+      "[(0,5),(5,20),(20,70),(70,80),(80,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(3),
+        @core.Percentage(50),
+        @core.Fill(2),
+        @core.Fill(4),
+      ],
+      "[(0,5),(5,20),(20,70),(70,80),(80,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(3),
+        @core.Min(50),
+        @core.Fill(2),
+        @core.Fill(4),
+      ],
+      "[(0,5),(5,20),(20,70),(70,80),(80,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(3),
+        @core.Max(50),
+        @core.Fill(2),
+        @core.Fill(4),
+      ],
+      "[(0,5),(5,20),(20,70),(70,80),(80,100)]",
+    ),
+    ([@core.Fill(0), @core.Fill(1), @core.Fill(0)], "[(0,0),(0,100),(100,100)]"),
+    (
+      [@core.Fill(0), @core.Length(1), @core.Fill(0)],
+      "[(0,50),(50,51),(51,100)]",
+    ),
+    (
+      [@core.Fill(0), @core.Percentage(1), @core.Fill(0)],
+      "[(0,50),(50,51),(51,100)]",
+    ),
+    ([@core.Fill(0), @core.Min(1), @core.Fill(0)], "[(0,50),(50,51),(51,100)]"),
+    ([@core.Fill(0), @core.Max(1), @core.Fill(0)], "[(0,50),(50,51),(51,100)]"),
+    (
+      [@core.Fill(0), @core.Fill(2), @core.Fill(0), @core.Fill(1)],
+      "[(0,0),(0,67),(67,67),(67,100)]",
+    ),
+    (
+      [@core.Fill(0), @core.Fill(2), @core.Percentage(20)],
+      "[(0,0),(0,80),(80,100)]",
+    ),
+    (
+      [@core.Fill(0), @core.Fill(0), @core.Percentage(20)],
+      "[(0,40),(40,80),(80,100)]",
+    ),
+    ([@core.Fill(0), @core.Ratio(1, 5)], "[(0,80),(80,100)]"),
+    ([@core.Fill(0), @core.Fill(65535)], "[(0,0),(0,100)]"),
+    ([@core.Fill(65535), @core.Fill(0)], "[(0,100),(100,100)]"),
+    ([@core.Fill(0), @core.Percentage(20)], "[(0,80),(80,100)]"),
+    ([@core.Fill(1), @core.Percentage(20)], "[(0,80),(80,100)]"),
+    ([@core.Fill(65535), @core.Percentage(20)], "[(0,80),(80,100)]"),
+    (
+      [@core.Fill(65535), @core.Fill(0), @core.Percentage(20)],
+      "[(0,80),(80,80),(80,100)]",
+    ),
+    ([@core.Fill(0), @core.Length(20)], "[(0,80),(80,100)]"),
+    ([@core.Fill(0), @core.Min(20)], "[(0,80),(80,100)]"),
+    ([@core.Fill(0), @core.Max(20)], "[(0,80),(80,100)]"),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Min(30),
+        @core.Length(50),
+      ],
+      "[(0,7),(7,13),(13,20),(20,50),(50,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Length(50),
+        @core.Length(50),
+      ],
+      "[(0,0),(0,0),(0,0),(0,50),(50,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Length(75),
+        @core.Length(50),
+      ],
+      "[(0,0),(0,0),(0,0),(0,75),(75,100)]",
+    ),
+    (
+      [
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Fill(1),
+        @core.Min(50),
+        @core.Max(50),
+      ],
+      "[(0,0),(0,0),(0,0),(0,50),(50,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Fill(1), @core.Fill(1), @core.Ratio(1, 1)],
+      "[(0,0),(0,0),(0,0),(0,100)]",
+    ),
+    (
+      [@core.Fill(1), @core.Fill(1), @core.Fill(1), @core.Percentage(100)],
+      "[(0,0),(0,0),(0,0),(0,100)]",
+    ),
+  ]
+  for case in cases {
+    check_ranges(100, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 percentage_parameterized 参数矩阵（2 case）喵。
+test "layout percentage_parameterized" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    ([@core.Min(0), @core.Percentage(20)], "[(0,80),(80,100)]"),
+    ([@core.Max(0), @core.Percentage(20)], "[(0,0),(0,100)]"),
+  ]
+  for case in cases {
+    check_ranges(100, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 min_max 参数矩阵（6 case）喵。
+test "layout min_max" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    ([@core.Max(100), @core.Min(0)], "[(0,100),(100,100)]"),
+    ([@core.Min(0), @core.Max(100)], "[(0,0),(0,100)]"),
+    ([@core.Length(65535), @core.Min(10)], "[(0,90),(90,100)]"),
+    ([@core.Min(10), @core.Length(65535)], "[(0,10),(10,100)]"),
+    ([@core.Length(0), @core.Max(10)], "[(0,90),(90,100)]"),
+    ([@core.Max(10), @core.Length(0)], "[(0,10),(10,100)]"),
+  ]
+  for case in cases {
+    check_ranges(100, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 flex_constraint 参数矩阵（59 case）喵。
+test "layout flex_constraint" {
+  let cases : Array[(Array[@core.Constraint], String, String)] = [
+    ([@core.Length(50)], "[(0,100)]", "Legacy"),
+    ([@core.Length(50)], "[(0,50)]", "Start"),
+    ([@core.Length(50)], "[(50,100)]", "End"),
+    ([@core.Length(50)], "[(25,75)]", "Center"),
+    ([@core.Ratio(1, 2)], "[(0,100)]", "Legacy"),
+    ([@core.Ratio(1, 2)], "[(0,50)]", "Start"),
+    ([@core.Ratio(1, 2)], "[(50,100)]", "End"),
+    ([@core.Ratio(1, 2)], "[(25,75)]", "Center"),
+    ([@core.Percentage(50)], "[(0,100)]", "Legacy"),
+    ([@core.Percentage(50)], "[(0,50)]", "Start"),
+    ([@core.Percentage(50)], "[(50,100)]", "End"),
+    ([@core.Percentage(50)], "[(25,75)]", "Center"),
+    ([@core.Min(50)], "[(0,100)]", "Legacy"),
+    ([@core.Min(50)], "[(0,100)]", "Start"),
+    ([@core.Min(50)], "[(0,100)]", "End"),
+    ([@core.Min(50)], "[(0,100)]", "Center"),
+    ([@core.Max(50)], "[(0,100)]", "Legacy"),
+    ([@core.Max(50)], "[(0,50)]", "Start"),
+    ([@core.Max(50)], "[(50,100)]", "End"),
+    ([@core.Max(50)], "[(25,75)]", "Center"),
+    ([@core.Min(1)], "[(0,100)]", "SpaceBetween"),
+    ([@core.Max(20)], "[(0,100)]", "SpaceBetween"),
+    ([@core.Length(20)], "[(0,100)]", "SpaceBetween"),
+    ([@core.Length(25), @core.Length(25)], "[(0,25),(25,100)]", "Legacy"),
+    ([@core.Length(25), @core.Length(25)], "[(0,25),(25,50)]", "Start"),
+    ([@core.Length(25), @core.Length(25)], "[(25,50),(50,75)]", "Center"),
+    ([@core.Length(25), @core.Length(25)], "[(50,75),(75,100)]", "End"),
+    ([@core.Length(25), @core.Length(25)], "[(0,25),(75,100)]", "SpaceBetween"),
+    ([@core.Length(25), @core.Length(25)], "[(17,42),(58,83)]", "SpaceEvenly"),
+    ([@core.Length(25), @core.Length(25)], "[(13,38),(63,88)]", "SpaceAround"),
+    (
+      [@core.Percentage(25), @core.Percentage(25)],
+      "[(0,25),(25,100)]",
+      "Legacy",
+    ),
+    ([@core.Percentage(25), @core.Percentage(25)], "[(0,25),(25,50)]", "Start"),
+    (
+      [@core.Percentage(25), @core.Percentage(25)],
+      "[(25,50),(50,75)]",
+      "Center",
+    ),
+    ([@core.Percentage(25), @core.Percentage(25)], "[(50,75),(75,100)]", "End"),
+    (
+      [@core.Percentage(25), @core.Percentage(25)],
+      "[(0,25),(75,100)]",
+      "SpaceBetween",
+    ),
+    (
+      [@core.Percentage(25), @core.Percentage(25)],
+      "[(17,42),(58,83)]",
+      "SpaceEvenly",
+    ),
+    (
+      [@core.Percentage(25), @core.Percentage(25)],
+      "[(13,38),(63,88)]",
+      "SpaceAround",
+    ),
+    ([@core.Min(25), @core.Min(25)], "[(0,25),(25,100)]", "Legacy"),
+    ([@core.Min(25), @core.Min(25)], "[(0,50),(50,100)]", "Start"),
+    ([@core.Min(25), @core.Min(25)], "[(0,50),(50,100)]", "Center"),
+    ([@core.Min(25), @core.Min(25)], "[(0,50),(50,100)]", "End"),
+    ([@core.Min(25), @core.Min(25)], "[(0,50),(50,100)]", "SpaceBetween"),
+    ([@core.Min(25), @core.Min(25)], "[(0,50),(50,100)]", "SpaceEvenly"),
+    ([@core.Min(25), @core.Min(25)], "[(0,50),(50,100)]", "SpaceAround"),
+    ([@core.Max(25), @core.Max(25)], "[(0,25),(25,100)]", "Legacy"),
+    ([@core.Max(25), @core.Max(25)], "[(0,25),(25,50)]", "Start"),
+    ([@core.Max(25), @core.Max(25)], "[(25,50),(50,75)]", "Center"),
+    ([@core.Max(25), @core.Max(25)], "[(50,75),(75,100)]", "End"),
+    ([@core.Max(25), @core.Max(25)], "[(0,25),(75,100)]", "SpaceBetween"),
+    ([@core.Max(25), @core.Max(25)], "[(17,42),(58,83)]", "SpaceEvenly"),
+    ([@core.Max(25), @core.Max(25)], "[(13,38),(63,88)]", "SpaceAround"),
+    (
+      [@core.Length(25), @core.Length(25), @core.Length(25)],
+      "[(0,25),(38,63),(75,100)]",
+      "SpaceBetween",
+    ),
+    ([@core.Length(50)], "[(0,100)]", "Legacy"),
+    ([@core.Length(50)], "[(0,50)]", "Start"),
+    ([@core.Length(50)], "[(50,100)]", "End"),
+    ([@core.Length(50)], "[(25,75)]", "Center"),
+    ([@core.Length(50)], "[(0,100)]", "SpaceBetween"),
+    ([@core.Length(50)], "[(25,75)]", "SpaceEvenly"),
+    ([@core.Length(50)], "[(25,75)]", "SpaceAround"),
+  ]
+  for case in cases {
+    check_ranges(100, case.0, flex_of(case.2), None, case.1)
+  }
+}
+
+///|
+/// 上游 flex_overlap 参数矩阵（8 case）喵。
+test "layout flex_overlap" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(20,20),(40,20)]",
+      "Start",
+      0,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(19,20),(38,20)]",
+      "Start",
+      -1,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(21,20),(40,20),(59,20)]",
+      "Center",
+      -1,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(42,20),(61,20),(80,20)]",
+      "End",
+      -1,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(19,20),(38,62)]",
+      "Legacy",
+      -1,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(40,20),(80,20)]",
+      "SpaceBetween",
+      -1,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(10,20),(40,20),(70,20)]",
+      "SpaceEvenly",
+      -1,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(7,20),(40,20),(73,20)]",
+      "SpaceAround",
+      -1,
+    ),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 flex_spacing 参数矩阵（8 case）喵。
+test "layout flex_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(20,20),(40,20)]",
+      "Start",
+      0,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(22,20),(44,20)]",
+      "Start",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(18,20),(40,20),(62,20)]",
+      "Center",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(36,20),(58,20),(80,20)]",
+      "End",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(22,20),(44,56)]",
+      "Legacy",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(40,20),(80,20)]",
+      "SpaceBetween",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(10,20),(40,20),(70,20)]",
+      "SpaceEvenly",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(7,20),(40,20),(73,20)]",
+      "SpaceAround",
+      2,
+    ),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 constraint_specification_tests_for_priority 参数矩阵（17 case）喵。
+test "layout constraint_specification_tests_for_priority" {
+  let cases : Array[(Array[@core.Constraint], String)] = [
+    ([@core.Length(25), @core.Length(25)], "[(0,25),(25,75)]"),
+    ([@core.Length(25), @core.Percentage(25)], "[(0,25),(25,75)]"),
+    ([@core.Percentage(25), @core.Length(25)], "[(0,75),(75,25)]"),
+    ([@core.Min(25), @core.Percentage(25)], "[(0,75),(75,25)]"),
+    ([@core.Percentage(25), @core.Min(25)], "[(0,25),(25,75)]"),
+    ([@core.Min(25), @core.Percentage(100)], "[(0,25),(25,75)]"),
+    ([@core.Percentage(100), @core.Min(25)], "[(0,75),(75,25)]"),
+    ([@core.Max(75), @core.Percentage(75)], "[(0,25),(25,75)]"),
+    ([@core.Percentage(75), @core.Max(75)], "[(0,75),(75,25)]"),
+    ([@core.Max(25), @core.Percentage(25)], "[(0,25),(25,75)]"),
+    ([@core.Percentage(25), @core.Max(25)], "[(0,75),(75,25)]"),
+    ([@core.Length(25), @core.Ratio(1, 4)], "[(0,25),(25,75)]"),
+    ([@core.Ratio(1, 4), @core.Length(25)], "[(0,75),(75,25)]"),
+    ([@core.Percentage(25), @core.Ratio(1, 4)], "[(0,25),(25,75)]"),
+    ([@core.Ratio(1, 4), @core.Percentage(25)], "[(0,75),(75,25)]"),
+    ([@core.Ratio(1, 4), @core.Fill(25)], "[(0,25),(25,75)]"),
+    ([@core.Fill(25), @core.Ratio(1, 4)], "[(0,75),(75,25)]"),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of("Legacy"), None, case.1)
+  }
+}
+
+///|
+/// 上游 constraint_specification_tests_for_priority_with_spacing 参数矩阵（7 case）喵。
+test "layout constraint_specification_tests_for_priority_with_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(20,20),(40,20)]",
+      "Start",
+      0,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(18,20),(40,20),(62,20)]",
+      "Center",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(36,20),(58,20),(80,20)]",
+      "End",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(22,20),(44,56)]",
+      "Legacy",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(0,20),(22,20),(44,56)]",
+      "Legacy",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(10,20),(40,20),(70,20)]",
+      "SpaceEvenly",
+      2,
+    ),
+    (
+      [@core.Length(20), @core.Length(20), @core.Length(20)],
+      "[(7,20),(40,20),(73,20)]",
+      "SpaceAround",
+      2,
+    ),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 fill_vs_flex 参数矩阵（11 case）喵。
+test "layout fill_vs_flex" {
+  let cases : Array[(Array[@core.Constraint], String, String)] = [
+    (
+      [@core.Length(10), @core.Fill(1), @core.Length(10)],
+      "[(0,10),(10,80),(90,10)]",
+      "Legacy",
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(0,10),(90,10)]", "SpaceBetween"),
+    (
+      [
+        @core.Fill(1),
+        @core.Length(10),
+        @core.Fill(1),
+        @core.Length(10),
+        @core.Fill(1),
+      ],
+      "[(0,27),(27,10),(37,26),(63,10),(73,27)]",
+      "Legacy",
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(27,10),(63,10)]", "SpaceEvenly"),
+    (
+      [@core.Length(10), @core.Length(10), @core.Fill(1)],
+      "[(0,10),(10,10),(20,80)]",
+      "Legacy",
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(0,10),(10,10)]", "Start"),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Length(10)],
+      "[(0,80),(80,10),(90,10)]",
+      "Legacy",
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(80,10),(90,10)]", "End"),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Length(10), @core.Fill(1)],
+      "[(0,40),(40,10),(50,10),(60,40)]",
+      "Legacy",
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(40,10),(50,10)]", "Center"),
+    ([@core.Length(10), @core.Length(10)], "[(20,10),(70,10)]", "SpaceAround"),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), None, case.1)
+  }
+}
+
+///|
+/// 上游 fill_spacing 参数矩阵（28 case）喵。
+test "layout fill_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "Legacy", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceEvenly", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceBetween", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceAround", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "Start", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "Center", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "End", 0),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,45),(55,45)]", "Legacy", 10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,45),(55,45)]", "Start", 10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,45),(55,45)]", "Center", 10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,45),(55,45)]", "End", 10),
+    ([@core.Fill(1), @core.Fill(1)], "[(10,35),(55,35)]", "SpaceEvenly", 10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,45),(55,45)]", "SpaceBetween", 10),
+    ([@core.Fill(1), @core.Fill(1)], "[(10,30),(60,30)]", "SpaceAround", 10),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "Legacy",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceEvenly",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceBetween",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceAround",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "Start",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "Center",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "End",
+      0,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,35),(45,10),(65,35)]",
+      "Legacy",
+      10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,35),(45,10),(65,35)]",
+      "Start",
+      10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,35),(45,10),(65,35)]",
+      "Center",
+      10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,35),(45,10),(65,35)]",
+      "End",
+      10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(10,25),(45,10),(65,25)]",
+      "SpaceEvenly",
+      10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,35),(45,10),(65,35)]",
+      "SpaceBetween",
+      10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(10,15),(45,10),(75,15)]",
+      "SpaceAround",
+      10,
+    ),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 fill_overlap 参数矩阵（28 case）喵。
+test "layout fill_overlap" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    ([@core.Fill(1), @core.Fill(1)], "[(0,55),(45,55)]", "Legacy", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceAround", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,55),(45,55)]", "SpaceBetween", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,55),(45,55)]", "Start", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,55),(45,55)]", "Center", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,55),(45,55)]", "End", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceEvenly", -10),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,51),(50,50)]", "Legacy", -1),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,51),(50,50)]", "Start", -1),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,51),(50,50)]", "Center", -1),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,51),(50,50)]", "End", -1),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceAround", -1),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,51),(50,50)]", "SpaceBetween", -1),
+    ([@core.Fill(1), @core.Fill(1)], "[(0,50),(50,50)]", "SpaceEvenly", -1),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,55),(45,10),(45,55)]",
+      "Legacy",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceAround",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,55),(45,10),(45,55)]",
+      "SpaceBetween",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,55),(45,10),(45,55)]",
+      "Start",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,55),(45,10),(45,55)]",
+      "Center",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,55),(45,10),(45,55)]",
+      "End",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceEvenly",
+      -10,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,46),(45,10),(54,46)]",
+      "Legacy",
+      -1,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,46),(45,10),(54,46)]",
+      "Start",
+      -1,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,46),(45,10),(54,46)]",
+      "Center",
+      -1,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,46),(45,10),(54,46)]",
+      "End",
+      -1,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceAround",
+      -1,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,46),(45,10),(54,46)]",
+      "SpaceBetween",
+      -1,
+    ),
+    (
+      [@core.Fill(1), @core.Length(10), @core.Fill(1)],
+      "[(0,45),(45,10),(55,45)]",
+      "SpaceEvenly",
+      -1,
+    ),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 flex_spacing_lower_priority_than_user_spacing 参数矩阵（1 case）喵。
+test "layout flex_spacing_lower_priority_than_user_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    ([@core.Length(10), @core.Length(10)], "[(0,10),(90,10)]", "Center", 80),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 split_with_spacers_no_spacing 参数矩阵（7 case）喵。
+test "layout split_with_spacers_no_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String)] = [
+    ([@core.Length(10), @core.Length(10)], "[(0,0),(10,0),(100,0)]", "Legacy"),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(10,80),(100,0)]",
+      "SpaceBetween",
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,27),(37,26),(73,27)]",
+      "SpaceEvenly",
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,20),(30,40),(80,20)]",
+      "SpaceAround",
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(0,0),(10,0),(20,80)]", "Start"),
+    ([@core.Length(10), @core.Length(10)], "[(0,40),(50,0),(60,40)]", "Center"),
+    ([@core.Length(10), @core.Length(10)], "[(0,80),(90,0),(100,0)]", "End"),
+  ]
+  for case in cases {
+    check_spacers(100, case.0, flex_of(case.2), None, case.1)
+  }
+}
+
+///|
+/// 上游 split_with_spacers_and_spacing 参数矩阵（7 case）喵。
+test "layout split_with_spacers_and_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(10,5),(100,0)]",
+      "Legacy",
+      5,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(10,80),(100,0)]",
+      "SpaceBetween",
+      5,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,27),(37,26),(73,27)]",
+      "SpaceEvenly",
+      5,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,20),(30,40),(80,20)]",
+      "SpaceAround",
+      5,
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(0,0),(10,5),(25,75)]", "Start", 5),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,38),(48,5),(63,37)]",
+      "Center",
+      5,
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(0,75),(85,5),(100,0)]", "End", 5),
+  ]
+  for case in cases {
+    check_spacers(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 split_with_spacers_and_overlap 参数矩阵（7 case）喵。
+test "layout split_with_spacers_and_overlap" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(10,0),(100,0)]",
+      "Legacy",
+      -1,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(10,80),(100,0)]",
+      "SpaceBetween",
+      -1,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,27),(37,26),(73,27)]",
+      "SpaceEvenly",
+      -1,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,20),(30,40),(80,20)]",
+      "SpaceAround",
+      -1,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(10,0),(19,81)]",
+      "Start",
+      -1,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,41),(51,0),(60,40)]",
+      "Center",
+      -1,
+    ),
+    ([@core.Length(10), @core.Length(10)], "[(0,81),(91,0),(100,0)]", "End", -1),
+  ]
+  for case in cases {
+    check_spacers(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 split_with_spacers_and_too_much_spacing 参数矩阵（7 case）喵。
+test "layout split_with_spacers_and_too_much_spacing" {
+  let cases : Array[(Array[@core.Constraint], String, String, Int)] = [
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(0,100),(100,0)]",
+      "Legacy",
+      200,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(0,100),(100,0)]",
+      "SpaceBetween",
+      200,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,33),(33,34),(67,33)]",
+      "SpaceEvenly",
+      200,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,25),(25,50),(75,25)]",
+      "SpaceAround",
+      200,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(0,100),(100,0)]",
+      "Start",
+      200,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(0,100),(100,0)]",
+      "Center",
+      200,
+    ),
+    (
+      [@core.Length(10), @core.Length(10)],
+      "[(0,0),(0,100),(100,0)]",
+      "End",
+      200,
+    ),
+  ]
+  for case in cases {
+    check_spacers(100, case.0, flex_of(case.2), Some(case.3), case.1)
+  }
+}
+
+///|
+/// 上游 legacy_vs_default 参数矩阵（6 case）喵。
+test "layout legacy_vs_default" {
+  let cases : Array[(Array[@core.Constraint], String, String)] = [
+    ([@core.Min(10), @core.Length(10)], "[(0,90),(90,10)]", "Legacy"),
+    ([@core.Min(10), @core.Length(10)], "[(0,90),(90,10)]", "Start"),
+    ([@core.Min(10), @core.Percentage(100)], "[(0,10),(10,90)]", "Legacy"),
+    ([@core.Min(10), @core.Percentage(100)], "[(0,10),(10,90)]", "Start"),
+    ([@core.Percentage(50), @core.Percentage(50)], "[(0,50),(50,50)]", "Legacy"),
+    ([@core.Percentage(50), @core.Percentage(50)], "[(0,50),(50,50)]", "Start"),
+  ]
+  for case in cases {
+    check_pairs(100, case.0, flex_of(case.2), None, case.1)
+  }
+}
