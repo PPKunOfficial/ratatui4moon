@@ -70,7 +70,7 @@ bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离�
 时 fork 的爆炸半径收敛在 backend 包内。代价：传递依赖 `moonbitlang/async`。
 
 > **TtyBackend 落位**：`backend/tty_backend.mbt` 以 **同步 ANSI 直写桥**
-> 实现 `Backend`（`frame_to_ansi` + `moonbitlang_async_write` 直写 fd 1
+> 实现 `Backend`（`frame_to_ansi` + `@utf8.encode` + `moonbitlang_async_write` 直写 fd 1
 >（Unix）/`GetStdHandle`（Windows），`Tty::window_size` 同步 `ioctl` 失败
 > `raise`（无 80×24 估算），`Tty::enter_raw_mode` 管理 raw 状态），`Backend`
 > 保持同步 trait，渲染不经 `Tty::write` 的 async 锁，

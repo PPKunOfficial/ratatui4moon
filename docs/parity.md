@@ -74,7 +74,7 @@
 ## 推进顺序（依赖驱动）
 
 > 9'. TtyBackend 落位结论（本轮）：`moonbit-community/tty@0.3.0` 已接，
-> 采用 **同步 ANSI 直写桥**（`Backend` 保持同步，`frame_to_ansi` + `moonbitlang_async_write` 直写 fd 1（Unix）/`GetStdHandle`（Windows），`window_size` 同步 `ioctl` 失败 `raise`（无 80×24 估算），`Tty::write` 的 async 路径仅用于输入查询，渲染不经异步锁），`TtyBackend::new() -> TtyBackend raise` 进入 raw mode，`draw([])` 空内容在 `moon test` 无污染，770 测全绿喵。
+> 采用 **同步 ANSI 直写桥**（`Backend` 保持同步，`frame_to_ansi` + `@utf8.encode` + `moonbitlang_async_write` 直写 fd 1（Unix）/`GetStdHandle`（Windows），`window_size` 同步 `ioctl` 失败 `raise`（无 80×24 估算），`Tty::write` 的 async 路径仅用于输入查询，渲染不经异步锁），`TtyBackend::new() -> TtyBackend raise` 进入 raw mode，`draw([])` 空内容在 `moon test` 无污染，770 测全绿喵。
 
 1. ✅ 文本基元（Span/Line/Alignment）→ Block 容器
 2. ✅ `Text` 容器 → `symbols/merge` + `merge_borders` → stylize 速记 + Color FromStr

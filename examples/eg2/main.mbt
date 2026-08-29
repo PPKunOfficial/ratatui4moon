@@ -62,7 +62,7 @@ fn run_test_backend() -> Unit {
   println(backend.to_display())
   println("=== last_ansi len=\{backend.last_ansi().length()} ===")
   let ansi = backend.last_ansi()
-  let preview = if ansi.length() > 300 { ansi[0:300].to_string() } else { ansi }
+  let preview = if ansi.length() > 300 { ansi[0:300].to_owned() } else { ansi }
   println(preview.replace_all(old="\u{1b}", new="\\x1b"))
 }
 

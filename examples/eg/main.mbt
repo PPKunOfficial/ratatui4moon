@@ -21,12 +21,7 @@ async fn main {
     run_with_test_backend()
     return
   }
-  let backend = @backend.TtyBackend::from_tty(tty) catch {
-    e => {
-      println("TtyBackend::from_tty 失败: \{e}")
-      return
-    }
-  }
+  let backend = @backend.TtyBackend::from_tty(tty)
   let terminal = @terminal.Terminal::new(backend) catch {
     e => {
       println("Terminal::new 失败: \{e}")
@@ -56,7 +51,7 @@ fn run_with_test_backend() -> Unit {
   }
   let ansi = backend.last_ansi()
   println("[非 TTY 回退] TestBackend 80x24，ANSI 长度=\{ansi.length()}")
-  let preview = if ansi.length() > 120 { ansi[0:120].to_string() } else { ansi }
+  let preview = if ansi.length() > 120 { ansi[0:120].to_owned() } else { ansi }
   let visible = preview.replace_all(old="\u{1b}", new="\\x1b")
   println(visible)
 }

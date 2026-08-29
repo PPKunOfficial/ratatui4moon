@@ -135,7 +135,7 @@ pub fn TestBackend::assert_cursor_position(
   self : TestBackend,
   position : @core.Position,
 ) -> Unit raise {
-  @debug.assert_eq(self.get_cursor_position(), position)
+  @debug.assert_eq(Backend::get_cursor_position(self), position)
 }
 
 ///|
@@ -337,7 +337,7 @@ pub impl Backend for TestBackend with fn append_lines(
   self : TestBackend,
   line_count : Int,
 ) -> Unit raise {
-  let position = self.get_cursor_position()
+  let position = Backend::get_cursor_position(self)
   let cur_x = position.x
   let cur_y = position.y
   let width = self.buffer.area.width
@@ -360,7 +360,10 @@ pub impl Backend for TestBackend with fn append_lines(
     }
   }
   let new_cursor_y = (cur_y + line_count).min(max_y)
-  self.set_cursor_position(@core.Position::new(new_cursor_x, new_cursor_y))
+  Backend::set_cursor_position(
+    self,
+    @core.Position::new(new_cursor_x, new_cursor_y),
+  )
 }
 
 ///|

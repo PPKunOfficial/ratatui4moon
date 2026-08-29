@@ -61,7 +61,7 @@ pub(all) struct Tag {
 priv enum OptimizeTarget {
   Objective
   Artificial
-} derive(Eq, Debug)
+}
 
 ///|
 pub(all) struct EditInfo {

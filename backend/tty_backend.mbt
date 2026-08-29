@@ -48,9 +48,8 @@ pub fn TtyBackend::close(self : TtyBackend) -> Unit {
 /// 同步 ANSI 直写辅助：`frame_to_ansi` 已含光标定位与 SGR 增量，
 /// 直接以同步 `write` 落盘，避免 `Tty::write` 的异步锁喵。
 ///
-/// 当前以 `extern "C" write` 直写 fd 1（Unix）/ `GetStdHandle`（Windows
-/// 由 `Tty` 侧已启用 VT），`moon check` 阶段为 no-op 桩，`native` 真机
-/// 由 `c_write` 承载喵。
+/// 复用 `moonbitlang/async` 导出的 `moonbitlang_async_write` 直写 fd 1（Unix）/
+/// `GetStdHandle`（Windows），以 `@utf8.encode` 保证 UTF-8 编码无乱码喵。
 #cfg(not(platform="windows"))
 #borrow(buf)
 extern "C" fn c_write(fd : Int, buf : Bytes, offset : Int, len : Int) -> Int = "moonbitlang_async_write"
@@ -66,7 +65,7 @@ fn write_ansi_sync(s : String) -> Unit {
   if s == "" {
     return
   }
-  let bytes = s.to_bytes()
+  let bytes = @utf8.encode(s)
   let len = bytes.length()
   if len == 0 {
     return
@@ -94,7 +93,7 @@ fn write_ansi_sync(s : String) -> Unit {
   if s == "" {
     return
   }
-  let bytes = s.to_bytes()
+  let bytes = @utf8.encode(s)
   let len = bytes.length()
   if len == 0 {
     return
