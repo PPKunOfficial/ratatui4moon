@@ -45,7 +45,7 @@ Gauge/LineGauge（unicode 半格进度条）、Sparkline（九级波形图）、
 Table（全族）、Canvas（Grid 三形态/Cohen–Sutherland 裁剪/五 Shape/
 world 地图）、Chart（轴/标签/图例八方位于一体/四图型）的单元测试与集成
 黄金用例逐条复刻自 ratatui-v0.30.2 并 TDD 转绿；symbols line/block/bar/
-shade/scrollbar/marker/braille/half_block/pixel 符号表全量入库；`terminal/`（Terminal 双缓冲/Frame/Viewport/draw 管线/autoresize）；黄金快照
-管线已立。
+shade/scrollbar/marker/braille/half_block/pixel 符号表全量入库；`terminal/`（Terminal 双缓冲/Frame/Viewport/draw 管线/autoresize）、
+RatatuiLogo/RatatuiMascot 徽标组件；黄金快照管线已立。
 设计全文见 [docs/design.md](docs/design.md)，对位进度见
 [docs/parity.md](docs/parity.md)，仓库条约见 [AGENTS.md](AGENTS.md)。

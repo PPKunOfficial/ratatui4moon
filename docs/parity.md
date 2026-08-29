@@ -67,7 +67,8 @@
 | `clear.rs` | `widgets/clear.mbt` | ✅ | 三条内联测试全量复刻（区域复位/部分越界/完全越界） |
 | `fill.rs` | `widgets/fill.mbt` | ✅ | 七条内联测试全量复刻（符号样式/越界裁剪/非零原点/替换符号）；Cow 双形态按 String 合并登记 |
 | `calendar.rs` | ⬜ | 月历（time 依赖需评估） |
-| `logo.rs` / `mascot.rs` | ⬜ | 徽标绘制 |
+| `mascot.rs` | `widgets/mascot.mbt` + `mascot_data.mbt` | ✅ | RatatuiMascot/MascotEyeColor + 32x16 半块像素画布（数据机械搬运）+ 逐对行合成渲染 + 5 条上游测试全量复刻 |
+| `logo.rs` | `widgets/logo.mbt` + `logo_data.mbt` | ✅ | RatatuiLogo/RatatuiLogoSize 两档字样（数据机械搬运）+ 8 条上游测试全量复刻（构造/缺省/快照/极小零尺寸缓冲） |
 
 ## 推进顺序（依赖驱动）
 

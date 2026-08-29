@@ -9,6 +9,8 @@ import {
 // Values
 pub fn dimmed() -> Dimmed
 
+pub let mascot_canvas_rows : Array[String]
+
 pub fn tabs_default_highlight_style() -> @core.Style
 
 pub let world_high_resolution : Array[(Double, Double)]
@@ -482,6 +484,12 @@ pub fn MapResolution::default() -> Self
 pub fn MapResolution::from_str(String) -> Self?
 pub fn MapResolution::name(Self) -> String
 
+pub(all) enum MascotEyeColor {
+  Default
+  Red
+} derive(Eq, @debug.Debug)
+pub fn MascotEyeColor::default() -> Self
+
 pub(all) struct Padding {
   left : Int
   right : Int
@@ -541,6 +549,39 @@ pub(all) struct Points {
 } derive(Eq, @debug.Debug)
 pub fn Points::new(Array[(Double, Double)], @core.Color) -> Self
 pub impl Shape for Points
+
+pub(all) struct RatatuiLogo {
+  size : RatatuiLogoSize
+} derive(Eq, @debug.Debug)
+pub fn RatatuiLogo::default() -> Self
+pub fn RatatuiLogo::new(RatatuiLogoSize) -> Self
+pub fn RatatuiLogo::size(Self, RatatuiLogoSize) -> Self
+pub fn RatatuiLogo::small() -> Self
+pub fn RatatuiLogo::tiny() -> Self
+pub impl @core.Widget for RatatuiLogo
+
+pub(all) enum RatatuiLogoSize {
+  Tiny
+  Small
+} derive(Eq, @debug.Debug)
+pub fn RatatuiLogoSize::default() -> Self
+pub fn RatatuiLogoSize::small_str() -> String
+pub fn RatatuiLogoSize::tiny_str() -> String
+
+pub(all) struct RatatuiMascot {
+  eye_state : MascotEyeColor
+  rat_color : @core.Color
+  rat_eye_color : @core.Color
+  rat_eye_blink : @core.Color
+  hat_color : @core.Color
+  term_color : @core.Color
+  term_border_color : @core.Color
+  term_cursor_color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn RatatuiMascot::default() -> Self
+pub fn RatatuiMascot::new() -> Self
+pub fn RatatuiMascot::set_eye(Self, MascotEyeColor) -> Self
+pub impl @core.Widget for RatatuiMascot
 
 pub(all) enum RenderDirection {
   LeftToRight
