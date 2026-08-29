@@ -1,0 +1,111 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "nonoka/ratatui4moon/unicode"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub let emoji_modifier_leaf_0 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_1 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_2 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_3 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_4 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_5 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_6 : Array[(Int, Int)]
+
+pub let emoji_modifier_leaf_7 : Array[(Int, Int)]
+
+pub let emoji_presentation_leaves : Array[Array[Int]]
+
+pub let grapheme_cat_table : Array[(Int, Int, GraphemeCat)]
+
+pub fn grapheme_category(Int) -> GraphemeCat
+
+pub fn grapheme_ranges(String) -> Array[(Int, Int)]
+
+pub fn graphemes(String) -> Array[String]
+
+pub fn incb_extend(Int) -> Bool
+
+pub let incb_extend_table : Array[(Int, Int)]
+
+pub let incb_linkers : Array[Int]
+
+pub fn is_incb_linker(Int) -> Bool
+
+pub fn lookup_width(Int) -> (Int, WidthInfo)
+
+pub let non_transparent_zero_widths : Array[(Int, Int)]
+
+pub fn single_char_width(Int) -> Int?
+
+pub fn str_width(String) -> Int
+
+pub let text_presentation_leaf_0 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_1 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_2 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_3 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_4 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_5 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_6 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_7 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_8 : Array[(Int, Int)]
+
+pub let text_presentation_leaf_9 : Array[(Int, Int)]
+
+pub let unicode_major : Int
+
+pub let unicode_minor : Int
+
+pub fn width_in_str(Int, WidthInfo) -> (Int, WidthInfo)
+
+pub let width_leaves : Array[Array[Int]]
+
+pub let width_middle : Array[Array[Int]]
+
+pub let width_root : Array[Int]
+
+// Errors
+
+// Types and methods
+pub(all) enum GraphemeCat {
+  GC_Any
+  GC_CR
+  GC_Control
+  GC_Extend
+  GC_Extended_Pictographic
+  GC_InCB_Consonant
+  GC_L
+  GC_LF
+  GC_LV
+  GC_LVT
+  GC_Prepend
+  GC_Regional_Indicator
+  GC_SpacingMark
+  GC_T
+  GC_V
+  GC_ZWJ
+} derive(Eq, @debug.Debug)
+
+pub(all) struct WidthInfo {
+  bits : Int
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits

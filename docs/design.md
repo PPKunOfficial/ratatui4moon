@@ -100,8 +100,12 @@ widgets/            无状态 widget（Block/Paragraph/Table/Canvas/Chart…）
    ▼
 core/               Rect · Position/Size/Margin/Offset · Style/Modifier/Color ·
                     Cell · Buffer · diff · Span/Line/Alignment/StyledGrapheme ·
-                    BorderSet · 近似宽度表  ← 依赖树叶，零 I/O
+                    BorderSet · 宽度 API  ← 零 I/O，宽度实现委托 unicode/
    ▲ 只依赖 core
+   │
+unicode/            依赖树叶：unicode-width 0.2.2 全量宽度表 + 状态机、
+                    unicode-segmentation 1.13.3 图形簇细分（纯数据+纯函数）
+   ▲ 只依赖 unicode（向下无环）
    │
 backend/            Backend trait（完整契约）· TestBackend · ANSI 引擎
    │ （未来）TtyBackend ← moonbit-community/tty ← moonbitlang/async
@@ -113,7 +117,8 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 
 规则：
 
-- `core` 禁止 import 本 module 任何包；`widgets` 禁止依赖 `backend`
+- `core` 只允许 import `unicode/`（宽度表与图形簇基础数据包，
+  依赖树叶，零 I/O）；`widgets` 禁止依赖 `backend`
   （widget 的输出是 Buffer，不是 ANSI）；
 - 差分方向对位上游 `BufferDiff`：`prev.diff(next)` 产出把 prev 更新为
   next 的最小变化序列；x/y/width 不一致为程序员错误（`guard!`），
@@ -137,20 +142,24 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 - 测试零真实终端、零网络、零 I/O，`moon test` 全绿方可提交；
 - CI 目标：Linux + Windows 双平台（v0.2 前）。
 
-## 5. unicode 计划
+## 5. unicode 计划（v0.2 已落地 ✅）
 
 CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
-以近似区间法供宽（覆盖 CJK/全角/谚文/常见 Emoji 区间，控制与零宽
-字符宽 0，换行符按上游 str 宽度语义记 1），已支撑 `set_stringn`
-列推进、差分吞列与 `Span`/`Line` 的对齐渲染与截断；升级路径：
+以近似区间法供宽；v0.2 已按本节计划升级：
 
-1. 迁入 `unicode/` 包并保留现有 API 语义（`char_display_width` /
-   `symbol_width` / `truncate_start` 等）；
-2. 数据表从 Rust `unicode-width` crate 机械搬运（east-asian width 全表 +
-   零宽组合符区间 + VS16 emoji 序列），替换近似区间，并补齐依赖
-   真实宽度的上游用例（emoji/ZWJ 图形簇/🇺🇸 regional indicator）；
-3. Grapheme 簇细分（`unicode-segmentation` 对位）随全量表一并评估；
-4. 折行引擎参考 ratatui `paragraph + reflow` 的行为规格翻译测试。
+1. ✅ `unicode/` 包落位（依赖树叶，零 I/O）；`core/width.mbt` 保留
+   API 语义（`char_display_width`/`symbol_width`/`truncate_start`），
+   实现委托 `unicode/`；
+2. ✅ 数据表从 `unicode-width 0.2.2`（Unicode 17.0）机械搬运：三层
+   查找表（root/middle/leaves，非 CJK 缺省构建）+ emoji 呈现/文本
+   呈现/修饰符叶子表 + 零宽区间表；宽度状态机（WidthInfo u16 位态）
+   纯 MoonBit 移植，`str_width` 自右向左折叠，上游 Rust 实测行为
+   交叉验证一致；
+3. ✅ Grapheme 簇细分：`unicode-segmentation 1.13.3` 的类别区间表
+   （1618 行）与 GB3–GB999 边界规则移植，`set_stringn`/
+   `styled_graphemes` 按扩展图形簇切分，emoji/VS16/ZWJ 用例全绿；
+4. ✅ 折行引擎已按 `paragraph + reflow` 行为规格翻译测试（reflow
+   全量复刻在先），宽度升级后无回归。
 
 ## 6. 路线图
 

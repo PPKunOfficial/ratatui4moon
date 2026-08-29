@@ -1,0 +1,5 @@
+// unicode 是依赖树叶子：全量宽度表与图形簇细分，纯数据 + 纯函数，
+// 零外部依赖、零 I/O 喵。
+pkgtype(kind: "library")
+
+supported_targets = "+native"

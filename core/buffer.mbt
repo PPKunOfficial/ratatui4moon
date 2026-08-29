@@ -162,11 +162,15 @@ pub fn Buffer::set_stringn(
   if remaining > max_width {
     remaining = max_width
   }
-  for ch in text {
-    if ch.to_int() < 0x20 || (ch.to_int() >= 0x7F && ch.to_int() < 0xA0) {
+  for grapheme in @unicode.graphemes(text) {
+    // 控制簇过滤（上游 `!symbol.contains(char::is_control)` 以
+    // 首码点控制判定等价承载）喵。
+    let head = grapheme.iter().next()
+    if head is Some(ch) &&
+      (ch.to_int() < 0x20 || (ch.to_int() >= 0x7F && ch.to_int() < 0xA0)) {
       continue
     }
-    let width = char_display_width(ch)
+    let width = symbol_width(grapheme)
     if width == 0 {
       continue
     }
@@ -176,7 +180,7 @@ pub fn Buffer::set_stringn(
     remaining -= width
     match self.mut_cell(x, y) {
       Some(cell) => {
-        cell.set_symbol(ch.to_string())
+        cell.set_symbol(grapheme)
         cell.set_style(style)
       }
       None => ()

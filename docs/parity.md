@@ -19,7 +19,7 @@
 | `layout/layout.rs` | `layout/` 包 | ✅ | kasuari 一次性求解子集（`Solver::new → add_constraint → fetch_changes`）+ Layout 约束体系/strengths/Flex/Spacing 全落；上游 split 全部 22 组参数矩阵（679 case，含 letters 391）+ docstring 示例 + edge_cases + 不变量测试全量复刻；`skip(1).tuples()` 非重叠单调对（overlap 通道）等语义差异经 kasuari 参照实测校准 |
 | `buffer/buffer.rs` | `core/buffer.mbt` | ✅ | `with_lines` 的 Into 泛型形态（有 `with_lines_of`）；Debug 全功能 |
 | `buffer/cell.rs` | `core/cell.mbt` | ✅ | — |
-| `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ◐ | 宽度表为近似区间法（unicode/ 全量表待迁） |
+| `buffer/cell_width.rs` | `Cell::cell_width` + `core/width.mbt` | ✅ | unicode-width 0.2.2（Unicode 17.0）全量三层查找表机械搬运至 `unicode/` 包，状态机（VS16/ZWJ emoji 序列/区域指示符/连字组合）纯 MoonBit 移植；`set_stringn`/`styled_graphemes` 按扩展图形簇切分；上游 emoji 测试（renders_emoji×4/diff 尾列两条）全量补齐 |
 | `buffer/diff.rs` | `Buffer::diff` | ✅ | `BufferDiff` 独立迭代器形态（行为等价 Array 输出） |
 | `buffer/assert.rs` | `core/buffer_assert.mbt` | ✅ | `assert_buffer_eq` 宏以 raise 函数对位（MoonBit 无宏，登记）；3 条测试复刻（should_panic 以 try/catch 承载） |
 | `style.rs`（Style/Modifier） | `core/style.mbt` | ✅ | stylize 速记糖（见 stylize 行） |
@@ -30,7 +30,7 @@
 | `text/span.rs` / `line.rs` | `core/text.mbt` | ✅ | Into/Cow/Collect 构造糖（Rust 语法层） |
 | `text/text.rs` | `core/text_container.mbt` | ✅ | Into/Iterator 语法糖 |
 | `text/masked.rs` | `core/masked.mbt` | ✅ | — |
-| `text/grapheme.rs` | `core/grapheme.mbt` | ◐ | 图形簇细分（逐码点近似，unicode/ 落位后升级） |
+| `text/grapheme.rs` | `core/grapheme.mbt` | ✅ | StyledGrapheme 全量（new/is_whitespace/styled 四测）；图形簇细分随 `unicode/` 落位（unicode-segmentation 1.13.3 的 GB3–GB999 状态机移植，`Span::styled_graphemes` 以扩展图形簇切分） |
 | `symbols/border.rs` | `core/border.mbt` | ✅ | 十六集合全量（含 McGugan ONE_EIGHTH_WIDE/TALL、PROPORTIONAL_WIDE/TALL、FULL/EMPTY）+ 上游 render 快照测试逐条复刻 |
 | `symbols/merge.rs` | `core/merge.mbt` | ✅ | — |
 | `symbols/line.rs` | `core/line_symbol.mbt` | ✅ | 49 常量 + `LineSet` 十集合全量 |

@@ -19,8 +19,12 @@
 
 ## 目录与放置约定 (Directory Contract)
 
-- `core/`：依赖树叶子。Rect/Style/Cell/Buffer/差分，纯数据结构 + 纯函数，
-  **零依赖、零 I/O**，禁止 import 本 module 其他包喵。
+- `core/`：Rect/Style/Cell/Buffer/差分，纯数据结构 + 纯函数，零 I/O；
+  除 `unicode/` 基础数据包（宽度表与图形簇，同为依赖树叶）外禁止
+  import 本 module 其他包喵。
+- `unicode/`：依赖树叶子。unicode-width/unicode-segmentation 的
+  全量表与算法，纯数据 + 纯函数，**零依赖、零 I/O**，禁止 import
+  本 module 任何包喵。
 - `backend/`：`Backend` trait、`TestBackend`、ANSI 发射引擎。只依赖 `core`。
   未来一切平台接触（tty/终端原语）收敛于此喵。
 - `widgets/`：无状态 widget。只依赖 `core`（**不得依赖 backend**，渲染输出

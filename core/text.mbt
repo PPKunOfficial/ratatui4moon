@@ -84,19 +84,21 @@ pub fn Span::to_display(self : Span, limit? : Int) -> String {
 
 ///|
 /// 拆出带样式的字形序列：`base_style` 先 patch 自身样式再逐字形下发；
-/// 控制字符被过滤（上游 `Span::styled_graphemes`）喵。
+/// 控制字符被过滤（上游 `Span::styled_graphemes`）。v0.2 起
+/// 以 `unicode/` 的扩展图形簇切分（VS16/ZWJ emoji 序列成单字形）喵。
 pub fn Span::styled_graphemes(
   self : Span,
   base_style : Style,
 ) -> Array[StyledGrapheme] {
   let style = base_style.patch(self.style)
   let out : Array[StyledGrapheme] = []
-  for ch in self.content {
-    let cp = ch.to_int()
-    if cp < 0x20 || (cp >= 0x7F && cp < 0xA0) {
+  for grapheme in @unicode.graphemes(self.content) {
+    let head = grapheme.iter().next()
+    if head is Some(ch) &&
+      (ch.to_int() < 0x20 || (ch.to_int() >= 0x7F && ch.to_int() < 0xA0)) {
       continue
     }
-    out.push(StyledGrapheme::of(ch.to_string(), style))
+    out.push(StyledGrapheme::of(grapheme, style))
   }
   out
 }

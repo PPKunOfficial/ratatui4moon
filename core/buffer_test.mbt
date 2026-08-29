@@ -3,10 +3,11 @@
 /// `buffer/diff.rs` 的测试清单喵。
 ///
 /// 登记"待复刻"：
-/// - `renders_emoji`×4、`vs16_trailing_cell_unchanged`、
-///   `diff_clears_trailing_cell_for_wide_grapheme`、
-///   `diff_ignores_style_only_changes_in_trailing_cells`：依赖真实
-///   emoji/VS16 宽度语义，随 `unicode/` 全量宽度表落位补齐；
+/// - emoji/VS16/宽图形簇用例（`renders_emoji`×4、
+///   `vs16_trailing_cell_unchanged`、`diff_clears_trailing_cell_for_
+///   wide_grapheme`、`diff_ignores_style_only_changes_in_trailing_
+///   cells`）已随 `unicode/` 全量宽度表落位补齐，见
+///   `buffer_emoji_test.mbt`；
 /// - `pos_of`/`index_of` 越界的 `should_panic` 用例：MoonBit 无
 ///   should_panic 通道，越界以 `guard!` 断言（程序员错误）覆盖。
 
