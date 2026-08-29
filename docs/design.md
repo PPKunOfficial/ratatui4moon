@@ -69,6 +69,13 @@ trait LayoutSolver {  solve(area: Rect, constraints: Array[Constraint]) -> Array
 bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离，tty 停更
 时 fork 的爆炸半径收敛在 backend 包内。代价：传递依赖 `moonbitlang/async`。
 
+> **TtyBackend 落位**：`backend/tty_backend.mbt` 以 **同步 ANSI 直写桥**
+> 实现 `Backend`（`frame_to_ansi` + `moonbitlang_async_write` 直写 fd 1，
+> `Tty::window_size` 同步 `ioctl`，`isatty`/`window_size` 判定非 TTY 回退
+> 80x24，`Tty::enter_raw_mode` 管理 raw 状态），`Backend` 保持同步 trait，
+> 渲染不经 `Tty::write` 的 async 锁，`Terminal::new(&TtyBackend::new())`
+> 即可直驱真机喵。
+
 ### ADR-5 黄金快照为主测试形式
 
 渲染正确性 = 精确 ANSI 字符串断言（`inspect!` 快照）。布局等未来浮点路径
@@ -123,8 +130,8 @@ unicode/            依赖树叶：unicode-width 0.2.2 全量宽度表 + 状态�
                     unicode-segmentation 1.13.3 图形簇细分（纯数据+纯函数）
    ▲ 只依赖 unicode（向下无环）
    │
-backend/            Backend trait（完整契约）· TestBackend · ANSI 引擎
-   │ （未来）TtyBackend ← moonbit-community/tty ← moonbitlang/async
+backend/            Backend trait · TestBackend · TtyBackend(tty@0.3.0 同步桥) · ANSI 引擎
+   │                ← moonbit-community/tty ← moonbitlang/async
    ▼
 terminal/           终端会话层：Terminal 双缓冲 · Frame · Viewport ·
    │ 只依赖 core+backend        draw 管线 · autoresize
@@ -188,7 +195,8 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
   一次性求解子集已落（679 case 全绿 ✅，**Double/f64 精度升级**）；`kasuari/`
   完整求解器 vendored（上游 kasuari 0.4.12 全量 864 行，22 测全绿 ✅）；
   Table/Chart/Canvas 已收官 ✅；`terminal/` 会话层已落 ✅；
-  `TtyBackend` 接入 tty 包（async 适配决策待定）；Linux + Windows CI
+  `backend/TtyBackend` 已接 `tty@0.3.0`（同步桥，`Terminal::new(&TtyBackend::new())` 直驱真机，770 测全绿 ✅）；
+  Linux + Windows CI
 - **v0.3**：单行 Editor（历史、光标）；鼠标；kitty 键盘
   协议增强；IME 摸底（raw mode 下 CJK 输入是已知硬骨头，mizchi 以 cooked
   模式绕行，本库需独立评估方案）

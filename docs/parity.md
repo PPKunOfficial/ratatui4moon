@@ -43,9 +43,9 @@
 | `symbols/braille.rs` | `core/braille_symbol.mbt` | ✅ | 256 项行主序位图表 + 位映射抽检（上游无内联测试，补锚定） |
 | `symbols/half_block.rs` | `core/half_block_symbol.mbt` | ✅ | UPPER/LOWER/FULL 三常量（上游无内联测试，补锚定） |
 | `symbols/pixel.rs` | `core/pixel_symbol.mbt` | ✅ | QUADRANTS/SEXTANTS/OCTANTS 三表 + 端点抽检（上游无内联测试，补锚定） |
-| `terminal/*`（Frame/Buffers/Viewport/Init/Render/Resize/Cursor/Inline） | `terminal/` 包 | ✅ | Terminal/Frame/CompletedFrame/Viewport/TerminalOptions + 双缓冲 flush/swap/clear 四族 + draw 管线 + autoresize/resize（含行内重排）+ 光标状态机 + `insert_before` 族（分块直写/滚动下推/清屏重绘语义，scrolling-regions 为上游 feature 门控路径不复刻并登记）+ 40 条测试复刻（buffers 12/viewport 1/terminal.backend 3/cursor 3/resize 6/init 5/render 6/inline compute+insert_before 8/工程锚定 4 中归并）；待补：init 的 raw-mode 接入（随 TtyBackend） |
+| `terminal/*`（Frame/Buffers/Viewport/Init/Render/Resize/Cursor/Inline） | `terminal/` 包 | ✅ | Terminal/Frame/CompletedFrame/Viewport/TerminalOptions + 双缓冲 flush/swap/clear 四族 + draw 管线 + autoresize/resize（含行内重排）+ 光标状态机 + `insert_before` 族（分块直写/滚动下推/清屏重绘语义，scrolling-regions 为上游 feature 门控路径不复刻并登记）+ 40 条测试复刻（buffers 12/viewport 1/terminal.backend 3/cursor 3/resize 6/init 5/render 6/inline compute+insert_before 8/工程锚定 4 中归并）；`TtyBackend` 已接 `tty@0.3.0`（`Terminal::new(&TtyBackend::new())` 直驱真机，`isatty` 判定避免 CI 污染） |
 | `widgets/widget.rs` / `stateful_widget.rs` | `core/widget.mbt` + `core/stateful_widget.mbt` | ✅ | Widget trait（Span/Line/Text/String/Block/Paragraph 实现）；StatefulWidget 以 Stateful[W,S] 状态打包形式化（MoonBit 无关联类型，所有权偏差登记） |
-| `backend.rs` + `backend/test.rs` | `backend/` 包 | ✅ | Backend trait 完整契约（draw/光标四件/clear 两件/size/window_size/flush/append_lines）+ ClearType/WindowSize + TestBackend 全形态（主/回滚缓冲/光标/append_lines 滚动/缓冲视图），上游 test.rs 测试清单复刻中（ClearType 2 条 + 主体行为测试经 terminal 包 34 条承载）；`last_ansi` 录帧为本库扩展 |
+| `backend.rs` + `backend/test.rs` | `backend/` 包 | ✅ | Backend trait 完整契约（draw/光标四件/clear 两件/size/window_size/flush/append_lines）+ ClearType/WindowSize + TestBackend 全形态（主/回滚缓冲/光标/append_lines 滚动/缓冲视图）+ `TtyBackend`（`backend/tty_backend.mbt`，`tty@0.3.0` 同步 ANSI 直写 + `window_size` 同步 `ioctl`，`enter_raw_mode` 管理，非 TTY 回退 80x24，1 测冒烟）+ 上游 test.rs 测试清单复刻中（ClearType 2 条 + 主体行为测试经 terminal 包 34 条承载）；`last_ansi` 录帧为本库扩展 |
 
 ## ratatui-widgets
 
@@ -73,10 +73,8 @@
 
 ## 推进顺序（依赖驱动）
 
-> 9'. TtyBackend 评估结论（本轮）：`moonbit-community/tty@0.3.0` 可达，
-> 其 `Tty::write_string`/`with_raw_mode` 等为 **async**（moonbitlang/async），
-> 与同步 `Backend` trait 不匹配；接入需先做"Backend 异步化 vs 写线程桥"
-> 的架构决策，故 TtyBackend 缓议，依赖未入库喵。
+> 9'. TtyBackend 落位结论（本轮）：`moonbit-community/tty@0.3.0` 已接，
+> 采用 **同步 ANSI 直写桥**（`Backend` 保持同步，`frame_to_ansi` + `moonbitlang_async_write` 直写 fd 1，`window_size` 同步 `ioctl`，`isatty`/`window_size` 判定非 TTY 回退 80x24 避免 CI 污染；`Tty::write` 的 async 路径仅用于输入查询，渲染不经异步锁），`TtyBackend::new() -> TtyBackend raise` 进入 raw mode，770 测全绿喵。
 
 1. ✅ 文本基元（Span/Line/Alignment）→ Block 容器
 2. ✅ `Text` 容器 → `symbols/merge` + `merge_borders` → stylize 速记 + Color FromStr
@@ -85,9 +83,9 @@
 5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
 6. ✅ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/LineGauge（单测与集成黄金用例全绿）
 7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart + Layout 求解器（ADR-3 kasuari 子集 Double/f64，679 case 全绿）+ `kasuari/` 完整求解器 vendored（22 测全绿）→ Table → Chart（symbols marker/braille/half_block/pixel 前置 + Canvas 全族先行落地）
-8. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
-9. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
-10. Chart/BarChart/Canvas 族（Canvas 已随 Chart 先行收官）
+8. ✅ Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
+9. ✅ 终端会话层（Frame/Buffers）→ `TtyBackend`（`tty@0.3.0` 同步桥，`Terminal::new(&TtyBackend::new())` 直驱真机）
+10. ✅ Chart/BarChart/Canvas 族（Canvas 已随 Chart 先行收官）
 
 ## 完成判据
 

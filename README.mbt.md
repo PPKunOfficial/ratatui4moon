@@ -25,9 +25,9 @@ core/      Rect / Style / Cell / Buffer + 帧差分（纯函数，零 I/O，依�
    │
 unicode/   依赖树叶：unicode-width 全量表 + 图形簇细分（零 I/O）
    │
-backend/   Backend trait · TestBackend（录帧）· ANSI 发射引擎
+backend/   Backend trait · TestBackend（录帧）· TtyBackend(tty@0.3.0 同步桥) · ANSI 发射引擎
    │
-terminal/  终端会话：Terminal 双缓冲/Frame/Viewport/draw 管线
+terminal/  终端会话：Terminal 双缓冲/Frame/Viewport/draw 管线（`Terminal::new(&TtyBackend::new())` 直驱真机）
 ```
 
 ## 测试哲学
@@ -55,6 +55,6 @@ Gauge/LineGauge（unicode 半格进度条）、Sparkline（九级波形图）、
 world 地图）、Chart（轴/标签/图例八方位于一体/四图型）的单元测试与集成
 黄金用例逐条复刻自 ratatui-v0.30.2 并 TDD 转绿；symbols line/block/bar/
 shade/scrollbar/marker/braille/half_block/pixel 符号表全量入库；`terminal/`（Terminal 双缓冲/Frame/Viewport/draw 管线/autoresize/insert_before）、
-RatatuiLogo/RatatuiMascot 徽标组件；黄金快照管线已立。**769 测全绿**喵。
+RatatuiLogo/RatatuiMascot 徽标组件；`backend/TtyBackend`（`tty@0.3.0` 同步桥，`window_size` 同步 `ioctl`，`isatty` 判定 CI 回退 80x24）；黄金快照管线已立。**770 测全绿**喵。
 设计全文见 [docs/design.md](docs/design.md)，对位进度见
 [docs/parity.md](docs/parity.md)，仓库条约见 [AGENTS.md](AGENTS.md)。

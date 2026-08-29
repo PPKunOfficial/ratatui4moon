@@ -2,6 +2,7 @@
 package "nonoka/ratatui4moon/backend"
 
 import {
+  "moonbit-community/tty",
   "moonbitlang/core/debug",
   "nonoka/ratatui4moon/core",
 }
@@ -57,6 +58,17 @@ pub fn TestBackend::resize(Self, Int, Int) -> Unit
 pub fn TestBackend::scrollback(Self) -> @core.Buffer
 pub fn TestBackend::to_display(Self) -> String
 pub impl Backend for TestBackend
+
+pub(all) struct TtyBackend {
+  tty : @tty.Tty
+  old_state : @tty.State?
+  mut pos : (Int, Int)
+  mut cursor_visible : Bool
+}
+pub fn TtyBackend::close(Self) -> Unit
+pub fn TtyBackend::from_tty(@tty.Tty) -> Self
+pub fn TtyBackend::new() -> Self raise
+pub impl Backend for TtyBackend
 
 pub(all) struct WindowSize {
   columns_rows : @core.Size

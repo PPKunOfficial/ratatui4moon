@@ -15,3 +15,8 @@ keywords = [ "tui", "terminal", "ratatui", "moonbit" ]
 preferred_target = "native"
 
 description = "MoonBit 的 ratatui 式终端 UI 框架：cell buffer 双缓冲、即时模式 widget、黄金 ANSI 快照测试"
+
+import {
+  "moonbit-community/tty@0.3.0",
+  "moonbitlang/async@0.20.0",
+}

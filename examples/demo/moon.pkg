@@ -1,0 +1,10 @@
+pkgtype(kind: "executable")
+
+supported_targets = "+native"
+
+import {
+  "nonoka/ratatui4moon/backend",
+  "nonoka/ratatui4moon/core",
+  "nonoka/ratatui4moon/terminal",
+  "nonoka/ratatui4moon/widgets",
+}
