@@ -37,7 +37,7 @@ moon test --update   # 行为变更后批量更新快照（禁止手改）
 
 ## 状态
 
-v0.1：`core` / `backend` / `widgets` 三包绿；Rect/Style/Cell/Buffer/Span/Line、
+v0.1：`core` / `backend` / `widgets` / `terminal` 四包绿；Rect/Style/Cell/Buffer/Span/Line、
 Block（边框/线型/标题/内边距）、Paragraph（折行/截断/滚动/对齐）、List、Tabs、
 Gauge/LineGauge（unicode 半格进度条）、Sparkline（九级波形图）、Scrollbar
 （四方位滚动条）、Clear/Fill（清空与填充基元）、BarChart（双方向分组
@@ -45,7 +45,7 @@ Gauge/LineGauge（unicode 半格进度条）、Sparkline（九级波形图）、
 Table（全族）、Canvas（Grid 三形态/Cohen–Sutherland 裁剪/五 Shape/
 world 地图）、Chart（轴/标签/图例八方位于一体/四图型）的单元测试与集成
 黄金用例逐条复刻自 ratatui-v0.30.2 并 TDD 转绿；symbols line/block/bar/
-shade/scrollbar/marker/braille/half_block/pixel 符号表全量入库；黄金快照
+shade/scrollbar/marker/braille/half_block/pixel 符号表全量入库；`terminal/`（Terminal 双缓冲/Frame/Viewport/draw 管线/autoresize）；黄金快照
 管线已立。
 设计全文见 [docs/design.md](docs/design.md)，对位进度见
 [docs/parity.md](docs/parity.md)，仓库条约见 [AGENTS.md](AGENTS.md)。

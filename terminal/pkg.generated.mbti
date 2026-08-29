@@ -1,0 +1,90 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "nonoka/ratatui4moon/terminal"
+
+import {
+  "moonbitlang/core/debug",
+  "nonoka/ratatui4moon/backend",
+  "nonoka/ratatui4moon/core",
+}
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct CompletedFrame {
+  buffer : @core.Buffer
+  area : @core.Rect
+  count : Int
+} derive(@debug.Debug)
+pub fn CompletedFrame::area(Self) -> @core.Rect
+pub fn CompletedFrame::buffer(Self) -> @core.Buffer
+pub fn CompletedFrame::count(Self) -> Int
+
+pub struct Frame {
+  mut cursor_position : @core.Position?
+  viewport_area : @core.Rect
+  buffer : @core.Buffer
+  count : Int
+} derive(@debug.Debug)
+pub fn Frame::area(Self) -> @core.Rect
+pub fn Frame::buffer_mut(Self) -> @core.Buffer
+pub fn Frame::render_stateful_widget(Self, &@core.StatefulWidget, @core.Rect) -> Unit
+pub fn Frame::render_widget(Self, &@core.Widget, @core.Rect) -> Unit
+pub fn Frame::set_cursor_position(Self, @core.Position) -> Unit
+
+pub struct Terminal {
+  backend : &@backend.Backend
+  buffers : (@core.Buffer, @core.Buffer)
+  mut current : Int
+  mut hidden_cursor : Bool
+  viewport : Viewport
+  mut viewport_area : @core.Rect
+  mut last_known_area : @core.Rect
+  mut last_known_cursor_pos : @core.Position
+  mut frame_count : Int
+}
+pub fn Terminal::apply_buffer(Self) -> CompletedFrame raise
+pub fn Terminal::apply_buffer_with_cursor(Self, @core.Position?) -> CompletedFrame raise
+pub fn Terminal::autoresize(Self) -> Unit raise
+pub fn Terminal::backend(Self) -> &@backend.Backend
+pub fn Terminal::buffer_at(Self, Int) -> @core.Buffer
+pub fn Terminal::clear(Self) -> Unit raise
+pub fn Terminal::current(Self) -> Int
+pub fn Terminal::current_buffer_mut(Self) -> @core.Buffer
+pub fn Terminal::draw(Self, (Frame) -> Unit raise) -> CompletedFrame raise
+pub fn Terminal::flush(Self) -> Unit raise
+pub fn Terminal::frame_count(Self) -> Int
+pub fn Terminal::get_cursor_position(Self) -> @core.Position raise
+pub fn Terminal::get_frame(Self) -> Frame
+pub fn Terminal::hidden_cursor(Self) -> Bool
+pub fn Terminal::hide_cursor(Self) -> Unit raise
+pub fn Terminal::last_known_area(Self) -> @core.Rect
+pub fn Terminal::last_known_cursor_pos(Self) -> @core.Position
+pub fn Terminal::new(&@backend.Backend) -> Self raise
+pub fn Terminal::resize(Self, @core.Rect) -> Unit raise
+pub fn Terminal::set_cursor_position(Self, @core.Position) -> Unit raise
+pub fn Terminal::show_cursor(Self) -> Unit raise
+pub fn Terminal::size(Self) -> @core.Size raise
+pub fn Terminal::swap_buffers(Self) -> Unit
+pub fn Terminal::try_draw(Self, (Frame) -> Unit raise) -> CompletedFrame raise
+pub fn Terminal::viewport(Self) -> Viewport
+pub fn Terminal::viewport_area(Self) -> @core.Rect
+pub fn Terminal::with_options(&@backend.Backend, TerminalOptions) -> Self raise
+
+pub(all) struct TerminalOptions {
+  viewport : Viewport
+} derive(Eq, @debug.Debug)
+pub fn TerminalOptions::default() -> Self
+
+pub(all) enum Viewport {
+  Fullscreen
+  Inline(Int)
+  Fixed(@core.Rect)
+} derive(Eq, @debug.Debug)
+pub fn Viewport::default() -> Self
+pub fn Viewport::to_display(Self) -> String
+
+// Type aliases
+
+// Traits

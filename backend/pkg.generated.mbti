@@ -2,6 +2,7 @@
 package "nonoka/ratatui4moon/backend"
 
 import {
+  "moonbitlang/core/debug",
   "nonoka/ratatui4moon/core",
 }
 
@@ -21,17 +22,60 @@ pub fn sgr_transition(@core.Style, @core.Style?) -> String
 // Errors
 
 // Types and methods
+pub(all) enum ClearType {
+  All
+  AfterCursor
+  BeforeCursor
+  CurrentLine
+  UntilNewLine
+} derive(Eq, @debug.Debug)
+pub fn ClearType::from_str(String) -> Self?
+pub fn ClearType::name(Self) -> String
+
 pub(all) struct TestBackend {
+  buffer : @core.Buffer
+  scrollback : @core.Buffer
+  mut cursor : Bool
+  mut pos : (Int, Int)
   frames : Array[Array[(Int, Int, @core.Cell)]]
 }
+pub fn TestBackend::assert_buffer(Self, @core.Buffer) -> Unit raise
+pub fn TestBackend::assert_buffer_lines(Self, Array[String]) -> Unit raise
+pub fn TestBackend::assert_cursor_position(Self, @core.Position) -> Unit raise
+pub fn TestBackend::assert_scrollback(Self, @core.Buffer) -> Unit raise
+pub fn TestBackend::assert_scrollback_empty(Self) -> Unit raise
+pub fn TestBackend::assert_scrollback_lines(Self, Array[String]) -> Unit raise
+pub fn TestBackend::buffer(Self) -> @core.Buffer
+pub fn TestBackend::cursor_position(Self) -> @core.Position
+pub fn TestBackend::cursor_visible(Self) -> Bool
 pub fn TestBackend::frame_count(Self) -> Int
 pub fn TestBackend::last_ansi(Self) -> String
 pub fn TestBackend::new() -> Self
+pub fn TestBackend::new_with_lines(Array[String]) -> Self
+pub fn TestBackend::new_with_size(Int, Int) -> Self
+pub fn TestBackend::resize(Self, Int, Int) -> Unit
+pub fn TestBackend::scrollback(Self) -> @core.Buffer
+pub fn TestBackend::to_display(Self) -> String
 pub impl Backend for TestBackend
+
+pub(all) struct WindowSize {
+  columns_rows : @core.Size
+  pixels : @core.Size
+} derive(Eq, @debug.Debug)
 
 // Type aliases
 
 // Traits
 pub(open) trait Backend {
-  fn draw(Self, Array[(Int, Int, @core.Cell)]) -> Unit
+  fn draw(Self, Array[(Int, Int, @core.Cell)]) -> Unit raise
+  fn append_lines(Self, Int) -> Unit raise
+  fn hide_cursor(Self) -> Unit raise
+  fn show_cursor(Self) -> Unit raise
+  fn get_cursor_position(Self) -> @core.Position raise
+  fn set_cursor_position(Self, @core.Position) -> Unit raise
+  fn clear(Self) -> Unit raise
+  fn clear_region(Self, ClearType) -> Unit raise
+  fn size(Self) -> @core.Size raise
+  fn window_size(Self) -> WindowSize raise
+  fn flush(Self) -> Unit raise
 }

@@ -1,7 +1,11 @@
 import {
   "nonoka/ratatui4moon/core",
-  "moonbitlang/core/debug",
+  "nonoka/ratatui4moon/backend",
 }
+
+import {
+  "moonbitlang/core/debug",
+} for "test"
 
 pkgtype(kind: "library")
 

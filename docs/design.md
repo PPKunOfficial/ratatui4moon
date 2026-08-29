@@ -95,7 +95,7 @@ bracketed paste、鼠标解析全有）。防御措施：`Backend` trait 隔离�
 ## 3. 分层架构与依赖方向
 
 ```
-widgets/            无状态 widget（Block：Borders/BorderType/Padding/标题…）
+widgets/            无状态 widget（Block/Paragraph/Table/Canvas/Chart…）
    │ 只依赖 core
    ▼
 core/               Rect · Position/Size/Margin/Offset · Style/Modifier/Color ·
@@ -103,9 +103,11 @@ core/               Rect · Position/Size/Margin/Offset · Style/Modifier/Color 
                     BorderSet · 近似宽度表  ← 依赖树叶，零 I/O
    ▲ 只依赖 core
    │
-backend/            Backend trait · TestBackend · ANSI 引擎
+backend/            Backend trait（完整契约）· TestBackend · ANSI 引擎
    │ （未来）TtyBackend ← moonbit-community/tty ← moonbitlang/async
    ▼
+terminal/           终端会话层：Terminal 双缓冲 · Frame · Viewport ·
+   │ 只依赖 core+backend        draw 管线 · autoresize
 widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
 ```
 
@@ -120,8 +122,9 @@ widgets/test/ 等    黑盒快照包：依赖被测包 + backend 公开 API
   单元格，`mut_cell` 原地修改；`filled` 等批量构造必须逐格克隆，
   禁止共享同一引用喵；
 - 一切终端转义出自 `backend/ansi.mbt`，上层禁止手拼；
-- 当前 `Backend` 契约只含 `draw(frame)`；raw mode / 光标 / 尺寸 / async 输入
-  在接入 tty 时扩契约，禁止为不存在的消费方预埋机制。
+- `Backend` 契约已随终端会话层扩至上游完整形态（draw/光标/清除/
+  尺寸）；`TtyBackend` 因 tty 包 async 语义与同步 trait 的适配
+  决策未定而缓议，见 parity.md 推进顺序 9'。
 
 ## 4. 测试策略
 
@@ -158,7 +161,8 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
   上游 v0.30.2 对应模块的单测与集成黄金用例逐条复刻全绿 ✅
 - **v0.2**：`unicode/` 宽度表全量搬运与折行升级；`layout/` kasuari
   一次性求解子集已落（679 case 全绿 ✅）；Table/Chart/Canvas 已收官 ✅；
-  `TtyBackend` 接入 tty 包；Linux + Windows CI
+  `terminal/` 会话层（Terminal/Frame/Viewport/draw 管线）已落 ✅；
+  `TtyBackend` 接入 tty 包（async 适配决策待定）；Linux + Windows CI
 - **v0.3**：单行 Editor（历史、光标）；鼠标；kitty 键盘
   协议增强；IME 摸底（raw mode 下 CJK 输入是已知硬骨头，mizchi 以 cooked
   模式绕行，本库需独立评估方案）

@@ -14,7 +14,7 @@ test "带边框 hello 的 ANSI 黄金快照" {
   let buf = @core.Buffer::new(area)
   @widgets.Block::bordered().render(area, buf)
   buf.set_string(1, 1, "hello, ratatui", @core.Style::default())
-  let t = @backend.TestBackend::new()
+  let t = @backend.TestBackend::new_with_size(area.width, area.height)
   t.draw(@core.Buffer::new(area).diff(buf))
   inspect(
     t.last_ansi(),
@@ -34,7 +34,7 @@ test "带加粗红字内容的黄金快照" {
     "hi",
     @core.Style::new().fg(@core.Color::Red).add_modifier(@core.Modifier::bold()),
   )
-  let t = @backend.TestBackend::new()
+  let t = @backend.TestBackend::new_with_size(area.width, area.height)
   t.draw(@core.Buffer::new(area).diff(buf))
   inspect(
     t.last_ansi(),
@@ -46,7 +46,7 @@ test "带加粗红字内容的黄金快照" {
 /// 多帧录帧：只有最近一帧参与 `last_ansi`，帧数可断言喵。
 test "多帧录制与取帧" {
   let area = @core.Rect::new(0, 0, 4, 1)
-  let t = @backend.TestBackend::new()
+  let t = @backend.TestBackend::new_with_size(area.width, area.height)
   let first = @core.Buffer::new(area)
   first.set_string(0, 0, "ab", @core.Style::default())
   t.draw(first.diff(@core.Buffer::new(area)))
