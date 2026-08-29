@@ -4,7 +4,7 @@
 
 ## 铁律（按优先级排序）
 
-1. **依赖方向**：`core` 是依赖树叶子，零依赖、零 I/O，禁止 import 本 module 其他 package；`backend` 只允许依赖 `core`；`widgets` / `layout` 只允许依赖 `core`，**禁止依赖 `backend`**（widget 的输出是 Buffer，不是 ANSI）；黑盒测试包（如 `widgets/test/`）只允许依赖被测 package 与 `backend` 的公开 API 喵。
+1. **依赖方向**：`core` 是依赖树叶子，零依赖、零 I/O，禁止 import 本 module 其他 package；`backend` 只允许依赖 `core`；`layout` 只允许依赖 `core`；`widgets` 只允许依赖 `core` 与 `layout`（layout 是 core 级纯计算层，对位上游 ratatui-core 内的 layout 模块），**禁止依赖 `backend`**（widget 的输出是 Buffer，不是 ANSI）；黑盒测试包（如 `widgets/test/`）只允许依赖被测 package 与 `backend` 的公开 API 喵。
 
 2. **core 零 I/O**：`core` 禁止终端、文件、网络、进程、时钟等一切 I/O；一切平台接触（raw mode、输入事件、tty）收敛在 `backend`，且真终端后端必须经由 `moonbit-community/tty` 组装，禁止在本库自写平台 C stub 喵。
 

@@ -54,7 +54,7 @@
 | `paragraph.rs` | `widgets/paragraph.mbt` | ✅ | 上游 29 条测试全量复刻（折行/截断/滚动/对齐/样式分层/CJK）；半宽浊点图形簇用例随 unicode/ |
 | `list.rs` + `list/*` | `widgets/list.mbt` + `list_render.mbt` | ✅ | 状态化渲染全算法 + `tests/widgets_list.rs` 全部 8 条集成用例复刻（Terminal 层以直渲染等价承载） |
 | `barchart.rs` + `barchart/{bar,bar_group}.rs` | `widgets/barchart.mbt` | ✅ | 内联 43 条 + `tests/widgets_barchart.rs` 2 条全量复刻（双方向/分组/组距/逐柱样式/值文本溢出双段样式/UTF-8 字节边界/CJK 值/u64 精度/issue 1928 回归） |
-| `table.rs` + `table/*` | ⬜ | Table + Row/Cell/State（列宽依赖 Layout 求解器，随 layout/ 落位） |
+| `table.rs` + `table/{cell,row,highlight_spacing,state}.rs` | `widgets/table.mbt` | ◐ | TableCell/TableRow/TableState/Table 全类型与渲染管线（Layout 驱动列宽）；cell/row/state/render/选中矩阵/偏移滚动（issue #1179 回归）内联测试全绿；column_widths 模块对包私有 `get_column_widths`/`get_cell_area` 直测登记（渲染等价承载）；`tests/widgets_table.rs` 集成用例待复刻 |
 | `tabs.rs` | `widgets/tabs.mbt` | ✅ | 13 条测试全量复刻（缺省样式/分隔符/内边距/选中矩阵/越界与取消/极小缓冲） |
 | `gauge.rs` | `widgets/gauge.mbt` | ✅ | Gauge + LineGauge：内联 14 条 + `tests/widgets_gauge.rs` 5 条全量复刻（unicode 半格/样式叠加/超宽标签）；越界 `assert!` 按无 panic 铁律改饱和并登记；deprecated `line_set`/`gauge_style` 不复刻已登记 |
 | `sparkline.rs` | `widgets/sparkline.mbt` | ✅ | 内联 22 条全量复刻（方向枚举/缺值柱/逐柱样式/双行 tick 分配/u64::MAX 整数精度）；Vec/Array/Slice 六条创建测试按 Array 形态合并登记；上游 u128 以 32 位半乘 + 128/64 逐位长除精确承载并另设进位路径加固用例 |
