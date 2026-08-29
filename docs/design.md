@@ -152,18 +152,20 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
 ## 6. 路线图
 
 - **v0.1（当前）**：core（Buffer/diff/Style/text 基元/symbols line+block+
-  bar+shade+scrollbar 符号表）+ backend（trait/TestBackend/ANSI）+ widgets
-  （Block/Paragraph/List/Tabs/Gauge/LineGauge/Sparkline/Scrollbar/Clear/Fill/
-  BarChart/Table），上游 v0.30.2 对应模块的单测与集成黄金用例逐条复刻全绿 ✅
+  bar+shade+scrollbar+marker+braille+half_block+pixel 符号表）+ backend
+  （trait/TestBackend/ANSI）+ widgets（Block/Paragraph/List/Tabs/Gauge/
+  LineGauge/Sparkline/Scrollbar/Clear/Fill/BarChart/Table/Canvas/Chart），
+  上游 v0.30.2 对应模块的单测与集成黄金用例逐条复刻全绿 ✅
 - **v0.2**：`unicode/` 宽度表全量搬运与折行升级；`layout/` kasuari
-  一次性求解子集已落（679 case 全绿 ✅）；Table/Chart 续推；
+  一次性求解子集已落（679 case 全绿 ✅）；Table/Chart/Canvas 已收官 ✅；
   `TtyBackend` 接入 tty 包；Linux + Windows CI
 - **v0.3**：单行 Editor（历史、光标）；鼠标；kitty 键盘
   协议增强；IME 摸底（raw mode 下 CJK 输入是已知硬骨头，mizchi 以 cooked
   模式绕行，本库需独立评估方案）
 
 **非目标**（写下来防蔓延）：cassowary 全量移植进本库、Yoga/flexbox 语义、
-canvas/图片协议（kitty graphics）/3D、响应式 vDOM、Bun/Node 运行时。
+图片协议（kitty graphics/Sixel 等位图渲染；Canvas 矢量画布 widget 属
+复刻范围，不在此列）、3D、响应式 vDOM、Bun/Node 运行时。
 
 ## 7. 与 Nonoka 的关系
 

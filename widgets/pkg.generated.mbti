@@ -196,6 +196,65 @@ pub impl Shape for CanvasRectangle
 
 type CharGrid derive(@debug.Debug)
 
+pub struct Chart {
+  block : Block?
+  x_axis : ChartAxis
+  y_axis : ChartAxis
+  datasets : Array[ChartDataset]
+  style : @core.Style
+  hidden_legend_constraints : (@core.Constraint, @core.Constraint)
+  legend_position : LegendPosition?
+} derive(Eq, @debug.Debug)
+pub fn Chart::block(Self, Block) -> Self
+pub fn Chart::get_style(Self) -> @core.Style
+pub fn Chart::hidden_legend_constraints(Self, (@core.Constraint, @core.Constraint)) -> Self
+pub fn Chart::legend_position(Self, LegendPosition?) -> Self
+pub fn Chart::new(Array[ChartDataset]) -> Self
+pub fn Chart::set_style(Self, @core.Style) -> Self
+pub fn Chart::style(Self, @core.Style) -> Self
+pub fn Chart::x_axis(Self, ChartAxis) -> Self
+pub fn Chart::y_axis(Self, ChartAxis) -> Self
+pub impl @core.Widget for Chart
+
+pub struct ChartAxis {
+  title : @core.Line?
+  bounds : (Double, Double)
+  labels : Array[@core.Line]
+  style : @core.Style
+  labels_alignment : @core.Alignment
+} derive(Eq, @debug.Debug)
+pub fn ChartAxis::bounds(Self, (Double, Double)) -> Self
+pub fn ChartAxis::default() -> Self
+pub fn ChartAxis::get_style(Self) -> @core.Style
+pub fn ChartAxis::labels(Self, Array[@core.Line]) -> Self
+pub fn ChartAxis::labels_alignment(Self, @core.Alignment) -> Self
+pub fn ChartAxis::labels_of_str(Self, Array[String]) -> Self
+pub fn ChartAxis::set_style(Self, @core.Style) -> Self
+pub fn ChartAxis::style(Self, @core.Style) -> Self
+pub fn ChartAxis::title(Self, @core.Line) -> Self
+pub fn ChartAxis::title_str(Self, String) -> Self
+
+pub struct ChartDataset {
+  name : @core.Line?
+  data : Array[(Double, Double)]
+  marker : @core.Marker
+  graph_type : GraphType
+  style : @core.Style
+  fill_to_y : Double
+} derive(Eq, @debug.Debug)
+pub fn ChartDataset::data(Self, Array[(Double, Double)]) -> Self
+pub fn ChartDataset::default() -> Self
+pub fn ChartDataset::fill_to_y(Self, Double) -> Self
+pub fn ChartDataset::get_style(Self) -> @core.Style
+pub fn ChartDataset::graph_type(Self, GraphType) -> Self
+pub fn ChartDataset::marker(Self, @core.Marker) -> Self
+pub fn ChartDataset::name(Self, @core.Line) -> Self
+pub fn ChartDataset::name_str(Self, String) -> Self
+pub fn ChartDataset::set_style(Self, @core.Style) -> Self
+pub fn ChartDataset::style(Self, @core.Style) -> Self
+
+type ChartLayout derive(@debug.Debug)
+
 pub(all) struct Circle {
   x : Double
   y : Double
@@ -265,6 +324,15 @@ pub fn Gauge::style(Self, @core.Style) -> Self
 pub fn Gauge::use_unicode(Self, Bool) -> Self
 pub impl @core.Widget for Gauge
 
+pub(all) enum GraphType {
+  Scatter
+  Line
+  Bar
+  Area
+} derive(Eq, @debug.Debug)
+pub fn GraphType::from_str(String) -> Self?
+pub fn GraphType::name(Self) -> String
+
 type GridKind derive(@debug.Debug)
 
 type HalfBlockGrid derive(@debug.Debug)
@@ -285,6 +353,18 @@ pub(all) struct Label {
 type Layer derive(@debug.Debug)
 
 type LayerCell derive(@debug.Debug)
+
+pub(all) enum LegendPosition {
+  Top
+  TopRight
+  TopLeft
+  Left
+  Right
+  Bottom
+  BottomRight
+  BottomLeft
+} derive(Eq, @debug.Debug)
+pub fn LegendPosition::default() -> Self
 
 pub(all) struct LineGauge {
   block : Block?

@@ -38,7 +38,10 @@
 | `symbols/bar.rs` | `core/bar_symbol.mbt` | ✅ | 八级底对齐柱常量 + `BarSet` 三/九级集合 |
 | `symbols/shade.rs` | `core/shade_symbol.mbt` | ✅ | 五级明暗常量 |
 | `symbols/scrollbar.rs` | `core/scrollbar_symbol.mbt` | ✅ | 四组 track/thumb/begin/end 集合 |
-| `symbols/braille.rs` / `half_block.rs` / `marker.rs` / `pixel.rs` | — | ⬜ | 各符号常量表（Canvas 前置） |
+| `symbols/marker.rs`（含 `symbols::DOT`） | `core/marker.mbt` | ✅ | 九变体 Marker + name/from_str（strum 对位）+ 两条上游测试 |
+| `symbols/braille.rs` | `core/braille_symbol.mbt` | ✅ | 256 项行主序位图表 + 位映射抽检（上游无内联测试，补锚定） |
+| `symbols/half_block.rs` | `core/half_block_symbol.mbt` | ✅ | UPPER/LOWER/FULL 三常量（上游无内联测试，补锚定） |
+| `symbols/pixel.rs` | `core/pixel_symbol.mbt` | ✅ | QUADRANTS/SEXTANTS/OCTANTS 三表 + 端点抽检（上游无内联测试，补锚定） |
 | `terminal/*`（Frame/Buffers/Viewport/Inline/Init/Render/Resize/Cursor） | — | ⬜ | 终端会话层（本库 backend 包对位其 TestBackend 部分） |
 | `widgets/widget.rs` / `stateful_widget.rs` | `core/widget.mbt` + `core/stateful_widget.mbt` | ✅ | Widget trait（Span/Line/Text/String/Block/Paragraph 实现）；StatefulWidget 以 Stateful[W,S] 状态打包形式化（MoonBit 无关联类型，所有权偏差登记） |
 | `backend.rs` + `backend/test.rs` | `backend/` 包（自有 Backend trait + TestBackend） | ◐ | 本库 trait 只含 `draw`，终端原语随 TtyBackend 扩契约 |
@@ -59,11 +62,8 @@
 | `gauge.rs` | `widgets/gauge.mbt` | ✅ | Gauge + LineGauge：内联 14 条 + `tests/widgets_gauge.rs` 5 条全量复刻（unicode 半格/样式叠加/超宽标签）；越界 `assert!` 按无 panic 铁律改饱和并登记；deprecated `line_set`/`gauge_style` 不复刻已登记 |
 | `sparkline.rs` | `widgets/sparkline.mbt` | ✅ | 内联 22 条全量复刻（方向枚举/缺值柱/逐柱样式/双行 tick 分配/u64::MAX 整数精度）；Vec/Array/Slice 六条创建测试按 Array 形态合并登记；上游 u128 以 32 位半乘 + 128/64 逐位长除精确承载并另设进位路径加固用例 |
 | `scrollbar.rs` | `widgets/scrollbar.mbt` | ✅ | 内联 26 条全量复刻（rstest 参数矩阵以循环承载：四方位/缺省符号/无轨道/底衬/箭头/自定义视口/极小轨道/#2582 回归）；包私有 `part_lengths` 直测以渲染等价承载已登记；状态机 prev/next/first/last/scroll 饱和语义全量 |
-| `gauge.rs` | ⬜ | Gauge/GaugeStyle |
-| `sparkline.rs` | ⬜ | Sparkline |
-| `scrollbar.rs` | ⬜ | Scrollbar + Orientation |
-| `chart.rs` / `barchart.rs` | ⬜ | 图表族 |
-| `canvas.rs` + `canvas/*` | ⬜ | Canvas + shape（world 域名地图数据单列） |
+| `canvas.rs` + `canvas/{points,line,rectangle,circle,map,world}.rs` | `widgets/canvas.mbt` + `canvas_{points,line,rectangle,circle,map,world}.mbt` | ✅ | Grid 三形态（PatternGrid/CharGrid/HalfBlockGrid）+ Painter/Context + 层合成；五 Shape + world 低/高分辨率点集（6291 点机械搬运）；内联测试全量复刻（横竖/对角线 × 10 marker 矩阵/裁剪 Bresenham 17+20 组/圆/矩形 5 条/地图低高全幅/极小零尺寸缓冲）；`line-clipping 0.3.7` 纯 MoonBit 移植；usize 溢出探针以渲染等价承载登记；`tests/widgets_canvas.rs` 1 条集成用例复刻；HalfBlock 越界直写按无 panic 铁律改守卫登记 |
+| `chart.rs` | `widgets/chart.mbt` | ✅ | Axis/Dataset/GraphType/LegendPosition/ChartLayout + 图例八方位置 `place` + X/Y 标签渲染管线全量；内联 22 条测试全量复刻（显隐约束/样式化/超宽标题/匿名数据集/图例样式补丁/长标题避让/溢出裁剪/八方位矩阵（含奇数余量 rstest）/Bar/叠加线条分层/Area 填充/极小零尺寸）；`Chart::layout` 包私有直测以渲染等价承载登记；`tests/widgets_chart.rs` 集成 8 条全量复刻（小区域矩阵/超长标签对齐 7 组/X·Y 对齐 3+3 组/零长边界/大数值域/空数据集/顶行样式归属） |
 | `clear.rs` | `widgets/clear.mbt` | ✅ | 三条内联测试全量复刻（区域复位/部分越界/完全越界） |
 | `fill.rs` | `widgets/fill.mbt` | ✅ | 七条内联测试全量复刻（符号样式/越界裁剪/非零原点/替换符号）；Cow 双形态按 String 合并登记 |
 | `calendar.rs` | ⬜ | 月历（time 依赖需评估） |
@@ -77,10 +77,10 @@
 4. ✅ Paragraph（折行/截断/滚动/对齐/样式分层全语义）
 5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
 6. ✅ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/LineGauge（单测与集成黄金用例全绿）
-7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart + Layout 求解器（ADR-3 kasuari 子集，679 case 全绿）→ ▶ Table → Chart
+7. ✅ Sparkline/Scrollbar/Clear/Fill/BarChart + Layout 求解器（ADR-3 kasuari 子集，679 case 全绿）→ Table → Chart（symbols marker/braille/half_block/pixel 前置 + Canvas 全族先行落地）
 8. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
 9. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
-10. Chart/BarChart/Canvas 族
+10. Chart/BarChart/Canvas 族（Canvas 已随 Chart 先行收官）
 
 ## 完成判据
 
