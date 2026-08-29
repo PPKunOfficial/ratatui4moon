@@ -66,18 +66,6 @@ fn write_ansi_sync(s : String) -> Unit {
   if s == "" {
     return
   }
-  // 非 TTY 环境（CI/`moon test`）不落盘，避免污染测试输出喵。
-  // 以 `window_size` 是否成功判定 TTY，避免 `isatty` 的 `Fd` trait 约束喵。
-  let is_tty = try {
-    let tty = @tty.Tty::stdio()
-    let _ = tty.window_size()
-    true
-  } catch {
-    _ => false
-  }
-  if !is_tty {
-    return
-  }
   let bytes = s.to_bytes()
   let len = bytes.length()
   if len == 0 {
@@ -88,10 +76,31 @@ fn write_ansi_sync(s : String) -> Unit {
 
 ///|
 #cfg(platform="windows")
+#borrow(buf)
+extern "C" fn c_write_win(
+  fd : @tty.Fd,
+  buf : Bytes,
+  offset : Int,
+  len : Int,
+) -> Int = "moonbitlang_async_write"
+
+///|
+#cfg(platform="windows")
+extern "C" fn get_std_handle(nStdHandle : Int) -> @tty.Fd = "GetStdHandle"
+
+///|
+#cfg(platform="windows")
 fn write_ansi_sync(s : String) -> Unit {
-  // Windows 桩：暂以 no-op 承载，同步直写需 `WriteConsoleW`，
-  // 后续补 `c_write` 调 `GetStdHandle` 喵。
-  let _ignore = s
+  if s == "" {
+    return
+  }
+  let bytes = s.to_bytes()
+  let len = bytes.length()
+  if len == 0 {
+    return
+  }
+  let handle = get_std_handle(-11)
+  ignore_write(c_write_win(handle, bytes, 0, len))
 }
 
 ///|
@@ -184,26 +193,16 @@ pub impl Backend for TtyBackend with fn append_lines(
 
 ///|
 pub impl Backend for TtyBackend with fn size(self : TtyBackend) -> @core.Size raise {
-  // `Tty::window_size` 为同步 `ioctl`，与 `Backend::size` 语义对齐喵。
-  try {
-    let ws = self.tty.window_size()
-    @core.Size::new(ws.cols, ws.rows)
-  } catch {
-    _ => @core.Size::new(80, 24)
-  }
+  let ws = self.tty.window_size()
+  @core.Size::new(ws.cols, ws.rows)
 }
 
 ///|
 pub impl Backend for TtyBackend with fn window_size(self : TtyBackend) -> WindowSize raise {
-  try {
-    let ws = self.tty.window_size()
-    {
-      columns_rows: @core.Size::new(ws.cols, ws.rows),
-      pixels: @core.Size::new(0, 0),
-    }
-  } catch {
-    _ =>
-      { columns_rows: @core.Size::new(80, 24), pixels: @core.Size::new(0, 0) }
+  let ws = self.tty.window_size()
+  {
+    columns_rows: @core.Size::new(ws.cols, ws.rows),
+    pixels: @core.Size::new(0, 0),
   }
 }
 

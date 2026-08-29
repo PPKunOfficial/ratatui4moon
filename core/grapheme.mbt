@@ -38,10 +38,12 @@ fn all_chars_whitespace(symbol : String) -> Bool {
 }
 
 ///|
-/// Unicode White_Space 近似区间（包私有）喵。
+/// Unicode White_Space 全量区间（包私有，对位 `char::is_whitespace`，
+/// `00A0` 亦属空白但由外层 `is_whitespace` 单独排除 NBSP 单字符）喵。
 fn char_is_whitespace(cp : Int) -> Bool {
   (cp >= 0x09 && cp <= 0x0D) ||
   cp == 0x20 ||
+  cp == 0x00A0 ||
   cp == 0x85 ||
   cp == 0x1680 ||
   (cp >= 0x2000 && cp <= 0x200A) ||
