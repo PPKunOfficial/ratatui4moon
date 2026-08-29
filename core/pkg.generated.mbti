@@ -487,6 +487,7 @@ pub fn Rect::offset(Self, Offset) -> Self
 pub fn Rect::op_add(Self, Offset) -> Self
 pub fn Rect::op_sub(Self, Offset) -> Self
 pub fn Rect::outer(Self, Margin) -> Self
+pub fn Rect::positions(Self) -> Iter[Position]
 pub fn Rect::resize(Self, Size) -> Self
 pub fn Rect::right(Self) -> Int
 pub fn Rect::rows(Self) -> Iter[Self]

@@ -82,6 +82,20 @@ pub fn Borders::to_debug(Self) -> String
 pub fn Borders::top() -> Self
 pub fn Borders::union(Self, Self) -> Self
 
+pub(all) struct Clear {
+}
+pub fn Clear::new() -> Self
+pub impl @core.Widget for Clear
+
+pub(all) struct Fill {
+  symbol : String
+  style : @core.Style
+} derive(Eq, @debug.Debug)
+pub fn Fill::new(String) -> Self
+pub fn Fill::style(Self, @core.Style) -> Self
+pub fn Fill::symbol(Self, String) -> Self
+pub impl @core.Widget for Fill
+
 pub(all) struct Gauge {
   block : Block?
   ratio : Float
