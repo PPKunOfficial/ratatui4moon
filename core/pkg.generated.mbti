@@ -6,6 +6,120 @@ import {
 }
 
 // Values
+pub const BLOCK_FIVE_EIGHTHS : String = "▋"
+
+pub const BLOCK_FULL : String = "█"
+
+pub const BLOCK_HALF : String = "▌"
+
+pub const BLOCK_ONE_EIGHTH : String = "▏"
+
+pub const BLOCK_ONE_QUARTER : String = "▎"
+
+pub const BLOCK_SEVEN_EIGHTHS : String = "▉"
+
+pub const BLOCK_THREE_EIGHTHS : String = "▍"
+
+pub const BLOCK_THREE_QUARTERS : String = "▊"
+
+pub const LINE_BOTTOM_LEFT : String = "└"
+
+pub const LINE_BOTTOM_RIGHT : String = "┘"
+
+pub const LINE_CROSS : String = "┼"
+
+pub const LINE_DOUBLE_BOTTOM_LEFT : String = "╚"
+
+pub const LINE_DOUBLE_BOTTOM_RIGHT : String = "╝"
+
+pub const LINE_DOUBLE_CROSS : String = "╬"
+
+pub const LINE_DOUBLE_HORIZONTAL : String = "═"
+
+pub const LINE_DOUBLE_HORIZONTAL_DOWN : String = "╦"
+
+pub const LINE_DOUBLE_HORIZONTAL_UP : String = "╩"
+
+pub const LINE_DOUBLE_TOP_LEFT : String = "╔"
+
+pub const LINE_DOUBLE_TOP_RIGHT : String = "╗"
+
+pub const LINE_DOUBLE_VERTICAL : String = "║"
+
+pub const LINE_DOUBLE_VERTICAL_LEFT : String = "╣"
+
+pub const LINE_DOUBLE_VERTICAL_RIGHT : String = "╠"
+
+pub const LINE_HEAVY_DOUBLE_DASH_HORIZONTAL : String = "╍"
+
+pub const LINE_HEAVY_DOUBLE_DASH_VERTICAL : String = "╏"
+
+pub const LINE_HEAVY_QUADRUPLE_DASH_HORIZONTAL : String = "┉"
+
+pub const LINE_HEAVY_QUADRUPLE_DASH_VERTICAL : String = "┋"
+
+pub const LINE_HEAVY_TRIPLE_DASH_HORIZONTAL : String = "┅"
+
+pub const LINE_HEAVY_TRIPLE_DASH_VERTICAL : String = "┇"
+
+pub const LINE_HORIZONTAL : String = "─"
+
+pub const LINE_HORIZONTAL_DOWN : String = "┬"
+
+pub const LINE_HORIZONTAL_UP : String = "┴"
+
+pub const LINE_LIGHT_DOUBLE_DASH_HORIZONTAL : String = "╌"
+
+pub const LINE_LIGHT_DOUBLE_DASH_VERTICAL : String = "╎"
+
+pub const LINE_LIGHT_QUADRUPLE_DASH_HORIZONTAL : String = "┈"
+
+pub const LINE_LIGHT_QUADRUPLE_DASH_VERTICAL : String = "┊"
+
+pub const LINE_LIGHT_TRIPLE_DASH_HORIZONTAL : String = "┄"
+
+pub const LINE_LIGHT_TRIPLE_DASH_VERTICAL : String = "┆"
+
+pub const LINE_ROUNDED_BOTTOM_LEFT : String = "╰"
+
+pub const LINE_ROUNDED_BOTTOM_RIGHT : String = "╯"
+
+pub const LINE_ROUNDED_TOP_LEFT : String = "╭"
+
+pub const LINE_ROUNDED_TOP_RIGHT : String = "╮"
+
+pub const LINE_THICK_BOTTOM_LEFT : String = "┗"
+
+pub const LINE_THICK_BOTTOM_RIGHT : String = "┛"
+
+pub const LINE_THICK_CROSS : String = "╋"
+
+pub const LINE_THICK_HORIZONTAL : String = "━"
+
+pub const LINE_THICK_HORIZONTAL_DOWN : String = "┳"
+
+pub const LINE_THICK_HORIZONTAL_UP : String = "┻"
+
+pub const LINE_THICK_TOP_LEFT : String = "┏"
+
+pub const LINE_THICK_TOP_RIGHT : String = "┓"
+
+pub const LINE_THICK_VERTICAL : String = "┃"
+
+pub const LINE_THICK_VERTICAL_LEFT : String = "┫"
+
+pub const LINE_THICK_VERTICAL_RIGHT : String = "┣"
+
+pub const LINE_TOP_LEFT : String = "┌"
+
+pub const LINE_TOP_RIGHT : String = "┐"
+
+pub const LINE_VERTICAL : String = "│"
+
+pub const LINE_VERTICAL_LEFT : String = "┤"
+
+pub const LINE_VERTICAL_RIGHT : String = "├"
+
 pub const MAX_COORD : Int = 65535
 
 pub fn char_display_width(Char) -> Int
@@ -23,6 +137,21 @@ pub(all) enum Alignment {
   Right
 } derive(Eq, @debug.Debug)
 pub fn Alignment::to_display(Self) -> String
+
+pub(all) struct BlockSet {
+  full : String
+  seven_eighths : String
+  three_quarters : String
+  five_eighths : String
+  half : String
+  three_eighths : String
+  one_quarter : String
+  one_eighth : String
+  empty : String
+} derive(Eq, @debug.Debug)
+pub fn BlockSet::default() -> Self
+pub fn BlockSet::nine_levels() -> Self
+pub fn BlockSet::three_levels() -> Self
 
 pub(all) struct BorderSet {
   top_left : String
@@ -192,6 +321,31 @@ pub fn Line::to_display(Self) -> String
 pub fn Line::width(Self) -> Int
 pub fn Line::with_alignment(Self, Alignment) -> Self
 pub fn Line::with_style(Self, Style) -> Self
+
+pub(all) struct LineSet {
+  vertical : String
+  horizontal : String
+  top_right : String
+  top_left : String
+  bottom_right : String
+  bottom_left : String
+  vertical_left : String
+  vertical_right : String
+  horizontal_down : String
+  horizontal_up : String
+  cross : String
+} derive(Eq, @debug.Debug)
+pub fn LineSet::default() -> Self
+pub fn LineSet::double() -> Self
+pub fn LineSet::heavy_double_dashed() -> Self
+pub fn LineSet::heavy_quadruple_dashed() -> Self
+pub fn LineSet::heavy_triple_dashed() -> Self
+pub fn LineSet::light_double_dashed() -> Self
+pub fn LineSet::light_quadruple_dashed() -> Self
+pub fn LineSet::light_triple_dashed() -> Self
+pub fn LineSet::normal() -> Self
+pub fn LineSet::rounded() -> Self
+pub fn LineSet::thick() -> Self
 
 pub(all) struct Margin {
   horizontal : Int

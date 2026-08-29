@@ -33,7 +33,9 @@
 | `text/grapheme.rs` | `core/grapheme.mbt` | ◐ | 图形簇细分（逐码点近似，unicode/ 落位后升级） |
 | `symbols/border.rs` | `core/border.mbt` | ◐ | 缺 ONE_EIGHTH/PROPORTIONAL/FULL/EMPTY 填充集（随 Canvas） |
 | `symbols/merge.rs` | `core/merge.mbt` | ✅ | — |
-| `symbols/line.rs` / `bar.rs` / `block.rs` / `braille.rs` / `half_block.rs` / `marker.rs` / `pixel.rs` / `scrollbar.rs` / `shade.rs` | — | ⬜ | 各符号常量表（Canvas/Chart/Scrollbar 前置） |
+| `symbols/line.rs` | `core/line_symbol.mbt` | ✅ | 49 常量 + `LineSet` 十集合全量 |
+| `symbols/block.rs` | `core/block_symbol.mbt` | ✅ | 八级填充常量 + `BlockSet` 三/九级集合 |
+| `symbols/bar.rs` / `braille.rs` / `half_block.rs` / `marker.rs` / `pixel.rs` / `scrollbar.rs` / `shade.rs` | — | ⬜ | 各符号常量表（Canvas/Chart/Scrollbar 前置） |
 | `terminal/*`（Frame/Buffers/Viewport/Inline/Init/Render/Resize/Cursor） | — | ⬜ | 终端会话层（本库 backend 包对位其 TestBackend 部分） |
 | `widgets/widget.rs` / `stateful_widget.rs` | `core/widget.mbt` + `core/stateful_widget.mbt` | ✅ | Widget trait（Span/Line/Text/String/Block/Paragraph 实现）；StatefulWidget 以 Stateful[W,S] 状态打包形式化（MoonBit 无关联类型，所有权偏差登记） |
 | `backend.rs` + `backend/test.rs` | `backend/` 包（自有 Backend trait + TestBackend） | ◐ | 本库 trait 只含 `draw`，终端原语随 TtyBackend 扩契约 |
@@ -50,6 +52,7 @@
 | `list.rs` + `list/*` | `widgets/list.mbt` + `list_render.mbt` | ✅ | 状态化渲染全算法 + `tests/widgets_list.rs` 全部 8 条集成用例复刻（Terminal 层以直渲染等价承载） |
 | `table.rs` + `table/*` | ⬜ | Table + Row/Cell/State |
 | `tabs.rs` | `widgets/tabs.mbt` | ✅ | 13 条测试全量复刻（缺省样式/分隔符/内边距/选中矩阵/越界与取消/极小缓冲） |
+| `gauge.rs` | `widgets/gauge.mbt` | ✅ | Gauge + LineGauge：内联 14 条 + `tests/widgets_gauge.rs` 5 条全量复刻（unicode 半格/样式叠加/超宽标签）；越界 `assert!` 按无 panic 铁律改饱和并登记；deprecated `line_set`/`gauge_style` 不复刻已登记 |
 | `gauge.rs` | ⬜ | Gauge/GaugeStyle |
 | `sparkline.rs` | ⬜ | Sparkline |
 | `scrollbar.rs` | ⬜ | Scrollbar + Orientation |
@@ -66,11 +69,11 @@
 3. ✅ `reflow.rs`（WordWrapper/LineTruncator）+ 21 条折行测试
 4. ✅ Paragraph（折行/截断/滚动/对齐/样式分层全语义）
 5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
-6. ▶ List（核心算法 ✅，集成黄金用例待补）→ Tabs/Gauge/Sparkline/Scrollbar
-4. Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/Sparkline/Scrollbar
-5. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
-6. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
-7. Table/Chart/BarChart/Canvas 族
+6. ✅ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/LineGauge（单测与集成黄金用例全绿）
+7. ▶ Sparkline/Scrollbar → Table（块填充符号集已随 Gauge 落位）
+8. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
+9. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
+10. Chart/BarChart/Canvas 族
 
 ## 完成判据
 

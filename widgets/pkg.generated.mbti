@@ -82,12 +82,53 @@ pub fn Borders::to_debug(Self) -> String
 pub fn Borders::top() -> Self
 pub fn Borders::union(Self, Self) -> Self
 
+pub(all) struct Gauge {
+  block : Block?
+  ratio : Float
+  label : @core.Span?
+  use_unicode : Bool
+  style : @core.Style
+  gauge_style : @core.Style
+} derive(Eq, @debug.Debug)
+pub fn Gauge::block(Self, Block) -> Self
+pub fn Gauge::default() -> Self
+pub fn Gauge::gauge_style(Self, @core.Style) -> Self
+pub fn Gauge::label(Self, @core.Span) -> Self
+pub fn Gauge::label_str(Self, String) -> Self
+pub fn Gauge::percent(Self, Int) -> Self
+pub fn Gauge::ratio(Self, Float) -> Self
+pub fn Gauge::style(Self, @core.Style) -> Self
+pub fn Gauge::use_unicode(Self, Bool) -> Self
+pub impl @core.Widget for Gauge
+
 pub(all) enum HighlightSpacing {
   Always
   WhenSelected
   Never
 } derive(Eq, @debug.Debug)
 pub fn HighlightSpacing::should_add(Self, Bool) -> Bool
+
+pub(all) struct LineGauge {
+  block : Block?
+  ratio : Float
+  label : @core.Line?
+  style : @core.Style
+  filled_symbol : String
+  unfilled_symbol : String
+  filled_style : @core.Style
+  unfilled_style : @core.Style
+} derive(Eq, @debug.Debug)
+pub fn LineGauge::block(Self, Block) -> Self
+pub fn LineGauge::default() -> Self
+pub fn LineGauge::filled_style(Self, @core.Style) -> Self
+pub fn LineGauge::filled_symbol(Self, String) -> Self
+pub fn LineGauge::label(Self, @core.Line) -> Self
+pub fn LineGauge::label_str(Self, String) -> Self
+pub fn LineGauge::ratio(Self, Float) -> Self
+pub fn LineGauge::style(Self, @core.Style) -> Self
+pub fn LineGauge::unfilled_style(Self, @core.Style) -> Self
+pub fn LineGauge::unfilled_symbol(Self, String) -> Self
+pub impl @core.Widget for LineGauge
 
 pub(all) struct LineTruncator {
   input_lines : Array[(Array[@core.StyledGrapheme], @core.Alignment)]

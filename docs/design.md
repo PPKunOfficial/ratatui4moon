@@ -151,13 +151,14 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
 
 ## 6. 路线图
 
-- **v0.1（当前）**：core（Buffer/diff/Style/text 基元）+ backend（trait/
-  TestBackend/ANSI）+ widgets（Block：边框/线型/标题/内边距），
-  上游 v0.30.2 core 与 Block 单测逐条复刻全绿 ✅
-- **v0.2**：`unicode/` 宽度表全量搬运与折行；Paragraph；线性 `layout/`
-  （`LayoutSolver` trait + LinearSolver）；`TtyBackend` 接入 tty 包；
-  Linux + Windows CI
-- **v0.3**：List / Scrollbar / 单行 Editor（历史、光标）；鼠标；kitty 键盘
+- **v0.1（当前）**：core（Buffer/diff/Style/text 基元/symbols line+block
+  符号表）+ backend（trait/TestBackend/ANSI）+ widgets（Block/Paragraph/
+  List/Tabs/Gauge/LineGauge），上游 v0.30.2 对应模块的单测与集成
+  黄金用例逐条复刻全绿 ✅
+- **v0.2**：`unicode/` 宽度表全量搬运与折行升级；线性 `layout/`
+  （`LayoutSolver` trait + LinearSolver）；Sparkline/Scrollbar/Table 续推；
+  `TtyBackend` 接入 tty 包；Linux + Windows CI
+- **v0.3**：单行 Editor（历史、光标）；鼠标；kitty 键盘
   协议增强；IME 摸底（raw mode 下 CJK 输入是已知硬骨头，mizchi 以 cooked
   模式绕行，本库需独立评估方案）
 
