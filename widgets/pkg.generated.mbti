@@ -417,6 +417,100 @@ pub fn SparklineBar::of(UInt64) -> Self
 pub fn SparklineBar::of_opt(UInt64?) -> Self
 pub fn SparklineBar::style(Self, @core.Style) -> Self
 
+pub(all) struct Table {
+  block : Block?
+  style : @core.Style
+  header : TableRow?
+  footer : TableRow?
+  rows : Array[TableRow]
+  widths : Array[@core.Constraint]
+  column_spacing : Int
+  row_highlight_style : @core.Style
+  column_highlight_style : @core.Style
+  cell_highlight_style : @core.Style
+  highlight_symbol : @core.Text
+  highlight_spacing : HighlightSpacing
+  flex : @core.Flex
+} derive(Eq, @debug.Debug)
+pub fn Table::block(Self, Block) -> Self
+pub fn Table::cell_highlight_style(Self, @core.Style) -> Self
+pub fn Table::column_count(Self) -> Int
+pub fn Table::column_highlight_style(Self, @core.Style) -> Self
+pub fn Table::column_spacing(Self, Int) -> Self
+pub fn Table::default() -> Self
+pub fn Table::flex(Self, @core.Flex) -> Self
+pub fn Table::footer(Self, TableRow) -> Self
+pub fn Table::header(Self, TableRow) -> Self
+pub fn Table::highlight_spacing(Self, HighlightSpacing) -> Self
+pub fn Table::highlight_symbol(Self, @core.Text) -> Self
+pub fn Table::highlight_symbol_str(Self, String) -> Self
+pub fn Table::make(Array[TableRow], Array[@core.Constraint]) -> Self
+pub fn Table::render_stateful(Self, @core.Rect, @core.Buffer, TableState) -> Unit
+pub fn Table::row_highlight_style(Self, @core.Style) -> Self
+pub fn Table::rows(Self, Array[TableRow]) -> Self
+pub fn Table::style(Self, @core.Style) -> Self
+pub fn Table::widths(Self, Array[@core.Constraint]) -> Self
+pub impl @core.Widget for Table
+
+pub(all) struct TableCell {
+  content : @core.Text
+  style : @core.Style
+  column_span : Int
+} derive(Eq, @debug.Debug)
+pub fn TableCell::column_span(Self, Int) -> Self
+pub fn TableCell::content(Self, @core.Text) -> Self
+pub fn TableCell::content_str(Self, String) -> Self
+pub fn TableCell::default() -> Self
+pub fn TableCell::new(@core.Text) -> Self
+pub fn TableCell::of_str(String) -> Self
+pub fn TableCell::style(Self, @core.Style) -> Self
+
+pub(all) struct TableRow {
+  cells : Array[TableCell]
+  height : Int
+  top_margin : Int
+  bottom_margin : Int
+  style : @core.Style
+} derive(Eq, @debug.Debug)
+pub fn TableRow::bottom_margin(Self, Int) -> Self
+pub fn TableRow::cells(Self, Array[TableCell]) -> Self
+pub fn TableRow::default() -> Self
+pub fn TableRow::height(Self, Int) -> Self
+pub fn TableRow::new(Array[TableCell]) -> Self
+pub fn TableRow::of_strs(Array[String]) -> Self
+pub fn TableRow::style(Self, @core.Style) -> Self
+pub fn TableRow::top_margin(Self, Int) -> Self
+
+pub(all) struct TableState {
+  mut offset : Int
+  mut selected : Int?
+  mut selected_column : Int?
+} derive(Eq, @debug.Debug)
+pub fn TableState::new() -> Self
+pub fn TableState::offset(Self) -> Int
+pub fn TableState::scroll_down_by(Self, Int) -> Unit
+pub fn TableState::scroll_left_by(Self, Int) -> Unit
+pub fn TableState::scroll_right_by(Self, Int) -> Unit
+pub fn TableState::scroll_up_by(Self, Int) -> Unit
+pub fn TableState::select(Self, Int?) -> Unit
+pub fn TableState::select_cell(Self, (Int, Int)?) -> Unit
+pub fn TableState::select_column(Self, Int?) -> Unit
+pub fn TableState::select_first(Self) -> Unit
+pub fn TableState::select_first_column(Self) -> Unit
+pub fn TableState::select_last(Self) -> Unit
+pub fn TableState::select_last_column(Self) -> Unit
+pub fn TableState::select_next(Self) -> Unit
+pub fn TableState::select_next_column(Self) -> Unit
+pub fn TableState::select_previous(Self) -> Unit
+pub fn TableState::select_previous_column(Self) -> Unit
+pub fn TableState::selected(Self) -> Int?
+pub fn TableState::selected_cell(Self) -> (Int, Int)?
+pub fn TableState::selected_column(Self) -> Int?
+pub fn TableState::with_offset(Self, Int) -> Self
+pub fn TableState::with_selected(Self, Int?) -> Self
+pub fn TableState::with_selected_cell(Self, (Int, Int)?) -> Self
+pub fn TableState::with_selected_column(Self, Int?) -> Self
+
 pub(all) struct Tabs {
   block : Block?
   titles : Array[@core.Line]

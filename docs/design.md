@@ -154,7 +154,7 @@ CJK 渲染是第一消费方（Nonoka）的刚需。v0.1 阶段 `core/width.mbt`
 - **v0.1（当前）**：core（Buffer/diff/Style/text 基元/symbols line+block+
   bar+shade+scrollbar 符号表）+ backend（trait/TestBackend/ANSI）+ widgets
   （Block/Paragraph/List/Tabs/Gauge/LineGauge/Sparkline/Scrollbar/Clear/Fill/
-  BarChart），上游 v0.30.2 对应模块的单测与集成黄金用例逐条复刻全绿 ✅
+  BarChart/Table），上游 v0.30.2 对应模块的单测与集成黄金用例逐条复刻全绿 ✅
 - **v0.2**：`unicode/` 宽度表全量搬运与折行升级；`layout/` kasuari
   一次性求解子集已落（679 case 全绿 ✅）；Table/Chart 续推；
   `TtyBackend` 接入 tty 包；Linux + Windows CI
