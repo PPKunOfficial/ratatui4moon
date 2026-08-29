@@ -59,6 +59,7 @@ pub fn Terminal::get_cursor_position(Self) -> @core.Position raise
 pub fn Terminal::get_frame(Self) -> Frame
 pub fn Terminal::hidden_cursor(Self) -> Bool
 pub fn Terminal::hide_cursor(Self) -> Unit raise
+pub fn Terminal::insert_before(Self, Int, (@core.Buffer) -> Unit) -> Unit raise
 pub fn Terminal::last_known_area(Self) -> @core.Rect
 pub fn Terminal::last_known_cursor_pos(Self) -> @core.Position
 pub fn Terminal::new(&@backend.Backend) -> Self raise

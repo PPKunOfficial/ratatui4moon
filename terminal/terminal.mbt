@@ -556,3 +556,109 @@ pub fn Terminal::buffer_at(self : Terminal, index : Int) -> @core.Buffer {
 pub fn Terminal::viewport(self : Terminal) -> Viewport {
   self.viewport
 }
+
+///|
+/// 在行内视口前插入内容（上游 `Terminal::insert_before`）：非行内
+/// 视口为无操作。视口未到屏底时下推，到底后向上滚动上方区域；
+/// 超出屏幕的行直接进入终端回滚缓冲喵。
+///
+/// 上游 scrolling-regions feature 提供免重绘视口的优化路径；该
+/// feature 非上游默认构建（滚动区域方法为 feature 门控），故按上游
+/// 默认构建对位 `insert_before_no_scrolling_regions` 路径，随后
+/// `clear` 令下一次 draw 重绘视口喵。
+pub fn Terminal::insert_before(
+  self : Terminal,
+  height : Int,
+  draw_fn : (@core.Buffer) -> Unit,
+) -> Unit raise {
+  match self.viewport {
+    Inline(_) => self.insert_before_no_scrolling_regions(height, draw_fn)
+    _ => ()
+  }
+}
+
+///|
+/// 标准后端能力实现（上游 `insert_before_no_scrolling_regions`）：
+/// 把插入内容渲染进临时缓冲，分块直写后端并按需滚动喵。
+fn Terminal::insert_before_no_scrolling_regions(
+  self : Terminal,
+  height : Int,
+  draw_fn : (@core.Buffer) -> Unit,
+) -> Unit raise {
+  let area = @core.Rect::new(0, 0, self.viewport_area.width, height)
+  let buffer = @core.Buffer::empty(area)
+  draw_fn(buffer)
+  let cells = buffer.cells
+  // 消费游标（上游以内容切片承载）喵。
+  let mut pos = 0
+  let mut drawn_height = self.viewport_area.top()
+  let mut buffer_height = height
+  let viewport_height = self.viewport_area.height
+  let screen_height = self.last_known_area.height
+  // 循环分块绘制（每次至多一屏），直至缓冲余量 + 视口能装进屏幕喵。
+  while buffer_height + viewport_height > screen_height {
+    let to_draw = buffer_height.min(screen_height)
+    let scroll_up = (drawn_height + to_draw - screen_height).max(0)
+    self.scroll_up(scroll_up)
+    pos = self.draw_lines(drawn_height - scroll_up, to_draw, cells, pos)
+    drawn_height += to_draw - scroll_up
+    buffer_height -= to_draw
+  }
+  // 余量足够后，再上滚恰好的量使整屏填满（含视口）喵。
+  let scroll_up = (drawn_height +
+  buffer_height +
+  viewport_height -
+  screen_height).max(0)
+  self.scroll_up(scroll_up)
+  pos = self.draw_lines(drawn_height - scroll_up, buffer_height, cells, pos)
+  ignore(pos)
+  drawn_height += buffer_height - scroll_up
+  self.set_viewport_area(
+    @core.Rect::new(
+      self.viewport_area.x,
+      drawn_height,
+      self.viewport_area.width,
+      self.viewport_area.height,
+    ),
+  )
+  // 最后清屏：临时缓冲非稀疏、已覆写屏幕；且规避 tmux 的
+  // "全屏清 + 立即滚动"回滚垃圾问题（上游注释语义）喵。
+  self.clear()
+}
+
+///|
+/// 在给定纵向偏移处按终端坐标直写行（上游 `Terminal::draw_lines`）：
+/// 返回未消费的单元格起始下标喵。
+fn Terminal::draw_lines(
+  self : Terminal,
+  y_offset : Int,
+  lines_to_draw : Int,
+  cells : Array[@core.Cell],
+  start : Int,
+) -> Int raise {
+  let width = self.last_known_area.width
+  let count = width * lines_to_draw
+  if lines_to_draw > 0 {
+    let updates : Array[(Int, Int, @core.Cell)] = []
+    for i in 0..<count {
+      updates.push(
+        ((start + i) % width, y_offset + (start + i) / width, cells[start + i]),
+      )
+    }
+    self.backend.draw(updates)
+    self.backend.flush()
+  }
+  start + count
+}
+
+///|
+/// 整屏上滚指定行数（上游 `Terminal::scroll_up`）：移光标到末行后
+/// 调 `Backend::append_lines` 喵。
+fn Terminal::scroll_up(self : Terminal, lines_to_scroll : Int) -> Unit raise {
+  if lines_to_scroll > 0 {
+    self.set_cursor_position(
+      @core.Position::new(0, self.last_known_area.height - 1),
+    )
+    self.backend.append_lines(lines_to_scroll)
+  }
+}

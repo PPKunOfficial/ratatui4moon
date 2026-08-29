@@ -550,3 +550,139 @@ test "with_options 行内高度钳制到终端" {
   })
   @debug.assert_eq(terminal.viewport_area(), @core.Rect::new(0, 0, 10, 3))
 }
+
+///|
+/// 上游 `compute_inline_size_uses_cursor_offset_when_space_available`
+/// 的 resize 等价承载：光标 y=6、视口内偏移 1 → 新视口顶 y=5 喵。
+test "行内重排按偏移取视口顶（空间充足）" {
+  let backend = @backend.TestBackend::new_with_size(10, 10)
+  let terminal = @terminal.Terminal::with_options(backend, {
+    viewport: @terminal.Inline(4),
+  })
+  // 追踪位 (0,1)：视口顶 0 + 偏移 1 喵。
+  terminal.set_cursor_position(@core.Position::new(0, 1))
+  // 后端光标移到 y=6（观测位）喵。
+  backend.set_cursor_position(@core.Position::new(0, 6))
+  terminal.resize(@core.Rect::new(0, 0, 10, 10))
+  @debug.assert_eq(terminal.viewport_area(), @core.Rect::new(0, 5, 10, 4))
+  // 观测光标位保持 (0,6) 喵。
+  @debug.assert_eq(backend.cursor_position(), @core.Position::new(0, 6))
+}
+
+///|
+/// 上游 `compute_inline_size_saturates_when_offset_exceeds_cursor_row`
+/// 的 resize 等价承载：偏移超过光标行时饱和到顶部 y=0 喵。
+test "行内重排偏移超过光标行时饱和" {
+  let backend = @backend.TestBackend::new_with_size(10, 10)
+  let terminal = @terminal.Terminal::with_options(backend, {
+    viewport: @terminal.Inline(4),
+  })
+  // 追踪位 (0,5)、后端光标 (0,0)：偏移 5 > 光标行 0 喵。
+  terminal.set_cursor_position(@core.Position::new(0, 5))
+  backend.set_cursor_position(@core.Position::new(0, 0))
+  terminal.resize(@core.Rect::new(0, 0, 10, 10))
+  @debug.assert_eq(terminal.viewport_area(), @core.Rect::new(0, 0, 10, 4))
+}
+
+///|
+/// 上游 `insert_before_is_noop_for_non_inline_viewports` 喵。
+test "insert_before 非行内视口为无操作" {
+  let backend = @backend.TestBackend::new_with_size(3, 2)
+  let terminal = @terminal.Terminal::new(backend)
+  let frame = terminal.get_frame()
+  match frame.buffer_mut().mut_cell(0, 0) {
+    Some(cell) => cell.set_symbol("x")
+    None => ()
+  }
+  terminal.flush()
+  let viewport_area = terminal.viewport_area()
+  let _ = terminal.insert_before(1, fn(buf) {
+    ignore(buf.set_string(0, 0, "zzz", @core.Style::new()))
+  })
+  @debug.assert_eq(terminal.viewport_area(), viewport_area)
+  backend.assert_buffer_lines(["x  ", "   "])
+}
+
+///|
+/// 上游 `insert_before_pushes_viewport_down_when_space_available`：
+/// 空间充足时下推视口并清空待重绘喵。
+test "insert_before 空间充足下推视口" {
+  let backend = @backend.TestBackend::new_with_lines([
+    "0000000000", "1111111111", "2222222222", "3333333333", "4444444444", "5555555555",
+    "6666666666", "7777777777", "8888888888", "9999999999",
+  ])
+  backend.set_cursor_position(@core.Position::new(0, 3))
+  let terminal = @terminal.Terminal::with_options(backend, {
+    viewport: @terminal.Inline(4),
+  })
+  let _ = terminal.insert_before(1, fn(buf) {
+    ignore(buf.set_string(0, 0, "INSERTLINE", @core.Style::new()))
+  })
+  @debug.assert_eq(terminal.viewport_area(), @core.Rect::new(0, 4, 10, 4))
+  backend.assert_buffer_lines([
+    "0000000000", "1111111111", "2222222222", "INSERTLINE", "          ", "          ",
+    "          ", "          ", "          ", "          ",
+  ])
+}
+
+///|
+/// 上游 `insert_before_scrolls_when_viewport_is_at_bottom`：视口
+/// 到底后上滚上方区域喵。
+test "insert_before 视口到底时上滚" {
+  let backend = @backend.TestBackend::new_with_lines([
+    "0000000000", "1111111111", "2222222222", "3333333333", "4444444444", "5555555555",
+    "6666666666", "7777777777", "8888888888", "9999999999",
+  ])
+  backend.set_cursor_position(@core.Position::new(0, 6))
+  let terminal = @terminal.Terminal::with_options(backend, {
+    viewport: @terminal.Inline(4),
+  })
+  let _ = terminal.insert_before(2, fn(buf) {
+    ignore(buf.set_string(0, 0, "INSERTED1", @core.Style::new()))
+    ignore(buf.set_string(0, 1, "INSERTED2", @core.Style::new()))
+  })
+  @debug.assert_eq(terminal.viewport_area(), @core.Rect::new(0, 6, 10, 4))
+  backend.assert_buffer_lines([
+    "2222222222", "3333333333", "4444444444", "5555555555", "INSERTED1 ", "INSERTED2 ",
+    "          ", "          ", "          ", "          ",
+  ])
+}
+
+///|
+/// 上游 `insert_before_then_draw_repaints_cleared_viewport`：插入后
+/// 下次 draw 重绘视口喵。
+test "insert_before 后 draw 重绘被清视口" {
+  let backend = @backend.TestBackend::new_with_size(10, 10)
+  backend.set_cursor_position(@core.Position::new(0, 6))
+  let terminal = @terminal.Terminal::with_options(backend, {
+    viewport: @terminal.Inline(4),
+  })
+  let _ = terminal.draw(fn(frame) {
+    let area = frame.area()
+    for y in area.top()..<area.bottom() {
+      ignore(
+        frame
+        .buffer_mut()
+        .set_string(area.x, y, "AAAAAAAAAA", @core.Style::new()),
+      )
+    }
+  })
+  let _ = terminal.insert_before(2, fn(buf) {
+    ignore(buf.set_string(0, 0, "INSERTED00", @core.Style::new()))
+    ignore(buf.set_string(0, 1, "INSERTED01", @core.Style::new()))
+  })
+  let _ = terminal.draw(fn(frame) {
+    let area = frame.area()
+    for y in area.top()..<area.bottom() {
+      ignore(
+        frame
+        .buffer_mut()
+        .set_string(area.x, y, "BBBBBBBBBB", @core.Style::new()),
+      )
+    }
+  })
+  backend.assert_buffer_lines([
+    "          ", "          ", "          ", "          ", "INSERTED00", "INSERTED01",
+    "BBBBBBBBBB", "BBBBBBBBBB", "BBBBBBBBBB", "BBBBBBBBBB",
+  ])
+}

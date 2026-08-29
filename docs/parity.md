@@ -42,7 +42,7 @@
 | `symbols/braille.rs` | `core/braille_symbol.mbt` | ✅ | 256 项行主序位图表 + 位映射抽检（上游无内联测试，补锚定） |
 | `symbols/half_block.rs` | `core/half_block_symbol.mbt` | ✅ | UPPER/LOWER/FULL 三常量（上游无内联测试，补锚定） |
 | `symbols/pixel.rs` | `core/pixel_symbol.mbt` | ✅ | QUADRANTS/SEXTANTS/OCTANTS 三表 + 端点抽检（上游无内联测试，补锚定） |
-| `terminal/*`（Frame/Buffers/Viewport/Init/Render/Resize/Cursor） | `terminal/` 包 | ◐ | Terminal/Frame/CompletedFrame/Viewport/TerminalOptions + 双缓冲 flush/swap/clear 四族 + draw 管线 + autoresize/resize（含行内重排）+ 光标状态机 + 34 条测试复刻（buffers 12/viewport 1/terminal.backend 3/cursor 3/resize 6/init 5/render 6 中归并）；待补：`insert_before` 等行内管理 API（inline.rs 主体）、init 的 raw-mode 接入 |
+| `terminal/*`（Frame/Buffers/Viewport/Init/Render/Resize/Cursor/Inline） | `terminal/` 包 | ✅ | Terminal/Frame/CompletedFrame/Viewport/TerminalOptions + 双缓冲 flush/swap/clear 四族 + draw 管线 + autoresize/resize（含行内重排）+ 光标状态机 + `insert_before` 族（分块直写/滚动下推/清屏重绘语义，scrolling-regions 为上游 feature 门控路径不复刻并登记）+ 40 条测试复刻（buffers 12/viewport 1/terminal.backend 3/cursor 3/resize 6/init 5/render 6/inline compute+insert_before 8/工程锚定 4 中归并）；待补：init 的 raw-mode 接入（随 TtyBackend） |
 | `widgets/widget.rs` / `stateful_widget.rs` | `core/widget.mbt` + `core/stateful_widget.mbt` | ✅ | Widget trait（Span/Line/Text/String/Block/Paragraph 实现）；StatefulWidget 以 Stateful[W,S] 状态打包形式化（MoonBit 无关联类型，所有权偏差登记） |
 | `backend.rs` + `backend/test.rs` | `backend/` 包 | ✅ | Backend trait 完整契约（draw/光标四件/clear 两件/size/window_size/flush/append_lines）+ ClearType/WindowSize + TestBackend 全形态（主/回滚缓冲/光标/append_lines 滚动/缓冲视图），上游 test.rs 测试清单复刻中（ClearType 2 条 + 主体行为测试经 terminal 包 34 条承载）；`last_ansi` 录帧为本库扩展 |
 
