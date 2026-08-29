@@ -494,6 +494,17 @@ pub fn Rect::to_display(Self) -> String
 pub fn Rect::top(Self) -> Int
 pub fn Rect::union(Self, Self) -> Self
 
+pub(all) struct ScrollbarSet {
+  track : String
+  thumb : String
+  begin : String
+  end : String
+} derive(Eq, @debug.Debug)
+pub fn ScrollbarSet::double_horizontal() -> Self
+pub fn ScrollbarSet::double_vertical() -> Self
+pub fn ScrollbarSet::horizontal() -> Self
+pub fn ScrollbarSet::vertical() -> Self
+
 pub(all) struct Size {
   width : Int
   height : Int

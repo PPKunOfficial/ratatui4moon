@@ -248,6 +248,66 @@ pub(all) enum RenderDirection {
 pub fn RenderDirection::from_str(String) -> Self?
 pub fn RenderDirection::to_display(Self) -> String
 
+pub(all) enum ScrollDirection {
+  Forward
+  Backward
+} derive(Eq, @debug.Debug)
+pub fn ScrollDirection::from_str(String) -> Self?
+pub fn ScrollDirection::to_display(Self) -> String
+
+pub(all) struct Scrollbar {
+  orientation : ScrollbarOrientation
+  thumb_style : @core.Style
+  thumb_symbol : String
+  track_style : @core.Style
+  track_symbol : String?
+  begin_style : @core.Style
+  begin_symbol : String?
+  end_style : @core.Style
+  end_symbol : String?
+} derive(Eq, @debug.Debug)
+pub fn Scrollbar::begin_style(Self, @core.Style) -> Self
+pub fn Scrollbar::begin_symbol(Self, String?) -> Self
+pub fn Scrollbar::end_style(Self, @core.Style) -> Self
+pub fn Scrollbar::end_symbol(Self, String?) -> Self
+pub fn Scrollbar::new(ScrollbarOrientation) -> Self
+pub fn Scrollbar::orientation(Self, ScrollbarOrientation) -> Self
+pub fn Scrollbar::orientation_and_symbol(Self, ScrollbarOrientation, @core.ScrollbarSet) -> Self
+pub fn Scrollbar::render_stateful(Self, @core.Rect, @core.Buffer, ScrollbarState) -> Unit
+pub fn Scrollbar::style(Self, @core.Style) -> Self
+pub fn Scrollbar::symbols(Self, @core.ScrollbarSet) -> Self
+pub fn Scrollbar::thumb_style(Self, @core.Style) -> Self
+pub fn Scrollbar::thumb_symbol(Self, String) -> Self
+pub fn Scrollbar::track_style(Self, @core.Style) -> Self
+pub fn Scrollbar::track_symbol(Self, String?) -> Self
+
+pub(all) enum ScrollbarOrientation {
+  VerticalRight
+  VerticalLeft
+  HorizontalBottom
+  HorizontalTop
+} derive(Eq, @debug.Debug)
+pub fn ScrollbarOrientation::from_str(String) -> Self?
+pub fn ScrollbarOrientation::is_horizontal(Self) -> Bool
+pub fn ScrollbarOrientation::is_vertical(Self) -> Bool
+pub fn ScrollbarOrientation::to_display(Self) -> String
+
+pub(all) struct ScrollbarState {
+  mut content_length : Int
+  mut position : Int
+  mut viewport_content_length : Int
+} derive(Eq, @debug.Debug)
+pub fn ScrollbarState::first(Self) -> Unit
+pub fn ScrollbarState::get_position(Self) -> Int
+pub fn ScrollbarState::last(Self) -> Unit
+pub fn ScrollbarState::new(Int) -> Self
+pub fn ScrollbarState::next(Self) -> Unit
+pub fn ScrollbarState::prev(Self) -> Unit
+pub fn ScrollbarState::scroll(Self, ScrollDirection) -> Unit
+pub fn ScrollbarState::with_content_length(Self, Int) -> Self
+pub fn ScrollbarState::with_position(Self, Int) -> Self
+pub fn ScrollbarState::with_viewport_content_length(Self, Int) -> Self
+
 pub(all) struct Sparkline {
   block : Block?
   style : @core.Style
