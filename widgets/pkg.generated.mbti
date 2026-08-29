@@ -12,6 +12,70 @@ pub fn tabs_default_highlight_style() -> @core.Style
 // Errors
 
 // Types and methods
+pub(all) struct Bar {
+  value : UInt64
+  label : @core.Line?
+  style : @core.Style
+  value_style : @core.Style
+  text_value : String?
+} derive(Eq, @debug.Debug)
+pub fn Bar::default() -> Self
+pub fn Bar::label(Self, @core.Line) -> Self
+pub fn Bar::label_str(Self, String) -> Self
+pub fn Bar::new(UInt64) -> Self
+pub fn Bar::style(Self, @core.Style) -> Self
+pub fn Bar::text_value(Self, String) -> Self
+pub fn Bar::value(Self, UInt64) -> Self
+pub fn Bar::value_style(Self, @core.Style) -> Self
+pub fn Bar::with_label(@core.Line, UInt64) -> Self
+pub fn Bar::with_label_str(String, UInt64) -> Self
+
+pub(all) struct BarChart {
+  block : Block?
+  bar_width : Int
+  bar_gap : Int
+  group_gap : Int
+  bar_set : @core.BarSet
+  bar_style : @core.Style
+  value_style : @core.Style
+  label_style : @core.Style
+  style : @core.Style
+  data : Array[BarGroup]
+  max : UInt64?
+  direction : @core.Direction
+} derive(Eq, @debug.Debug)
+pub fn BarChart::bar_gap(Self, Int) -> Self
+pub fn BarChart::bar_set(Self, @core.BarSet) -> Self
+pub fn BarChart::bar_style(Self, @core.Style) -> Self
+pub fn BarChart::bar_width(Self, Int) -> Self
+pub fn BarChart::block(Self, Block) -> Self
+pub fn BarChart::data(Self, BarGroup) -> Self
+pub fn BarChart::data_pairs(Self, Array[(String, UInt64)]) -> Self
+pub fn BarChart::default() -> Self
+pub fn BarChart::direction(Self, @core.Direction) -> Self
+pub fn BarChart::group_gap(Self, Int) -> Self
+pub fn BarChart::grouped(Array[BarGroup]) -> Self
+pub fn BarChart::horizontal(Array[Bar]) -> Self
+pub fn BarChart::label_style(Self, @core.Style) -> Self
+pub fn BarChart::max(Self, UInt64) -> Self
+pub fn BarChart::of_bars(Array[Bar]) -> Self
+pub fn BarChart::style(Self, @core.Style) -> Self
+pub fn BarChart::value_style(Self, @core.Style) -> Self
+pub impl @core.Widget for BarChart
+
+pub(all) struct BarGroup {
+  label : @core.Line?
+  bars : Array[Bar]
+} derive(Eq, @debug.Debug)
+pub fn BarGroup::bars(Self, Array[Bar]) -> Self
+pub fn BarGroup::default() -> Self
+pub fn BarGroup::label(Self, @core.Line) -> Self
+pub fn BarGroup::label_str(Self, String) -> Self
+pub fn BarGroup::new(Array[Bar]) -> Self
+pub fn BarGroup::of_pairs(Array[(String, UInt64)]) -> Self
+pub fn BarGroup::with_label(@core.Line, Array[Bar]) -> Self
+pub fn BarGroup::with_label_str(String, Array[Bar]) -> Self
+
 pub(all) struct Block {
   titles : Array[(TitlePosition?, @core.Line)]
   titles_style : @core.Style

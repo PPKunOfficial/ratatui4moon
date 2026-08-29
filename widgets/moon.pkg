@@ -1,5 +1,6 @@
 import {
   "nonoka/ratatui4moon/core",
+  "moonbitlang/core/encoding/utf8",
 }
 
 import {
