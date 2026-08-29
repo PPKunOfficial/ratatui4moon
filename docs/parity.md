@@ -11,8 +11,8 @@
 | 上游模块 | 本库 | 状态 | 缺项 |
 |---|---|---|---|
 | `layout/rect.rs` + `rect/ops.rs` | `core/rect.mbt` + `rect_test.mbt` | ✅ | `iter.rs` 的 Rows/Columns/Positions 结构体形态（`rows`/`columns`/`positions` 已有 Iter 版） |
-| `layout/position.rs` | `core/position.mbt` | ✅ | `Add<Position>`（Position+Position）糖 |
-| `layout/size.rs` / `margin.rs` / `offset.rs` | 同名 `.mbt` | ✅ | FromStr 糖 |
+| `layout/position.rs` | `core/position.mbt` | ✅ | `±Offset` 算术（`op_add`/`op_sub` 饱和钳制）与 `to_display` 全量 |
+| `layout/size.rs` / `margin.rs` / `offset.rs` | 同名 `.mbt` | ✅ | 上游本无 FromStr；`Display` 以 `to_display` 对位 |
 | `layout/alignment.rs` | `core/alignment.mbt` | ✅ | Horizontal/Vertical 全变体 + to_display/from_str（strum 对位）|
 | `layout/constraint.rs` | `core/constraint.mbt` | ✅ | apply/from_* 构造器/Display 全量；u32::MAX 极端用例按 Int 域折算 |
 | `layout/direction.rs` / `flex.rs` | `core/direction.mbt` + `core/flex.mbt` | ✅ | — |

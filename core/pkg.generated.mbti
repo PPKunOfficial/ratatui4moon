@@ -482,6 +482,19 @@ pub fn Color::of_srgb_u8(Int, Int, Int) -> Self
 pub fn Color::to_an_style_color(Self) -> AnStyleColor raise
 pub fn Color::to_display(Self) -> String
 
+pub(all) struct Columns {
+  rect : Rect
+  mut current_column_fwd : Int
+  mut current_column_back : Int
+  mut rev : Bool
+} derive(Eq, @debug.Debug)
+pub fn Columns::new(Rect) -> Self
+pub fn Columns::next(Self) -> Rect?
+pub fn Columns::next_back(Self) -> Rect?
+pub fn Columns::rev(Self) -> Self
+pub fn Columns::size_hint(Self) -> (Int, Int)
+pub fn Columns::skip(Self, Int) -> Self
+
 pub(all) enum Constraint {
   Min(Int)
   Max(Int)
@@ -713,6 +726,14 @@ pub fn Position::op_sub(Self, Offset) -> Self
 pub fn Position::to_display(Self) -> String
 pub fn Position::to_tuple(Self) -> (Int, Int)
 
+pub(all) struct Positions {
+  rect : Rect
+  mut current_position : Position
+} derive(Eq, @debug.Debug)
+pub fn Positions::new(Rect) -> Self
+pub fn Positions::next(Self) -> Position?
+pub fn Positions::size_hint(Self) -> (Int, Int)
+
 pub(all) struct Rect {
   x : Int
   y : Int
@@ -752,6 +773,19 @@ pub(all) struct RgbColor {
   b : Int
 } derive(Eq, @debug.Debug)
 pub fn RgbColor::try_from(Color) -> Result[Self, TryFromColorError]
+
+pub(all) struct Rows {
+  rect : Rect
+  mut current_row_fwd : Int
+  mut current_row_back : Int
+  mut rev : Bool
+} derive(Eq, @debug.Debug)
+pub fn Rows::new(Rect) -> Self
+pub fn Rows::next(Self) -> Rect?
+pub fn Rows::next_back(Self) -> Rect?
+pub fn Rows::rev(Self) -> Self
+pub fn Rows::size_hint(Self) -> (Int, Int)
+pub fn Rows::skip(Self, Int) -> Self
 
 pub(all) struct ScrollbarSet {
   track : String
