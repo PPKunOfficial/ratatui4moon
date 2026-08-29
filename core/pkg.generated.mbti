@@ -38,6 +38,14 @@ pub const BLOCK_THREE_EIGHTHS : String = "▍"
 
 pub const BLOCK_THREE_QUARTERS : String = "▊"
 
+pub const DOT : String = "•"
+
+pub const HALF_BLOCK_FULL : Char = '█'
+
+pub const HALF_BLOCK_LOWER : Char = '▄'
+
+pub const HALF_BLOCK_UPPER : Char = '▀'
+
 pub const LINE_BOTTOM_LEFT : String = "└"
 
 pub const LINE_BOTTOM_RIGHT : String = "┘"
@@ -148,7 +156,15 @@ pub const SHADE_LIGHT : String = "░"
 
 pub const SHADE_MEDIUM : String = "▒"
 
+pub let braille_table : Array[Char]
+
 pub fn char_display_width(Char) -> Int
+
+pub let octants : Array[Char]
+
+pub let quadrants : Array[Char]
+
+pub let sextants : Array[Char]
 
 pub fn symbol_width(String) -> Int
 
@@ -395,6 +411,21 @@ pub(all) struct Margin {
 pub fn Margin::new(Int, Int) -> Self
 pub fn Margin::to_display(Self) -> String
 pub fn Margin::uniform(Int) -> Self
+
+pub(all) enum Marker {
+  Dot
+  Block
+  Bar
+  Braille
+  HalfBlock
+  Quadrant
+  Sextant
+  Octant
+  Custom(Char)
+} derive(Eq, @debug.Debug)
+pub fn Marker::default() -> Self
+pub fn Marker::from_str(String) -> Self?
+pub fn Marker::name(Self) -> String
 
 pub(all) struct Masked {
   inner : String
