@@ -38,6 +38,14 @@ pub const BLOCK_THREE_EIGHTHS : String = "▍"
 
 pub const BLOCK_THREE_QUARTERS : String = "▊"
 
+pub const BORDER_ONE_EIGHTH_BOTTOM_EIGHT : String = "▁"
+
+pub const BORDER_ONE_EIGHTH_LEFT_EIGHT : String = "▏"
+
+pub const BORDER_ONE_EIGHTH_RIGHT_EIGHT : String = "▕"
+
+pub const BORDER_ONE_EIGHTH_TOP_EIGHT : String = "▔"
+
 pub const DOT : String = "•"
 
 pub const HALF_BLOCK_FULL : Char = '█'
@@ -222,13 +230,19 @@ pub(all) struct BorderSet {
   horizontal_bottom : String
 } derive(Eq, @debug.Debug)
 pub fn BorderSet::double() -> Self
+pub fn BorderSet::empty_set() -> Self
+pub fn BorderSet::full() -> Self
 pub fn BorderSet::heavy_double_dashed() -> Self
 pub fn BorderSet::heavy_quadruple_dashed() -> Self
 pub fn BorderSet::heavy_triple_dashed() -> Self
 pub fn BorderSet::light_double_dashed() -> Self
 pub fn BorderSet::light_quadruple_dashed() -> Self
 pub fn BorderSet::light_triple_dashed() -> Self
+pub fn BorderSet::one_eighth_tall() -> Self
+pub fn BorderSet::one_eighth_wide() -> Self
 pub fn BorderSet::plain() -> Self
+pub fn BorderSet::proportional_tall() -> Self
+pub fn BorderSet::proportional_wide() -> Self
 pub fn BorderSet::quadrant_inside() -> Self
 pub fn BorderSet::quadrant_outside() -> Self
 pub fn BorderSet::rounded() -> Self

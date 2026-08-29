@@ -31,7 +31,7 @@
 | `text/text.rs` | `core/text_container.mbt` | ✅ | Into/Iterator 语法糖 |
 | `text/masked.rs` | `core/masked.mbt` | ✅ | — |
 | `text/grapheme.rs` | `core/grapheme.mbt` | ◐ | 图形簇细分（逐码点近似，unicode/ 落位后升级） |
-| `symbols/border.rs` | `core/border.mbt` | ◐ | 缺 ONE_EIGHTH/PROPORTIONAL/FULL/EMPTY 填充集（随 Canvas） |
+| `symbols/border.rs` | `core/border.mbt` | ✅ | 十六集合全量（含 McGugan ONE_EIGHTH_WIDE/TALL、PROPORTIONAL_WIDE/TALL、FULL/EMPTY）+ 上游 render 快照测试逐条复刻 |
 | `symbols/merge.rs` | `core/merge.mbt` | ✅ | — |
 | `symbols/line.rs` | `core/line_symbol.mbt` | ✅ | 49 常量 + `LineSet` 十集合全量 |
 | `symbols/block.rs` | `core/block_symbol.mbt` | ✅ | 八级填充常量 + `BlockSet` 三/九级集合 |
