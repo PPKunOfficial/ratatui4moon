@@ -241,6 +241,44 @@ pub fn Paragraph::scroll(Self, (Int, Int)) -> Self
 pub fn Paragraph::style(Self, @core.Style) -> Self
 pub fn Paragraph::wrap(Self, Wrap) -> Self
 
+pub(all) enum RenderDirection {
+  LeftToRight
+  RightToLeft
+} derive(Eq, @debug.Debug)
+pub fn RenderDirection::from_str(String) -> Self?
+pub fn RenderDirection::to_display(Self) -> String
+
+pub(all) struct Sparkline {
+  block : Block?
+  style : @core.Style
+  absent_value_style : @core.Style
+  absent_value_symbol : String
+  data : Array[SparklineBar]
+  max : UInt64?
+  bar_set : @core.BarSet
+  direction : RenderDirection
+} derive(Eq, @debug.Debug)
+pub fn Sparkline::absent_value_style(Self, @core.Style) -> Self
+pub fn Sparkline::absent_value_symbol(Self, String) -> Self
+pub fn Sparkline::bar_set(Self, @core.BarSet) -> Self
+pub fn Sparkline::block(Self, Block) -> Self
+pub fn Sparkline::data(Self, Array[UInt64]) -> Self
+pub fn Sparkline::data_of_bars(Self, Array[SparklineBar]) -> Self
+pub fn Sparkline::data_of_option(Self, Array[UInt64?]) -> Self
+pub fn Sparkline::default() -> Self
+pub fn Sparkline::direction(Self, RenderDirection) -> Self
+pub fn Sparkline::max(Self, UInt64) -> Self
+pub fn Sparkline::style(Self, @core.Style) -> Self
+pub impl @core.Widget for Sparkline
+
+pub(all) struct SparklineBar {
+  value : UInt64?
+  style : @core.Style?
+} derive(Eq, @debug.Debug)
+pub fn SparklineBar::of(UInt64) -> Self
+pub fn SparklineBar::of_opt(UInt64?) -> Self
+pub fn SparklineBar::style(Self, @core.Style) -> Self
+
 pub(all) struct Tabs {
   block : Block?
   titles : Array[@core.Line]

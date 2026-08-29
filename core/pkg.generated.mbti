@@ -6,6 +6,22 @@ import {
 }
 
 // Values
+pub const BAR_FIVE_EIGHTHS : String = "▅"
+
+pub const BAR_FULL : String = "█"
+
+pub const BAR_HALF : String = "▄"
+
+pub const BAR_ONE_EIGHTH : String = "▁"
+
+pub const BAR_ONE_QUARTER : String = "▂"
+
+pub const BAR_SEVEN_EIGHTHS : String = "▇"
+
+pub const BAR_THREE_EIGHTHS : String = "▃"
+
+pub const BAR_THREE_QUARTERS : String = "▆"
+
 pub const BLOCK_FIVE_EIGHTHS : String = "▋"
 
 pub const BLOCK_FULL : String = "█"
@@ -122,6 +138,16 @@ pub const LINE_VERTICAL_RIGHT : String = "├"
 
 pub const MAX_COORD : Int = 65535
 
+pub const SHADE_DARK : String = "▓"
+
+pub const SHADE_EMPTY : String = " "
+
+pub const SHADE_FULL : String = "█"
+
+pub const SHADE_LIGHT : String = "░"
+
+pub const SHADE_MEDIUM : String = "▒"
+
 pub fn char_display_width(Char) -> Int
 
 pub fn symbol_width(String) -> Int
@@ -137,6 +163,21 @@ pub(all) enum Alignment {
   Right
 } derive(Eq, @debug.Debug)
 pub fn Alignment::to_display(Self) -> String
+
+pub(all) struct BarSet {
+  full : String
+  seven_eighths : String
+  three_quarters : String
+  five_eighths : String
+  half : String
+  three_eighths : String
+  one_quarter : String
+  one_eighth : String
+  empty : String
+} derive(Eq, @debug.Debug)
+pub fn BarSet::default() -> Self
+pub fn BarSet::nine_levels() -> Self
+pub fn BarSet::three_levels() -> Self
 
 pub(all) struct BlockSet {
   full : String
