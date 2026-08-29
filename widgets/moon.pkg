@@ -1,6 +1,7 @@
 import {
   "nonoka/ratatui4moon/core",
   "nonoka/ratatui4moon/layout",
+  "moonbitlang/core/math",
   "moonbitlang/core/encoding/utf8",
 }
 

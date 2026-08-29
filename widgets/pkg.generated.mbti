@@ -9,6 +9,10 @@ import {
 // Values
 pub fn tabs_default_highlight_style() -> @core.Style
 
+pub let world_high_resolution : Array[(Double, Double)]
+
+pub let world_low_resolution : Array[(Double, Double)]
+
 // Errors
 
 // Types and methods
@@ -146,10 +150,81 @@ pub fn Borders::to_debug(Self) -> String
 pub fn Borders::top() -> Self
 pub fn Borders::union(Self, Self) -> Self
 
+pub struct Canvas {
+  block : Block?
+  x_bounds : (Double, Double)
+  y_bounds : (Double, Double)
+  paint_func : ((Context) -> Unit)?
+  background_color : @core.Color
+  marker : @core.Marker
+}
+pub fn Canvas::background_color(Self, @core.Color) -> Self
+pub fn Canvas::block(Self, Block) -> Self
+pub fn Canvas::default() -> Self
+pub fn Canvas::marker(Self, @core.Marker) -> Self
+pub fn Canvas::paint(Self, (Context) -> Unit) -> Self
+pub fn Canvas::x_bounds(Self, (Double, Double)) -> Self
+pub fn Canvas::y_bounds(Self, (Double, Double)) -> Self
+pub impl @core.Widget for Canvas
+
+pub(all) struct CanvasLine {
+  x1 : Double
+  y1 : Double
+  x2 : Double
+  y2 : Double
+  color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn CanvasLine::new(Double, Double, Double, Double, @core.Color) -> Self
+pub impl Shape for CanvasLine
+
+pub(all) struct CanvasMap {
+  resolution : MapResolution
+  color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn CanvasMap::default() -> Self
+pub impl Shape for CanvasMap
+
+pub(all) struct CanvasRectangle {
+  x : Double
+  y : Double
+  width : Double
+  height : Double
+  color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn CanvasRectangle::new(Double, Double, Double, Double, @core.Color) -> Self
+pub impl Shape for CanvasRectangle
+
+type CharGrid derive(@debug.Debug)
+
+pub(all) struct Circle {
+  x : Double
+  y : Double
+  radius : Double
+  color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn Circle::new(Double, Double, Double, @core.Color) -> Self
+pub impl Shape for Circle
+
 pub(all) struct Clear {
 }
 pub fn Clear::new() -> Self
 pub impl @core.Widget for Clear
+
+pub struct Context {
+  width : Int
+  height : Int
+  x_bounds : (Double, Double)
+  y_bounds : (Double, Double)
+  mut grid : GridKind
+  mut dirty : Bool
+  layers : Array[Layer]
+  labels : Array[Label]
+} derive(@debug.Debug)
+pub fn Context::draw(Self, &Shape) -> Unit
+pub fn Context::layer(Self) -> Unit
+pub fn Context::marker(Self, @core.Marker) -> Unit
+pub fn Context::new(Int, Int, (Double, Double), (Double, Double), @core.Marker) -> Self
+pub fn Context::print(Self, Double, Double, @core.Line) -> Unit
 
 pub(all) struct Fill {
   symbol : String
@@ -159,6 +234,17 @@ pub fn Fill::new(String) -> Self
 pub fn Fill::style(Self, @core.Style) -> Self
 pub fn Fill::symbol(Self, String) -> Self
 pub impl @core.Widget for Fill
+
+pub(all) struct FilledCanvasLine {
+  x1 : Double
+  y1 : Double
+  x2 : Double
+  y2 : Double
+  fill_to_y : Double
+  color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn FilledCanvasLine::new(Double, Double, Double, Double, Double, @core.Color) -> Self
+pub impl Shape for FilledCanvasLine
 
 pub(all) struct Gauge {
   block : Block?
@@ -179,12 +265,26 @@ pub fn Gauge::style(Self, @core.Style) -> Self
 pub fn Gauge::use_unicode(Self, Bool) -> Self
 pub impl @core.Widget for Gauge
 
+type GridKind derive(@debug.Debug)
+
+type HalfBlockGrid derive(@debug.Debug)
+
 pub(all) enum HighlightSpacing {
   Always
   WhenSelected
   Never
 } derive(Eq, @debug.Debug)
 pub fn HighlightSpacing::should_add(Self, Bool) -> Bool
+
+pub(all) struct Label {
+  x : Double
+  y : Double
+  line : @core.Line
+} derive(Eq, @debug.Debug)
+
+type Layer derive(@debug.Debug)
+
+type LayerCell derive(@debug.Debug)
 
 pub(all) struct LineGauge {
   block : Block?
@@ -279,6 +379,14 @@ pub fn ListState::selected(Self) -> Int?
 pub fn ListState::with_offset(Self, Int) -> Self
 pub fn ListState::with_selected(Self, Int?) -> Self
 
+pub(all) enum MapResolution {
+  Low
+  High
+} derive(Eq, @debug.Debug)
+pub fn MapResolution::default() -> Self
+pub fn MapResolution::from_str(String) -> Self?
+pub fn MapResolution::name(Self) -> String
+
 pub(all) struct Padding {
   left : Int
   right : Int
@@ -296,6 +404,15 @@ pub fn Padding::top(Int) -> Self
 pub fn Padding::uniform(Int) -> Self
 pub fn Padding::vertical(Int) -> Self
 pub fn Padding::zero() -> Self
+
+pub struct Painter {
+  context : Context
+  resolution : (Double, Double)
+} derive(@debug.Debug)
+pub fn Painter::bounds(Self) -> ((Double, Double), (Double, Double))
+pub fn Painter::get_point(Self, Double, Double) -> (Int, Int)?
+pub fn Painter::of(Context) -> Self
+pub fn Painter::paint(Self, Int, Int, @core.Color) -> Unit
 
 pub(all) struct Paragraph {
   block : Block?
@@ -318,6 +435,17 @@ pub fn Paragraph::right_aligned(Self) -> Self
 pub fn Paragraph::scroll(Self, (Int, Int)) -> Self
 pub fn Paragraph::style(Self, @core.Style) -> Self
 pub fn Paragraph::wrap(Self, Wrap) -> Self
+
+type PatternCell derive(@debug.Debug)
+
+type PatternGrid derive(@debug.Debug)
+
+pub(all) struct Points {
+  coords : Array[(Double, Double)]
+  color : @core.Color
+} derive(Eq, @debug.Debug)
+pub fn Points::new(Array[(Double, Double)], @core.Color) -> Self
+pub impl Shape for Points
 
 pub(all) enum RenderDirection {
   LeftToRight
@@ -570,4 +698,8 @@ pub(all) struct WrappedLine {
 // Traits
 pub(open) trait LineComposer {
   fn next_line(Self) -> WrappedLine?
+}
+
+pub(open) trait Shape {
+  fn draw(Self, Painter) -> Unit
 }
