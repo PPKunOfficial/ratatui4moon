@@ -13,7 +13,7 @@
 | `layout/rect.rs` + `rect/ops.rs` | `core/rect.mbt` + `rect_test.mbt` | ✅ | `iter.rs` 的 Rows/Columns/Positions 结构体形态（`rows`/`columns`/`positions` 已有 Iter 版） |
 | `layout/position.rs` | `core/position.mbt` | ✅ | `Add<Position>`（Position+Position）糖 |
 | `layout/size.rs` / `margin.rs` / `offset.rs` | 同名 `.mbt` | ✅ | FromStr 糖 |
-| `layout/alignment.rs` | `core/alignment.mbt` | ◐ | `VerticalAlignment`、FromStr |
+| `layout/alignment.rs` | `core/alignment.mbt` | ✅ | Horizontal/Vertical 全变体 + to_display/from_str（strum 对位）|
 | `layout/constraint.rs` | `core/constraint.mbt` | ✅ | apply/from_* 构造器/Display 全量；u32::MAX 极端用例按 Int 域折算 |
 | `layout/direction.rs` / `flex.rs` | `core/direction.mbt` + `core/flex.mbt` | ✅ | — |
 | `layout/layout.rs` | `layout/` 包 | ✅ | kasuari 一次性求解子集（`Solver::new → add_constraint → fetch_changes`）+ Layout 约束体系/strengths/Flex/Spacing 全落；上游 split 全部 22 组参数矩阵（679 case，含 letters 391）+ docstring 示例 + edge_cases + 不变量测试全量复刻；`skip(1).tuples()` 非重叠单调对（overlap 通道）等语义差异经 kasuari 参照实测校准 |
@@ -50,8 +50,8 @@
 
 | 上游模块 | 状态 | 缺项 |
 |---|---|---|
-| `block.rs` + `block/padding.rs` | ◐ | `shadow`、Stylize 糖 |
-| `block/shadow.rs` | ⬜ | Shadow/Dimmed 渲染 |
+| `block.rs` + `block/padding.rs` | `widgets/block.mbt` | ◐ | Stylize 速记糖（样式经 set_style/patch_style 组合覆盖）|
+| `block/shadow.rs` | `widgets/shadow.mbt` | ✅ | 五内联测试全量复刻（overlay/Symbol 矩阵/越界裁剪/Custom/Dimmed RGB 减半）；`Arc<dyn CellEffect>` 以注册表 + id 寻址承载（同一性 ≡ ptr_eq，登记）|
 | `borders.rs` | ✅ | — |
 | `reflow.rs`（WordWrapper/LineTruncator） | `widgets/reflow.mbt` | ✅ | 上游 21 条折行测试全量复刻；宽度用近似区间法（unicode/ 落位后升级） |
 | `paragraph.rs` | `widgets/paragraph.mbt` | ✅ | 上游 29 条测试全量复刻（折行/截断/滚动/对齐/样式分层/CJK）；半宽浊点图形簇用例随 unicode/ |
