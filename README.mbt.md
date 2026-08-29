@@ -40,7 +40,7 @@ moon test --update   # 行为变更后批量更新快照（禁止手改）
 v0.1：`core` / `backend` / `widgets` 三包绿；Rect/Style/Cell/Buffer/Span/Line、
 Block（边框/线型/标题/内边距）、Paragraph（折行/截断/滚动/对齐）、List、Tabs、
 Gauge/LineGauge（unicode 半格进度条）、Sparkline（九级波形图）、Scrollbar
-（四方位滚动条）的单元测试与集成黄金用例逐条复刻自 ratatui-v0.30.2 并 TDD
+（四方位滚动条）、Clear/Fill（清空与填充基元）的单元测试与集成黄金用例逐条复刻自 ratatui-v0.30.2 并 TDD
 转绿；symbols line/block/bar/shade/scrollbar 符号表全量入库；黄金快照管线
 已立。
 设计全文见 [docs/design.md](docs/design.md)，对位进度见

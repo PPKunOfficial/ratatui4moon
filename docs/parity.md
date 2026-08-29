@@ -10,7 +10,7 @@
 
 | 上游模块 | 本库 | 状态 | 缺项 |
 |---|---|---|---|
-| `layout/rect.rs` + `rect/ops.rs` | `core/rect.mbt` + `rect_test.mbt` | ✅ | `positions()`/`iter.rs` 的 Rows/Columns 结构体细化（`rows`/`columns` 已有 Iter 版） |
+| `layout/rect.rs` + `rect/ops.rs` | `core/rect.mbt` + `rect_test.mbt` | ✅ | `iter.rs` 的 Rows/Columns/Positions 结构体形态（`rows`/`columns`/`positions` 已有 Iter 版） |
 | `layout/position.rs` | `core/position.mbt` | ✅ | `Add<Position>`（Position+Position）糖 |
 | `layout/size.rs` / `margin.rs` / `offset.rs` | 同名 `.mbt` | ✅ | FromStr 糖 |
 | `layout/alignment.rs` | `core/alignment.mbt` | ◐ | `VerticalAlignment`、FromStr |
@@ -63,7 +63,8 @@
 | `scrollbar.rs` | ⬜ | Scrollbar + Orientation |
 | `chart.rs` / `barchart.rs` | ⬜ | 图表族 |
 | `canvas.rs` + `canvas/*` | ⬜ | Canvas + shape（world 域名地图数据单列） |
-| `clear.rs` / `fill.rs` | ⬜ | Clear/Fill |
+| `clear.rs` | `widgets/clear.mbt` | ✅ | 三条内联测试全量复刻（区域复位/部分越界/完全越界） |
+| `fill.rs` | `widgets/fill.mbt` | ✅ | 七条内联测试全量复刻（符号样式/越界裁剪/非零原点/替换符号）；Cow 双形态按 String 合并登记 |
 | `calendar.rs` | ⬜ | 月历（time 依赖需评估） |
 | `logo.rs` / `mascot.rs` | ⬜ | 徽标绘制 |
 
@@ -75,7 +76,7 @@
 4. ✅ Paragraph（折行/截断/滚动/对齐/样式分层全语义）
 5. ✅ Widget/StatefulWidget trait 形式化（Span/Line/Text/String/Block/Paragraph 实现；Stateful[W,S] 状态打包）
 6. ✅ Widget/StatefulWidget trait 形式化 → List/Tabs/Gauge/LineGauge（单测与集成黄金用例全绿）
-7. ✅ Sparkline/Scrollbar（bar/shade/scrollbar 符号集随落位）→ ▶ Table → Clear/Fill
+7. ✅ Sparkline/Scrollbar/Clear/Fill（bar/shade/scrollbar 符号集随落位）→ ▶ Table
 8. Layout 数据类型（Constraint/Direction/Flex）→ cassowary 一次性求解子集（ADR-3）
 9. 终端会话层（Frame/Buffers）→ TtyBackend（moonbit-community/tty）
 10. Chart/BarChart/Canvas 族

@@ -265,6 +265,25 @@ pub fn Rect::columns(self : Rect) -> Iter[Rect] {
 }
 
 ///|
+/// 逐点惰性迭代：自上而下逐行、行内自左向右（上游 `Rect::positions`）喵。
+pub fn Rect::positions(self : Rect) -> Iter[Position] {
+  let mut next_y = self.y
+  let mut next_x = self.x
+  Iter::new(() => {
+    if next_y >= self.bottom() {
+      return None
+    }
+    let position = Position::new(next_x, next_y)
+    next_x += 1
+    if next_x >= self.right() {
+      next_x = self.x
+      next_y += 1
+    }
+    Some(position)
+  })
+}
+
+///|
 /// 取左上角坐标点（上游 `Rect::as_position`）喵。
 pub fn Rect::as_position(self : Rect) -> Position {
   Position::new(self.x, self.y)
