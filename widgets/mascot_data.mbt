@@ -3,6 +3,7 @@
 //
 // 字符语义：`h` 帽 / `e` 眼 / `█` 鼠 / `░` 终端 / `▒` 终端边框 /
 // `▓` 光标 / 空格空白喵。
+
 ///|
 pub let mascot_canvas_rows : Array[String] = [
   "               hhh", "             hhhhhh", "            hhhhhhh", "           hhhhhhhh",

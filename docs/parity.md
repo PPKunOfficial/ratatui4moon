@@ -66,8 +66,8 @@
 | `chart.rs` | `widgets/chart.mbt` | ✅ | Axis/Dataset/GraphType/LegendPosition/ChartLayout + 图例八方位置 `place` + X/Y 标签渲染管线全量；内联 22 条测试全量复刻（显隐约束/样式化/超宽标题/匿名数据集/图例样式补丁/长标题避让/溢出裁剪/八方位矩阵（含奇数余量 rstest）/Bar/叠加线条分层/Area 填充/极小零尺寸）；`Chart::layout` 包私有直测以渲染等价承载登记；`tests/widgets_chart.rs` 集成 8 条全量复刻（小区域矩阵/超长标签对齐 7 组/X·Y 对齐 3+3 组/零长边界/大数值域/空数据集/顶行样式归属） |
 | `clear.rs` | `widgets/clear.mbt` | ✅ | 三条内联测试全量复刻（区域复位/部分越界/完全越界） |
 | `fill.rs` | `widgets/fill.mbt` | ✅ | 七条内联测试全量复刻（符号样式/越界裁剪/非零原点/替换符号）；Cow 双形态按 String 合并登记 |
-| `calendar.rs` | ⬜ | 月历（time 依赖需评估） |
 | `mascot.rs` | `widgets/mascot.mbt` + `mascot_data.mbt` | ✅ | RatatuiMascot/MascotEyeColor + 32x16 半块像素画布（数据机械搬运）+ 逐对行合成渲染 + 5 条上游测试全量复刻 |
+| `calendar.rs` | `widgets/calendar.mbt` + `calendar_date.mbt` | ✅ | time crate 使用面（Date/Month/周日基准周数/按天加减）以纯 MoonBit 公历算术承载（civil_from_days 算法）；Monthly/DateStyler/CalendarEventStore 全量 + 7 条测试复刻；`today`（真实时钟）与 `test_today` 登记不复刻；包私有 `sunday_based_weeks` 以裸月历 height() 等价承载 |
 | `logo.rs` | `widgets/logo.mbt` + `logo_data.mbt` | ✅ | RatatuiLogo/RatatuiLogoSize 两档字样（数据机械搬运）+ 8 条上游测试全量复刻（构造/缺省/快照/极小零尺寸缓冲） |
 
 ## 推进顺序（依赖驱动）
